@@ -1,3 +1,0 @@
-[Name]Module1
-[Version]V5.05.17
-[Date]2019-5-12
