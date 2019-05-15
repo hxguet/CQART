@@ -53,9 +53,10 @@ Sub 生成版本号()
     Dim Vbc As Object
     Dim ModuleName As String
     Dim ModuleCount As Integer
-    Dim FilePath As String
+    Dim ReleaseFilePath As String
+    Dim BackupFilePath As String
     Dim ReleaseFile As String
-
+    Dim Commit As String
     Dim n As Integer
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
@@ -63,9 +64,9 @@ Sub 生成版本号()
     MainVer = Range("H3").Value
     SubVer = Range("H4").Value
     RiviseVer = Range("H5").Value
-    FilePath = Range("H6").Value
+    ReleaseFilePath = Range("H6").Value
+    BackupFilePath = Range("H7").Value
     ReleaseFile = "模块1源代码.bas"
-
     If (RiviseVer < 40) Then
         RiviseVer = RiviseVer + 1
     Else
@@ -81,12 +82,13 @@ Sub 生成版本号()
     End If
     Version = "V" & MainVer & "." & Format(SubVer, "00") & "." & Format(RiviseVer, "00")
     RiviseDate = Format(Now, "yyyy-mm-dd")
-    ModuleFileName = ThisWorkbook.Path & "\源代码备份" & "\模块1源代码-" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".bas"
+    Commit = Format(Now, "yyyy-mm-dd hh:mm:ss") & "Commit"
+    ModuleFileName = BackupFilePath & "\模块1源代码-" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".bas"
     If Dir(ModuleFileName) <> "" Then
         Kill ModuleFileName
     End If
-    If Dir(FilePath & "\") = "" Then
-        MkDir FilePath
+    If Dir(ReleaseFilePath & "\") = "" Then
+        MkDir ReleaseFilePath
     End If
     ModuleCount = 0
     For Each Vbc In ThisWorkbook.VBProject.VBComponents
@@ -99,24 +101,26 @@ Sub 生成版本号()
     Next Vbc
     If ModuleCount = 1 Then
         Application.VBE.ActiveVBProject.VBComponents("模块1").Export (ModuleFileName)
-        Application.VBE.ActiveVBProject.VBComponents("模块1").Export (FilePath & "\" & ReleaseFile)
+        Application.VBE.ActiveVBProject.VBComponents("模块1").Export (ReleaseFilePath & "\" & ReleaseFile)
         Range("H1").Value = Version
         Range("H2").Value = RiviseDate
         Range("H3").Value = MainVer
         Range("H4").Value = SubVer
         Range("H5").Value = RiviseVer
-        Call 生成Readme("模块1", ReleaseFile, Version, RiviseDate)
+        Call 生成Readme(ReleaseFilePath & "\Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
+        Shell ("cmd /k " & ReleaseFilePath & "\git add .")
+        ShellAndWait (ReleaseFilePath & "\git.exe add .")
+        ShellAndWait (ReleaseFilePath & "git.exe commit -m " & Commit)
+        ShellAndWait (ReleaseFilePath & "git.exe push -u origin master")
     End If
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
-Sub 生成Readme(ModuleName As String, ReleaseFile As String, Version As String, RiviseDate As String)
-    Dim ReadmeFile As String
+Sub 生成Readme(ReadmeFile As String, ModuleName As String, ReleaseFile As String, Version As String, RiviseDate As String)
     Dim ModuleCount As Integer
     Dim i As Integer
     Dim k As Integer
     Dim LineCount As Integer
-    ReadmeFile = ThisWorkbook.Path & "\代码更新\Readme.txt"
     DownVersionFile (ReadmeFile)
     GetVersionFromFile (ReadmeFile)
     ModuleCount = ModuleLastRivise(CSummary, CModuleCount)
@@ -137,7 +141,6 @@ Sub 生成Readme(ModuleName As String, ReleaseFile As String, Version As String, R
     Next i
     MyTxtObj.Close
 End Sub
-
 Sub 更新代码()
     Dim ModuleRivise() As String
     Dim ModuleCount As Integer
