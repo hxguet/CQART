@@ -58,6 +58,12 @@ Sub 生成版本号()
     Dim ReleaseFile As String
     Dim Commit As String
     Dim n As Integer
+    Dim BatFile As String
+    Dim TempStr As String
+    BatFile = "发布代码.bat"
+    ReleaseFilePath = Range("H6").Value
+    Commit = Format(Now, "yyyy-mm-dd hh:mm:ss Commit")
+
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -67,6 +73,7 @@ Sub 生成版本号()
     ReleaseFilePath = Range("H6").Value
     BackupFilePath = Range("H7").Value
     ReleaseFile = "模块1源代码.bas"
+    BatFile = "发布代码.bat"
     If (RiviseVer < 40) Then
         RiviseVer = RiviseVer + 1
     Else
@@ -107,27 +114,39 @@ Sub 生成版本号()
         Range("H3").Value = MainVer
         Range("H4").Value = SubVer
         Range("H5").Value = RiviseVer
-        Call 生成Readme(ReleaseFilePath & "\Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
-        Shell ("cmd /k " & ReleaseFilePath & "\git add .")
-        ShellAndWait (ReleaseFilePath & "\git.exe add .")
-        ShellAndWait (ReleaseFilePath & "git.exe commit -m " & Commit)
-        ShellAndWait (ReleaseFilePath & "git.exe push -u origin master")
+        Call 生成Readme(ReleaseFilePath & "\Readme.txt", BackupFilePath & "\Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
+        '生成Git发布批处理文件
+        Set fso = CreateObject("Scripting.FileSystemObject")
+        Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & BatFile, True, False)
+        MyTxtObj.WriteLine (Mid(ReleaseFilePath, 1, 2))
+        MyTxtObj.WriteLine ("cd " & Mid(ReleaseFilePath, 3, Len(ReleaseFilePath) - 2))
+        MyTxtObj.WriteLine ("git add .")
+        TempStr = "git commit -m """
+        TempStr = TempStr & Commit
+        TempStr = TempStr & """"
+        MyTxtObj.WriteLine (TempStr)
+        MyTxtObj.WriteLine ("git push -u origin master")
+        MyTxtObj.WriteLine ("exit")
+        MyTxtObj.Close
+        Shell (ReleaseFilePath & "\" & BatFile)
     End If
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
-Sub 生成Readme(ReadmeFile As String, ModuleName As String, ReleaseFile As String, Version As String, RiviseDate As String)
+Sub 生成Readme(ReleaseReadmeFile As String, BackupReadmeFile As String, ModuleName As String, ReleaseFile As String, Version As String, RiviseDate As String)
     Dim ModuleCount As Integer
     Dim i As Integer
     Dim k As Integer
     Dim LineCount As Integer
-    DownVersionFile (ReadmeFile)
-    GetVersionFromFile (ReadmeFile)
+    Dim UpdateInfo As String
+    On Error Resume Next
+    DownVersionFile (ReleaseReadmeFile)
+    GetVersionFromFile (ReleaseReadmeFile)
     ModuleCount = ModuleLastRivise(CSummary, CModuleCount)
     LineCount = ModuleLastRivise(CSummary, CSumLines)
     k = 1
     Set fso = CreateObject("Scripting.FileSystemObject")
-    Set MyTxtObj = fso.CreateTextFile(ReadmeFile, True, False)
+    Set MyTxtObj = fso.CreateTextFile(ReleaseReadmeFile, True, False)
     ModuleLastRivise(1, CModuleName) = "模块1"
     ModuleLastRivise(1, CFileName) = ReleaseFile
     ModuleLastRivise(1, CVersion) = Version
@@ -137,9 +156,13 @@ Sub 生成Readme(ReadmeFile As String, ModuleName As String, ReleaseFile As String
         MyTxtObj.WriteLine ("[文件名称]" & ModuleLastRivise(i, CFileName))
         MyTxtObj.WriteLine ("[修订版本]" & ModuleLastRivise(i, CVersion))
         MyTxtObj.WriteLine ("[修订日期]" & ModuleLastRivise(i, CRiviseDate))
-        MyTxtObj.WriteLine ("[更新说明]" & vbCrLf & ModuleLastRivise(i, CUpdateInfo))
+        UpdateInfo = InputBox("请输入" & ModuleLastRivise(i, CModuleName) & "此次更新说明" & vbCrLf & ModuleLastRivise(i, CUpdateInfo))
+        MyTxtObj.WriteLine ("[更新说明]" & vbCrLf & ModuleLastRivise(i, CUpdateInfo)) & UpdateInfo
     Next i
+    fso.CopyFile ReleaseReadmeFile, BackupReadmeFile
     MyTxtObj.Close
+    Set fso = Nothing
+    Set MyTxtObj = Nothing
 End Sub
 Sub 更新代码()
     Dim ModuleRivise() As String
