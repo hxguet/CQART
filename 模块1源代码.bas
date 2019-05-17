@@ -130,6 +130,8 @@ Sub 生成版本号()
         MyTxtObj.Close
         Shell (ReleaseFilePath & "\" & BatFile)
     End If
+    Set MyTxtObj = Nothing
+    Set fso = Nothing
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
@@ -305,10 +307,6 @@ Sub GetVersionFromLocal()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
-Sub test()
-    DownVersionFile (ThisWorkbook.Path & "\代码更新\Readme.txt")
-    GetVersionFromFile (ThisWorkbook.Path & "\代码更新\Readme.txt")
-End Sub
 Sub DownVersionFile(ReadmeFile As String)
     Dim FileName As String
     Dim Result As String
@@ -371,7 +369,9 @@ Sub GetVersionFromFile(LocalFileName As String)
             i = i + 1
             Do While i <= n - 1
                 If InStr(1, StrTxt(i), "[文件名称]") = 0 Then
-                    UpdateInfo = UpdateInfo & StrTxt(i) & vbCrLf
+                    If StrTxt(i) <> "" Then
+                        UpdateInfo = UpdateInfo & StrTxt(i) & vbCrLf
+                    End If
                     i = i + 1
                 End If
             Loop
