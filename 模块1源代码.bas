@@ -114,7 +114,7 @@ Sub 生成版本号()
         Range("H3").Value = MainVer
         Range("H4").Value = SubVer
         Range("H5").Value = RiviseVer
-        Call 生成Readme(ReleaseFilePath & "\Readme.txt", BackupFilePath & "\Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
+        Call 生成Readme(ReleaseFilePath, "Readme.txt", BackupFilePath, "Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
         '生成Git发布批处理文件
         Set fso = CreateObject("Scripting.FileSystemObject")
         Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & BatFile, True, False)
@@ -135,15 +135,15 @@ Sub 生成版本号()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
-Sub 生成Readme(ReleaseReadmeFile As String, BackupReadmeFile As String, ModuleName As String, ReleaseFile As String, Version As String, RiviseDate As String)
+Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFilePath As String, BackupReadmeFile As String, ModuleName As String, ReleaseFile As String, Version As String, RiviseDate As String)
     Dim ModuleCount As Integer
     Dim i As Integer
     Dim k As Integer
     Dim LineCount As Integer
     Dim UpdateInfo As String
     On Error Resume Next
-    DownVersionFile (ReleaseReadmeFile)
-    GetVersionFromFile (ReleaseReadmeFile)
+    Call DownFile(ReleaseFilePath, ReleaseReadmeFile)
+    Call GetVersionFromFile(ReleaseFilePath & "\" & ReleaseReadmeFile)
     ModuleCount = ModuleLastRivise(CSummary, CModuleCount)
     LineCount = ModuleLastRivise(CSummary, CSumLines)
     k = 1
@@ -161,7 +161,7 @@ Sub 生成Readme(ReleaseReadmeFile As String, BackupReadmeFile As String, ModuleNa
         UpdateInfo = InputBox("请输入" & ModuleLastRivise(i, CModuleName) & "此次更新说明" & vbCrLf & ModuleLastRivise(i, CUpdateInfo))
         MyTxtObj.WriteLine ("[更新说明]" & vbCrLf & ModuleLastRivise(i, CUpdateInfo)) & UpdateInfo
     Next i
-    fso.CopyFile ReleaseReadmeFile, BackupReadmeFile
+    fso.CopyFile ReleaseFilePath & "\" & ReleaseReadmeFile, BackupFilePath & "\" & BackupReadmeFile
     MyTxtObj.Close
     Set fso = Nothing
     Set MyTxtObj = Nothing
@@ -307,13 +307,13 @@ Sub GetVersionFromLocal()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
-Sub DownVersionFile(ReadmeFile As String)
-    Dim FileName As String
+Sub DownFile(FilePath As String, FileName As String)
+    Dim TempFileName As String
     Dim Result As String
     Dim VersionFilePath As String
-    VersionFilePath = "https://raw.githubusercontent.com/hxguet/CQART/master/Readme.txt"
-    FileName = ThisWorkbook.Path & "\代码更新\wget.exe -O " & ReadmeFile & " " & VersionFilePath
-    Result = ShellAndWait(FileName)
+    RemoteFile = "https://raw.githubusercontent.com/hxguet/CQART/master/" & FileName
+    TempFileName = ThisWorkbook.Path & "\代码更新\wget.exe -O " & FilePath & "\" & FileName & " " & RemoteFile
+    Result = ShellAndWait(TempFileName)
 End Sub
 Sub GetVersionFromFile(LocalFileName As String)
     Dim StrTxt() As String
