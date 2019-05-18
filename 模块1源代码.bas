@@ -112,7 +112,9 @@ Sub 生成版本号()
             Kill ReleaseFilePath & "\" & ReleaseFile
         End If
         Application.VBE.ActiveVBProject.VBComponents("模块1").Export (ReleaseFilePath & "\" & ReleaseFile)
-        Range("H1").Value = Version
+        Range("H1").Select
+        ActiveCell.FormulaR1C1 = _
+            "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
         Range("H2").Value = RiviseDate
         Range("H3").Value = MainVer
         Range("H4").Value = SubVer
@@ -240,7 +242,9 @@ Sub 远程更新代码()
                     Exit For
                 End If
             Next Vbc
-            Range("H1").Value = LastVersion
+            Range("H1").Select
+            ActiveCell.FormulaR1C1 = _
+                "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
             Range("H2").Value = LastRiviseDate
             Range("H3").Value = Val(Mid(LastVersion, 2, 3))
             Range("H4").Value = Val(Mid(LastVersion, 4, 2))
