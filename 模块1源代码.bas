@@ -207,7 +207,7 @@ Sub 远程更新代码()
         GoTo Error
     End If
     Call GetVersionFromFile(LastFilePath & "\" & LastReadme)
-    ModuleName = ModuleLastRivise(1, CFileName)
+    ModuleFile = ModuleLastRivise(1, CFileName)
     Status = DownFile(ThisWorkbook.Path, ModuleFile)
     If Status = False Then
         GoTo Error
