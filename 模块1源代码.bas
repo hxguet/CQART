@@ -75,17 +75,17 @@ Sub 生成版本号()
     If (RiviseVer < 40) Then
         RiviseVer = RiviseVer + 1
     Else
-        Range("H5").Value = 1
+        RiviseVer = 1
         If (SubVer < 20) Then
             SubVer = SubVer + 1
         Else
-            Range("H4").Value = 1
+            SubVer = 1
             If (MainVer < 10) Then
                 MainVer = MainVer + 1
              End If
        End If
     End If
-    Version = "V" & Range("H3").Value & "." & Format(Range("H5").Value, "00") & "." & Format(Range("H4").Value, "00")
+    Version = "V" & MainVer & "." & Format(SubVer, "00") & "." & Format(RiviseVer, "00")
     RiviseDate = Format(Now, "yyyy-mm-dd")
     Commit = Format(Now, "yyyy-mm-dd hh:mm:ss") & "Commit"
     ModuleFileName = BackupFilePath & "\模块1源代码-" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".bas"
