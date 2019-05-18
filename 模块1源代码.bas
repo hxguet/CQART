@@ -62,8 +62,7 @@ Sub 生成版本号()
     Dim TempStr As String
     BatFile = "发布代码.bat"
     ReleaseFilePath = Range("H6").Value
-    Commit = Format(Now, "yyyy-mm-dd hh:mm:ss Commit")
-
+    Commit = Format(Now, "yyyy-mm-dd hh:mm:ss  Commit")
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -148,7 +147,7 @@ Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFil
     LineCount = ModuleLastRivise(CSummary, CSumLines)
     k = 1
     Set fso = CreateObject("Scripting.FileSystemObject")
-    Set MyTxtObj = fso.CreateTextFile(ReleaseReadmeFile, True, False)
+    Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & ReleaseReadmeFile, True, False)
     ModuleLastRivise(1, CModuleName) = "模块1"
     ModuleLastRivise(1, CFileName) = ReleaseFile
     ModuleLastRivise(1, CVersion) = Version
