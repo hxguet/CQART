@@ -205,13 +205,13 @@ Sub 远程更新代码()
     End If
     MsgBox ("正在连接远程服务器，检查代码最新版本！")
     Status = DownFile(LastFilePath, LastReadme)
-    If Status = False Or Dir(LastFilePath & "\" & LastReadme) <> "" Then
+    If Status = False Or Dir(LastFilePath & "\" & LastReadme) = "" Then
         GoTo Error
     End If
     Call GetVersionFromFile(LastFilePath & "\" & LastReadme)
     ModuleFile = ModuleLastRivise(1, CFileName)
     Status = DownFile(ThisWorkbook.Path, ModuleFile)
-    If Status = False Or Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
+    If Status = False Or Dir(ThisWorkbook.Path & "\" & ModuleFile) = "" Then
         GoTo Error
     End If
     CurrentVersion = Range("H1").Value
