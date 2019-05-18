@@ -196,8 +196,11 @@ Sub 远程更新代码()
     If Dir((LastFilePath & "\" & LastReadme)) <> "" Then
         Kill LastFilePath & "\" & LastReadme
     End If
+    MsgBox ("正在连接远程服务器，检查代码最新版本！")
     Call DownFile(LastFilePath, LastReadme)
     Call GetVersionFromFile(LastFilePath & "\" & LastReadme)
+    ModuleName = ModuleLastRivise(1, CFileName)
+    Call DownFile(ThisWorkbook.Path, ModuleFile)
     CurrentVersion = Range("H1").Value
     CurrentRiviseDate = Range("H2").Value
     CtrResult = StrComp(CurrentVersion, ModuleLastRivise(1, CVersion), vbTextCompare)
@@ -213,8 +216,6 @@ Sub 远程更新代码()
                 ThisWorkbook.VBProject.VBComponents.Remove Vbc
             End If
         Next Vbc
-        MsgBox ("连接远程服务器，检查代码最新版本！")
-        Call DownFile(ThisWorkbook.Path, ModuleFile)
         If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
             ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
             ModuleCount = 0
