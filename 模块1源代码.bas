@@ -229,6 +229,7 @@ Sub 远程更新代码()
             Range("H4").Value = Val(Mid(LastVersion, 4, 2))
             Range("H5").Value = Val(Mid(LastVersion, 7, 2))
         End If
+        MsgBox ("已更新代码为：" & LastVersion & "修订日期：" & LastRiviseDate)
     Else
         MsgBox ("该模版代码版本已经为最新版本!")
     End If
