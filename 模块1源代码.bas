@@ -61,7 +61,6 @@ Sub 生成版本号()
     Dim BatFile As String
     Dim TempStr As String
     BatFile = "发布代码.bat"
-    ReleaseFilePath = Range("H6").Value
     Commit = Format(Now, "yyyy-mm-dd hh:mm:ss  Commit")
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
@@ -164,6 +163,71 @@ Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFil
     MyTxtObj.Close
     Set fso = Nothing
     Set MyTxtObj = Nothing
+End Sub
+Sub 远程更新代码()
+    Dim ModuleCount As Integer
+    Dim ModuleName As String
+    Dim ModuleFile As String
+    Dim CurrentVersion As String
+    Dim CurrentRiviseDate As String
+    Dim UpdateInfo As String
+    Dim wbList() As String
+    Dim FileName As String
+    Dim FileType As String
+    Dim LastVersion As String
+    Dim LastRiviseDate As String
+    Dim CtrResult As String
+    Dim Vbc As Object
+    Dim Result As String
+    Dim VersionFilePath As String
+    Dim LastFilePath As String
+    Dim LastReadme As String
+    Dim LastBasFile As String
+    Worksheets("专业矩阵状态").Visible = True
+    Worksheets("专业矩阵状态").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    LastFilePath = ThisWorkbook.Path
+    LastReadme = "Readme.txt"
+    If Dir((LastFilePath & "\" & LastReadme)) <> "" Then
+        Kill LastFilePath & "\" & LastReadme
+    End If
+    Call DownFile(LastFilePath, LastReadme)
+    Call GetVersionFromFile(LastFilePath & "\" & LastReadme)
+    CurrentVersion = Range("H1").Value
+    CurrentRiviseDate = Range("H2").Value
+    CtrResult = StrComp(CurrentVersion, ModuleLastRivise(1, CVersion), vbTextCompare)
+    '远程代码版本号比当前代码版本号新
+    If CtrResult = -1 Then
+        ModuleName = ModuleLastRivise(1, CModuleName)
+        ModuleFile = ModuleLastRivise(1, CFileName)
+        LastVersion = ModuleLastRivise(1, CVersion)
+        LastRiviseDate = ModuleLastRivise(1, CRiviseDate)
+        UpdateInfo = ModuleLastRivise(1, CUpdateInfo)
+        For Each Vbc In ThisWorkbook.VBProject.VBComponents
+            If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
+                ThisWorkbook.VBProject.VBComponents.Remove Vbc
+            End If
+        Next Vbc
+        ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
+        ModuleCount = 0
+        For Each Vbc In ThisWorkbook.VBProject.VBComponents
+            If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
+                ModuleCount = ModuleCount + 1
+            End If
+            If ModuleCount = 1 Then
+                Vbc.Name = "模块1"
+            Else
+                Exit For
+            End If
+        Next Vbc
+        Range("H1").Value = LastVersion
+        Range("H2").Value = LastRiviseDate
+        Range("H3").Value = Mid(LastVersion, 1, 2)
+        Range("H4").Value = Mid(LastVersion, 4, 2)
+        Range("H5").Value = Mid(LastVersion, 7, 2)
+    End If
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("专业矩阵状态").Visible = False
 End Sub
 Sub 更新代码()
     Dim ModuleRivise() As String
@@ -379,107 +443,7 @@ Sub GetVersionFromFile(LocalFileName As String)
         End If
     Next i
 End Sub
-Sub 远程更新代码()
-    Dim ModuleRivise() As String
-    Dim ModuleCount As Integer
-    Dim ModuleFile As String
-    Dim CurrentVersion As String
-    Dim CurrentRiviseDate As String
-    Dim wbList() As String
-    Dim FileName As String
-    Dim FileType As String
-    Dim LastVersion As String
-    Dim LastRiviseDate As String
-    Dim CtrResult As String
-    Dim Vbc As Object
-    Const CFileName = 1
-    Const CModuelName = 2
-    Const CVersion = 3
-    Const CRiviseDate = 4
-    Dim Result As String
-    Dim VersionFilePath As String
-    'ReadTXT (ThisWorkbook.Path & "\代码更新\Version.txt")
-    VersionFilePath = "https://raw.githubusercontent.com/hxguet/CQART/master/Readme.txt"
-    FileName = ThisWorkbook.Path & "\代码更新\wget.exe -O " & ThisWorkbook.Path & "\代码更新\Readme.txt " & VersionFilePath
-    Result = ShellAndWait(FileName)
-    Call ReadTXT(ThisWorkbook.Path & "\代码更新\Readme.txt")
-    
-    Worksheets("专业矩阵状态").Visible = True
-    Worksheets("专业矩阵状态").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    CurrentVersion = Range("H1").Value
-    CurrentRiviseDate = Range("H2").Value
-    FolderName = ThisWorkbook.Path
-    wbName = Dir(FolderName & "\*.bas")
-    ModuleCount = 0
-    While wbName <> ""
-        Info = Split(Mid(wbName, 1, Len(wbName) - 4), "-")
-        '文件名必须包含模块名，版本号和修订日期
-        If UBound(Info) - LBound(Info) = 2 Then
-            If Len(Info(0)) = 6 And Len(Info(1)) = 8 And Len(Info(2)) = 8 Then
-                ModuleCount = ModuleCount + 1
-                ReDim Preserve wbList(1 To ModuleCount)
-                wbList(ModuleCount) = wbName
-            End If
-        End If
-        wbName = Dir
-    Wend
-    If ModuleCount = 0 Then
-        ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-        Worksheets("专业矩阵状态").Visible = False
-        Exit Sub
-    End If
-    ReDim Preserve ModuleRivise(1 To ModuleCount, 1 To 4)
-    LastVersion = ""
-    LastRiviseDate = ""
-    For i = 1 To ModuleCount
-        ModuleRivise(i, CFileName) = wbList(i)
-        Info = Split(Mid(wbList(i), 1, Len(wbList(i)) - 4), "-")
-        ModuleRivise(i, CModuelName) = Mid(Info(0), 1, 3)
-        ModuleRivise(i, CVersion) = Info(1)
-        ModuleRivise(i, CRiviseDate) = Info(2)
-        CtrResult = StrComp(LastVersion, ModuleRivise(i, CVersion), vbTextCompare)
-        If CtrResult = -1 Then
-            LastVersion = ModuleRivise(i, CVersion)
-            LastRiviseDate = ModuleRivise(i, CRiviseDate)
-            ModuleFile = ModuleRivise(i, CFileName)
-        End If
-    Next i
-    CtrResult = StrComp(LastVersion, CurrentVersion, vbTextCompare)
-    '代码版本号比当前代码版本号新
-    If CtrResult = 1 Then
-        CtrResult = StrComp(LastRiviseDate, CurrentRiviseDate, vbTextCompare)
-        '最新版本号代码的更新日期旧于当前代码，不做更新
-        If CtrResult = -1 Then
-            Exit Sub
-        Else
-            For Each Vbc In ThisWorkbook.VBProject.VBComponents
-                If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
-                    ThisWorkbook.VBProject.VBComponents.Remove Vbc
-                End If
-            Next Vbc
-            ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
-            ModuleCount = 0
-            For Each Vbc In ThisWorkbook.VBProject.VBComponents
-                If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
-                    ModuleCount = ModuleCount + 1
-                End If
-                If ModuleCount = 1 Then
-                    Vbc.Name = "模块1"
-                Else
-                    Exit For
-                End If
-            Next Vbc
-        End If
-    End If
-    Range("H1").Value = LastVersion
-    Range("H2").Value = LastRiviseDate
-    Range("H3").Value = Mid(LastVersion, 1, 2)
-    Range("H4").Value = Mid(LastVersion, 4, 2)
-    Range("H5").Value = Mid(LastVersion, 7, 2)
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-    Worksheets("专业矩阵状态").Visible = False
-End Sub
+
 Sub 修订课程目标和综合分析公式()
     Dim MyShapes As Shapes
     Dim Shp As Shape
@@ -490,8 +454,8 @@ Sub 修订课程目标和综合分析公式()
     Worksheets("专业矩阵状态").Visible = False
     '修订"2-课程目标和综合分析（填写）"工作表评价环节课程报告和作业成绩公式
     Worksheets("2-课程目标和综合分析（填写）").Activate
+    Application.EnableEvents = False
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    
     Set MyShapes = Worksheets("2-课程目标和综合分析（填写）").Shapes
     ActiveSheet.Shapes.SelectAll
     Selection.Delete
@@ -524,7 +488,17 @@ Sub 修订课程目标和综合分析公式()
             ActiveCell.FormulaR1C1 = "（4）改进措施"
         End If
     End If
+    Range("AH4:AQ4").Select
+    Selection.Merge
+    Range("AH5:AQ5").Select
+    Selection.Merge
+    Range("AH4:AQ4").Select
+    ActiveCell.FormulaR1C1 = "=专业矩阵状态!R[-3]C[-27]&""：""&专业矩阵状态!R[-3]C[-26]"
+    Range("AH5:AQ5").Select
+    ActiveCell.FormulaR1C1 = _
+        "=专业矩阵状态!R[-3]C[-27]&""：""&TEXT(专业矩阵状态!R[-3]C[-26],""YYYY年MM月DD日"")"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Application.EnableEvents = True
 End Sub
 Sub 修订教学过程登记表公式()
     Dim temp As Boolean
@@ -643,7 +617,6 @@ Sub 修订教学过程登记表公式()
     '设置作业登记区域的数据校验
     Range("D6:T" & (SumCount + 5)).Select
     Selection.FormulaHidden = False
-    
     With Selection.Validation
         .Delete
         .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
@@ -674,9 +647,7 @@ Sub 修订专业矩阵状态()
      '修订专业矩阵状态工作表
     Dim MyShapes As Shapes
     Dim Shp As Shape
-    
     Set MyShapes = Worksheets("专业矩阵状态").Shapes
-    
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
