@@ -208,23 +208,35 @@ Sub 远程更新代码()
                 ThisWorkbook.VBProject.VBComponents.Remove Vbc
             End If
         Next Vbc
-        ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
-        ModuleCount = 0
-        For Each Vbc In ThisWorkbook.VBProject.VBComponents
-            If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
-                ModuleCount = ModuleCount + 1
-            End If
-            If ModuleCount = 1 Then
-                Vbc.Name = "模块1"
-            Else
-                Exit For
-            End If
-        Next Vbc
-        Range("H1").Value = LastVersion
-        Range("H2").Value = LastRiviseDate
-        Range("H3").Value = Mid(LastVersion, 1, 2)
-        Range("H4").Value = Mid(LastVersion, 4, 2)
-        Range("H5").Value = Mid(LastVersion, 7, 2)
+        MsgBox ("连接远程服务器，检查代码最新版本！")
+        Call DownFile(ThisWorkbook.Path & "\" & ModuleFile)
+        If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
+            ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
+            ModuleCount = 0
+            For Each Vbc In ThisWorkbook.VBProject.VBComponents
+                If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
+                    ModuleCount = ModuleCount + 1
+                End If
+                If ModuleCount = 1 Then
+                    Vbc.Name = "模块1"
+                Else
+                    Exit For
+                End If
+            Next Vbc
+            Range("H1").Value = LastVersion
+            Range("H2").Value = LastRiviseDate
+            Range("H3").Value = Val(Mid(LastVersion, 2, 3))
+            Range("H4").Value = Val(Mid(LastVersion, 4, 2))
+            Range("H5").Value = Val(Mid(LastVersion, 7, 2))
+        End If
+    Else
+        MsgBox ("该模版代码版本已经为最新版本!")
+    End If
+    If Dir(LastFilePath & "\" & LastReadme) <> "" Then
+        Kill LastFilePath & "\" & LastReadme
+    End If
+    If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
+        Kill ThisWorkbook.Path & "\" & ModuleFile
     End If
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
