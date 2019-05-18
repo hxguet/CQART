@@ -26,6 +26,8 @@ Sub 修订公式()
     Call 修订专业矩阵状态
     Call 修订课程目标和综合分析公式
     Call 修订平时成绩表
+    Call 修订教学过程登记表公式
+    Call 修订毕业要求达成度评价表
     Call 允许事件触发
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Application.EnableEvents = True
@@ -75,11 +77,11 @@ Sub 生成版本号()
     If (RiviseVer < 40) Then
         RiviseVer = RiviseVer + 1
     Else
-        RiviseVer = 1
+        Range("H5").Value = 1
         If (SubVer < 20) Then
             SubVer = SubVer + 1
         Else
-            SubVer = 1
+            Range("H4").Value = 1
             If (MainVer < 10) Then
                 MainVer = MainVer + 1
              End If
@@ -106,6 +108,9 @@ Sub 生成版本号()
     Next Vbc
     If ModuleCount = 1 Then
         Application.VBE.ActiveVBProject.VBComponents("模块1").Export (ModuleFileName)
+        If Dir(ReleaseFilePath & "\" & ReleaseFile) <> "" Then
+            Kill ReleaseFilePath & "\" & ReleaseFile
+        End If
         Application.VBE.ActiveVBProject.VBComponents("模块1").Export (ReleaseFilePath & "\" & ReleaseFile)
         Range("H1").Value = Version
         Range("H2").Value = RiviseDate
@@ -209,7 +214,7 @@ Sub 远程更新代码()
             End If
         Next Vbc
         MsgBox ("连接远程服务器，检查代码最新版本！")
-        Call DownFile(ThisWorkbook.Path & "\" & ModuleFile)
+        Call DownFile(ThisWorkbook.Path, ModuleFile)
         If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
             ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
             ModuleCount = 0
@@ -241,6 +246,7 @@ Sub 远程更新代码()
     End If
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
+    Call 修订公式
 End Sub
 Sub 更新代码()
     Dim ModuleRivise() As String
