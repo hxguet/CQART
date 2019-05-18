@@ -144,8 +144,12 @@ Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFil
     Dim k As Integer
     Dim LineCount As Integer
     Dim UpdateInfo As String
+    Dim Status As String
     On Error Resume Next
-    Call DownFile(ReleaseFilePath, ReleaseReadmeFile)
+    Status = DownFile(ReleaseFilePath, ReleaseReadmeFile)
+    If Status = False Then
+        Exit Sub
+    End If
     Call GetVersionFromFile(ReleaseFilePath & "\" & ReleaseReadmeFile)
     ModuleCount = ModuleLastRivise(CSummary, CModuleCount)
     LineCount = ModuleLastRivise(CSummary, CSumLines)
@@ -188,6 +192,7 @@ Sub 远程更新代码()
     Dim LastFilePath As String
     Dim LastReadme As String
     Dim LastBasFile As String
+    Dim Status As Boolean
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -197,10 +202,16 @@ Sub 远程更新代码()
         Kill LastFilePath & "\" & LastReadme
     End If
     MsgBox ("正在连接远程服务器，检查代码最新版本！")
-    Call DownFile(LastFilePath, LastReadme)
+    Status = DownFile(LastFilePath, LastReadme)
+    If Status = False Then
+        GoTo Error
+    End If
     Call GetVersionFromFile(LastFilePath & "\" & LastReadme)
     ModuleName = ModuleLastRivise(1, CFileName)
-    Call DownFile(ThisWorkbook.Path, ModuleFile)
+    Status = DownFile(ThisWorkbook.Path, ModuleFile)
+    If Status = False Then
+        GoTo Error
+    End If
     CurrentVersion = Range("H1").Value
     CurrentRiviseDate = Range("H2").Value
     CtrResult = StrComp(CurrentVersion, ModuleLastRivise(1, CVersion), vbTextCompare)
@@ -245,86 +256,21 @@ Sub 远程更新代码()
     If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
         Kill ThisWorkbook.Path & "\" & ModuleFile
     End If
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-    Worksheets("专业矩阵状态").Visible = False
     Call 修订公式
-End Sub
-Sub 更新代码()
-    Dim ModuleRivise() As String
-    Dim ModuleCount As Integer
-    Dim ModuleFile As String
-    Dim CurrentVersion As String
-    Dim CurrentRiviseDate As String
-    Dim wbList() As String
-    Dim FileName As String
-    Dim FileType As String
-    Dim LastVersion As String
-    Dim LastRiviseDate As String
-    Dim CtrResult As String
-    Dim Vbc As Object
-    Worksheets("专业矩阵状态").Visible = True
-    Worksheets("专业矩阵状态").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    CurrentVersion = Range("H1").Value
-    CurrentRiviseDate = Range("H2").Value
-    FolderName = ThisWorkbook.Path
-    wbName = Dir(FolderName & "\*.bas")
-    ModuleCount = ModuleLastRivise(0, CModuleCount)
-    LastVersion = ""
-    LastRiviseDate = ""
-    For i = 1 To ModuleCount
-        ModuleRivise(i, CFileName) = wbList(i)
-        Info = Split(Mid(wbList(i), 1, Len(wbList(i)) - 4), "-")
-        ModuleRivise(i, CModuleName) = Mid(Info(0), 1, 3)
-        ModuleRivise(i, CVersion) = Info(1)
-        ModuleRivise(i, CRiviseDate) = Info(2)
-        CtrResult = StrComp(LastVersion, ModuleRivise(i, CVersion), vbTextCompare)
-        If CtrResult = -1 Then
-            LastVersion = ModuleRivise(i, CVersion)
-            LastRiviseDate = ModuleRivise(i, CRiviseDate)
-            ModuleFile = ModuleRivise(i, CFileName)
-        End If
-    Next i
-    CtrResult = StrComp(LastVersion, CurrentVersion, vbTextCompare)
-    '代码版本号比当前代码版本号新
-    If CtrResult = 1 Then
-        CtrResult = StrComp(LastRiviseDate, CurrentRiviseDate, vbTextCompare)
-        '最新版本号代码的更新日期旧于当前代码，不做更新
-        If CtrResult = -1 Then
-            Exit Sub
-        Else
-            For Each Vbc In ThisWorkbook.VBProject.VBComponents
-                If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
-                    ThisWorkbook.VBProject.VBComponents.Remove Vbc
-                End If
-            Next Vbc
-            ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
-            ModuleCount = 0
-            For Each Vbc In ThisWorkbook.VBProject.VBComponents
-                If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
-                    ModuleCount = ModuleCount + 1
-                End If
-                If ModuleCount = 1 Then
-                    Vbc.Name = "模块1"
-                Else
-                    Exit For
-                End If
-            Next Vbc
-        End If
-    End If
-    Range("H1").Value = LastVersion
-    Range("H2").Value = LastRiviseDate
-    Range("H3").Value = Mid(LastVersion, 1, 2)
-    Range("H4").Value = Mid(LastVersion, 4, 2)
-    Range("H5").Value = Mid(LastVersion, 7, 2)
+Error:
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
 Function ShellAndWait(cmdStr As String) As String
+    On Error Resume Next
     Dim oShell As Object, oExec As Object
     Set oShell = CreateObject("WScript.Shell")
     Set oExec = oShell.exec(cmdStr)
-    ShellAndWait = oExec.StdOut.ReadAll
+    If Err.Description <> "" Then
+        ShellAndWait = Err.Description
+    Else
+        ShellAndWait = oExec.StdOut.ReadAll
+    End If
     Set oShell = Nothing
     Set oExec = Nothing
 End Function
@@ -390,14 +336,20 @@ Sub GetVersionFromLocal()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
-Sub DownFile(FilePath As String, FileName As String)
+Function DownFile(FilePath As String, FileName As String)
     Dim TempFileName As String
     Dim Result As String
     Dim VersionFilePath As String
     RemoteFile = "https://raw.githubusercontent.com/hxguet/CQART/master/" & FileName
-    TempFileName = ThisWorkbook.Path & "\代码更新\wget.exe -O " & FilePath & "\" & FileName & " " & RemoteFile
+    TempFileName = ThisWorkbook.Path & "\wget.exe -O " & FilePath & "\" & FileName & " " & RemoteFile
     Result = ShellAndWait(TempFileName)
-End Sub
+    If Result <> "" Then
+        MsgBox ("请检查" & ThisWorkbook.Path & "\wget.exe 文件是否存在！")
+        DownFile = False
+    Else
+        DownFile = True
+    End If
+End Function
 Sub GetVersionFromFile(LocalFileName As String)
     Dim StrTxt() As String
     Dim n As Integer
