@@ -18,6 +18,7 @@ Attribute VB_Name = "模块1"
     Public ModuleLastRivise() As String
 ''专业及修订
 Sub 修订公式()
+Attribute 修订公式.VB_ProcData.VB_Invoke_Func = "q\n14"
     Application.MacroOptions Macro:="修订公式", Description:="", ShortcutKey:="q"
     Application.EnableEvents = False
     Call 设置表格主题
@@ -809,7 +810,6 @@ On Error Resume Next
         ActiveSheet.Name = "专业矩阵状态"
         Call 新建专业矩阵状态工作表
     End If
-    Call 设置学院专业
     Call 导入矩阵
     Sheets("专业矩阵状态").Visible = False
     Call 指标点数据表公式
@@ -5044,4 +5044,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.25
+'[版本号]V5.05.21
