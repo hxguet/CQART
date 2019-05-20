@@ -118,12 +118,12 @@ Sub 生成版本号()
         Range("H4").Value = SubVer
         Range("H5").Value = RiviseVer
         Application.VBE.ActiveVBProject.VBComponents("模块1").Export (ModuleFileName)
-        Call WriteLastLine(ModuleFileName, Range("H1").Value)
+        Call WriteLastLine(ModuleFileName, "'[版本号]" & Range("H1").Value)
         If Dir(ReleaseFilePath & "\" & ReleaseFile) <> "" Then
             Kill ReleaseFilePath & "\" & ReleaseFile
         End If
-        Set FSO = CreateObject("Scripting.FileSystemObject")
-        FSO.CopyFile ModuleFileName, ReleaseFilePath & "\" & ReleaseFile
+        Application.VBE.ActiveVBProject.VBComponents("模块1").Export (ReleaseFilePath & "\" & ReleaseFile)
+        Call WriteLastLine(ReleaseFilePath & "\" & ReleaseFile, "'[版本号]" & Range("H1").Value)
         Call 生成Readme(ReleaseFilePath, "Readme.txt", BackupFilePath, "Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
         '生成Git发布批处理文件
         Set FSO = CreateObject("Scripting.FileSystemObject")
@@ -200,6 +200,8 @@ Sub 远程更新代码()
     Dim LastReadme As String
     Dim LastBasFile As String
     Dim Status As Boolean
+    Dim RemoteVersion As String
+    Dim DownComplete As String
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -216,15 +218,19 @@ Sub 远程更新代码()
     Call GetVersionFromFile(LastFilePath & "\" & LastReadme)
     ModuleFile = ModuleLastRivise(1, CFileName)
     Status = DownFile(ThisWorkbook.Path, ModuleFile)
-    GetLastLine (ThisWorkbook.Path & "\" & ModuleFile)
+    RemoteVersion = Replace(GetLastLine(ThisWorkbook.Path & "\" & ModuleFile), "'[版本号]", "")
     If Status = False Or Dir(ThisWorkbook.Path & "\" & ModuleFile) = "" Then
         GoTo Error
     End If
     CurrentVersion = Range("H1").Value
     CurrentRiviseDate = Range("H2").Value
+    DownComplete = StrComp(CurrentVersion, RemoteVersion, vbTextCompare)
     CtrResult = StrComp(CurrentVersion, ModuleLastRivise(1, CVersion), vbTextCompare)
+    
     '远程代码版本号比当前代码版本号新
-    If CtrResult = -1 Then
+    If DownComplete <> 0 Then
+        MsgBox ("版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
+    ElseIf CtrResult = -1 Then
         ModuleName = ModuleLastRivise(1, CModuleName)
         ModuleFile = ModuleLastRivise(1, CFileName)
         LastVersion = ModuleLastRivise(1, CVersion)
@@ -256,7 +262,7 @@ Sub 远程更新代码()
             Range("H4").Value = Val(Mid(LastVersion, 4, 2))
             Range("H5").Value = Val(Mid(LastVersion, 7, 2))
         End If
-        MsgBox ("已更新代码为：" & LastVersion & "修订日期：" & LastRiviseDate)
+        MsgBox ("已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
     Else
         MsgBox ("该模版代码版本已经为最新版本!")
     End If
@@ -5038,4 +5044,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-V5.05.21
+'[版本号]V5.05.25
