@@ -18,7 +18,6 @@ Attribute VB_Name = "模块1"
     Public ModuleLastRivise() As String
 ''专业及修订
 Sub 修订公式()
-Attribute 修订公式.VB_ProcData.VB_Invoke_Func = "q\n14"
     Application.MacroOptions Macro:="修订公式", Description:="", ShortcutKey:="q"
     Application.EnableEvents = False
     Call 设置表格主题
@@ -203,6 +202,7 @@ Sub 远程更新代码()
     Dim Status As Boolean
     Dim RemoteVersion As String
     Dim DownComplete As String
+    Call 修订专业矩阵状态
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -663,6 +663,9 @@ Sub 修订专业矩阵状态()
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("H1").Select
+    ActiveCell.FormulaR1C1 = _
+        "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
     Range("G1").Select
     ActiveCell.FormulaR1C1 = "版本号"
     Range("G2").Select
@@ -709,7 +712,7 @@ Sub 修订专业矩阵状态()
         SkipBlanks:=False, Transpose:=False
     Rows("1:12").Select
     Selection.RowHeight = 30
-    Call 设置表格线("A2", "AF12", 12)
+    Call 设置表格线("A2", "H12", 12)
     Range("A1:I12").Select
     With Selection.Validation
         .Delete
@@ -5053,4 +5056,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.27
+'[版本号]V5.05.21
