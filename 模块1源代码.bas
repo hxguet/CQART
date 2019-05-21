@@ -225,7 +225,7 @@ Sub 远程更新代码()
     End If
     CurrentVersion = Range("H1").Value
     CurrentRiviseDate = Range("H2").Value
-    DownComplete = StrComp(CurrentVersion, RemoteVersion, vbTextCompare)
+    DownComplete = StrComp(ModuleLastRivise(1, CVersion), RemoteVersion, vbTextCompare)
     CtrResult = StrComp(CurrentVersion, ModuleLastRivise(1, CVersion), vbTextCompare)
     
     '远程代码版本号比当前代码版本号新
