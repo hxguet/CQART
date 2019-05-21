@@ -304,6 +304,7 @@ Function GetLastLine(FileName As String)
     Open FileName For Input As #1
     If EOF(1) Then
         TempBuf = "ÎÄ¼þÎª¿Õ"
+        Close #1
     Else
         Set fso = CreateObject("Scripting.FileSystemObject")
         With fso.OpenTextFile(FileName, 1)
