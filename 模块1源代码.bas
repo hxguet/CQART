@@ -213,58 +213,63 @@ Sub 远程更新代码()
     End If
     MsgBox ("正在连接远程服务器，检查代码最新版本！")
     Status = DownFile(LastFilePath, LastReadme)
-    If Status = False Or Dir(LastFilePath & "\" & LastReadme) = "" Then
+    If Status = False Or Dir(LastFilePath & "\" & LastReadme) = "" Or GetLastLine(LastFilePath & "\" & LastReadme) = "文件为空" Then
         GoTo Error
     End If
     Call GetVersionFromFile(LastFilePath & "\" & LastReadme)
-    ModuleFile = ModuleLastRivise(1, CFileName)
-    Status = DownFile(ThisWorkbook.Path, ModuleFile)
-    RemoteVersion = Replace(GetLastLine(ThisWorkbook.Path & "\" & ModuleFile), "'[版本号]", "")
-    If Status = False Or Dir(ThisWorkbook.Path & "\" & ModuleFile) = "" Then
-        GoTo Error
-    End If
     CurrentVersion = Range("H1").Value
     CurrentRiviseDate = Range("H2").Value
-    DownComplete = StrComp(ModuleLastRivise(1, CVersion), RemoteVersion, vbTextCompare)
     CtrResult = StrComp(CurrentVersion, ModuleLastRivise(1, CVersion), vbTextCompare)
-    
-    '远程代码版本号比当前代码版本号新
-    If DownComplete <> "0" Then
-        MsgBox ("版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
-    ElseIf CtrResult = "-1" Then
-        ModuleName = ModuleLastRivise(1, CModuleName)
+     '远程代码版本号比当前代码版本号新
+    If CtrResult = "-1" Then
         ModuleFile = ModuleLastRivise(1, CFileName)
-        LastVersion = ModuleLastRivise(1, CVersion)
-        LastRiviseDate = ModuleLastRivise(1, CRiviseDate)
-        UpdateInfo = ModuleLastRivise(1, CUpdateInfo)
-        For Each Vbc In ThisWorkbook.VBProject.VBComponents
-            If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
-                ThisWorkbook.VBProject.VBComponents.Remove Vbc
+        Status = DownFile(ThisWorkbook.Path, ModuleFile)
+        If GetLastLine(ThisWorkbook.Path & "\" & ModuleFile) = "文件为空" Then
+            DownComplete = "1"
+        Else
+            RemoteVersion = Replace(GetLastLine(ThisWorkbook.Path & "\" & ModuleFile), "'[版本号]", "")
+            If Status = False Or Dir(ThisWorkbook.Path & "\" & ModuleFile) = "" Then
+                GoTo Error
             End If
-        Next Vbc
-        If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
-            ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
-            ModuleCount = 0
+            DownComplete = StrComp(ModuleLastRivise(1, CVersion), RemoteVersion, vbTextCompare)
+        End If
+        If DownComplete <> "0" Then
+            MsgBox ("版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
+        Else
+            ModuleName = ModuleLastRivise(1, CModuleName)
+            ModuleFile = ModuleLastRivise(1, CFileName)
+            LastVersion = ModuleLastRivise(1, CVersion)
+            LastRiviseDate = ModuleLastRivise(1, CRiviseDate)
+            UpdateInfo = ModuleLastRivise(1, CUpdateInfo)
             For Each Vbc In ThisWorkbook.VBProject.VBComponents
                 If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
-                    ModuleCount = ModuleCount + 1
-                End If
-                If ModuleCount = 1 Then
-                    Vbc.Name = "模块1"
-                Else
-                    Exit For
+                    ThisWorkbook.VBProject.VBComponents.Remove Vbc
                 End If
             Next Vbc
-            Range("H1").Select
-            ActiveCell.FormulaR1C1 = _
-                "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
-            Range("H2").Value = LastRiviseDate
-            Range("H3").Value = Val(Mid(LastVersion, 2, 3))
-            Range("H4").Value = Val(Mid(LastVersion, 4, 2))
-            Range("H5").Value = Val(Mid(LastVersion, 7, 2))
+            If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
+                ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
+                ModuleCount = 0
+                For Each Vbc In ThisWorkbook.VBProject.VBComponents
+                    If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
+                        ModuleCount = ModuleCount + 1
+                    End If
+                    If ModuleCount = 1 Then
+                        Vbc.Name = "模块1"
+                    Else
+                        Exit For
+                    End If
+                Next Vbc
+                Range("H1").Select
+                ActiveCell.FormulaR1C1 = _
+                    "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
+                Range("H2").Value = LastRiviseDate
+                Range("H3").Value = Val(Mid(LastVersion, 2, 3))
+                Range("H4").Value = Val(Mid(LastVersion, 4, 2))
+                Range("H5").Value = Val(Mid(LastVersion, 7, 2))
+            End If
+            MsgBox ("已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
+            Call 修订公式
         End If
-        MsgBox ("已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
-        Call 修订公式
     Else
         MsgBox ("该模版代码版本已经为最新版本!")
     End If
@@ -296,18 +301,23 @@ Function GetLastLine(FileName As String)
     Dim LastRow As Long
     Dim fso As Object
     Dim TempBuf As String
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    With fso.OpenTextFile(FileName, 1)
-        Buf = .ReadAll
-        .Close
-    End With
-    Set fso = Nothing
-    LastRow = UBound(Split(Buf, vbLf)) - 1
-    TempBuf = Split(Buf, vbLf)(LastRow)
-    While (TempBuf = "")
-        LastRow = LastRow - 1
+    Open FileName For Input As #1
+    If EOF(1) Then
+        TempBuf = "文件为空"
+    Else
+        Set fso = CreateObject("Scripting.FileSystemObject")
+        With fso.OpenTextFile(FileName, 1)
+            Buf = .ReadAll
+            .Close
+        End With
+        Set fso = Nothing
+        LastRow = UBound(Split(Buf, vbLf)) - 1
         TempBuf = Split(Buf, vbLf)(LastRow)
-    Wend
+        While (TempBuf = "")
+            LastRow = LastRow - 1
+            TempBuf = Split(Buf, vbLf)(LastRow)
+        Wend
+    End If
     GetLastLine = TempBuf
 End Function
 Sub WriteLastLine(FileName As String, WriteStr As String)
@@ -680,7 +690,7 @@ Sub 修订专业矩阵状态()
     Selection.Font.Bold = True
     ActiveSheet.Shapes.SelectAll
     Selection.Delete
-    Set NewShp = ActiveSheet.Buttons.Add(695, 2.25, 102, 27) '（位置高度，位置宽度，按钮高度，按钮宽度）
+    Set NewShp = ActiveSheet.Buttons.Add(710, 2.2, 100, 25) '（位置高度，位置宽度，按钮高度，按钮宽度）
     NewShp.Characters.Text = "发布版本"
     NewShp.OnAction = "生成版本号"
     NewShp.Font.Name = "微软雅黑"
