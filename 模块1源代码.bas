@@ -127,8 +127,8 @@ Sub 生成版本号()
         Call WriteLastLine(ReleaseFilePath & "\" & ReleaseFile, "'[版本号]" & Range("H1").Value)
         Call 生成Readme(ReleaseFilePath, "Readme.txt", BackupFilePath, "Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
         '生成Git发布批处理文件
-        Set FSO = CreateObject("Scripting.FileSystemObject")
-        Set MyTxtObj = FSO.CreateTextFile(ReleaseFilePath & "\" & BatFile, True, False)
+        Set fso = CreateObject("Scripting.FileSystemObject")
+        Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & BatFile, True, False)
         MyTxtObj.WriteLine (Mid(ReleaseFilePath, 1, 2))
         MyTxtObj.WriteLine ("cd " & Mid(ReleaseFilePath, 3, Len(ReleaseFilePath) - 2))
         MyTxtObj.WriteLine ("git add .")
@@ -142,7 +142,7 @@ Sub 生成版本号()
         Shell (ReleaseFilePath & "\" & BatFile)
     End If
     Set MyTxtObj = Nothing
-    Set FSO = Nothing
+    Set fso = Nothing
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
@@ -162,8 +162,8 @@ Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFil
     ModuleCount = ModuleLastRivise(CSummary, CModuleCount)
     LineCount = ModuleLastRivise(CSummary, CSumLines)
     k = 1
-    Set FSO = CreateObject("Scripting.FileSystemObject")
-    Set MyTxtObj = FSO.CreateTextFile(ReleaseFilePath & "\" & ReleaseReadmeFile, True, False)
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & ReleaseReadmeFile, True, False)
     ModuleLastRivise(1, CModuleName) = "模块1"
     ModuleLastRivise(1, CFileName) = ReleaseFile
     ModuleLastRivise(1, CVersion) = Version
@@ -176,9 +176,9 @@ Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFil
         UpdateInfo = InputBox("请输入" & ModuleLastRivise(i, CModuleName) & "此次更新说明" & vbCrLf & ModuleLastRivise(i, CUpdateInfo))
         MyTxtObj.WriteLine ("[更新说明]" & vbCrLf & ModuleLastRivise(i, CUpdateInfo)) & UpdateInfo
     Next i
-    FSO.CopyFile ReleaseFilePath & "\" & ReleaseReadmeFile, BackupFilePath & "\" & BackupReadmeFile
+    fso.CopyFile ReleaseFilePath & "\" & ReleaseReadmeFile, BackupFilePath & "\" & BackupReadmeFile
     MyTxtObj.Close
-    Set FSO = Nothing
+    Set fso = Nothing
     Set MyTxtObj = Nothing
 End Sub
 Sub 远程更新代码()
@@ -294,14 +294,14 @@ End Function
 Function GetLastLine(FileName As String)
     Dim Buf As String
     Dim LastRow As Long
-    Dim FSO As Object
+    Dim fso As Object
     Dim TempBuf As String
-    Set FSO = CreateObject("Scripting.FileSystemObject")
-    With FSO.OpenTextFile(FileName, 1)
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    With fso.OpenTextFile(FileName, 1)
         Buf = .ReadAll
         .Close
     End With
-    Set FSO = Nothing
+    Set fso = Nothing
     LastRow = UBound(Split(Buf, vbLf)) - 1
     TempBuf = Split(Buf, vbLf)(LastRow)
     While (TempBuf = "")
@@ -311,9 +311,27 @@ Function GetLastLine(FileName As String)
     GetLastLine = TempBuf
 End Function
 Sub WriteLastLine(FileName As String, WriteStr As String)
-    Set FSO = CreateObject("Scripting.FileSystemObject")
-    Set Wt = FSO.OpenTextFile(FileName, 8, True)
-    Wt.Write WriteStr
+    Dim fso As Object
+    Dim Txtfile As Object
+    Dim Str$
+    Set fso = CreateObject("scripting.filesystemobject")
+    Set Txtfile = fso.OpenTextFile(FileName, 1)
+    Str = Txtfile.ReadAll
+    Txtfile.Close
+    temp = Split(Str, vbLf)
+    i = UBound(temp)
+    While (temp(i) = "")
+        i = i - 1
+    Wend
+    If InStr(1, temp(i), "版本号") > 0 Then
+        temp(i) = WriteStr
+    Else
+        temp(i + 1) = WriteStr
+    End If
+    Str = Join(temp, vbLf)
+    Set Txtfile = fso.OpenTextFile(FileName, 2)
+    Txtfile.Write Str
+    Txtfile.Close
 End Sub
 Sub GetVersionFromLocal()
     Dim ModuleRivise() As String
@@ -407,8 +425,8 @@ Sub GetVersionFromFile(LocalFileName As String)
         Loop
     End If
     Close #1
-    Set FSO = CreateObject("Scripting.FileSystemObject")
-    Set MyTxtObj = FSO.CreateTextFile(LocalFileName, True, False)
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set MyTxtObj = fso.CreateTextFile(LocalFileName, True, False)
     For i = 0 To n - 1
         x = InStr(1, StrTxt(i), "[模块名称]")
         If x > 0 Then
@@ -459,15 +477,6 @@ Sub 修订课程目标和综合分析公式()
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Application.EnableEvents = False
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    Set MyShapes = Worksheets("2-课程目标和综合分析（填写）").Shapes
-    ActiveSheet.Shapes.SelectAll
-    Selection.Delete
-    Set NewShp = ActiveSheet.Buttons.Add(866, 66, 77, 28).Select
-    NewShp.Characters.Text = "更新代码"
-    NewShp.OnAction = "生成版本号"
-    NewShp.Font.Name = "微软雅黑"
-    NewShp.Font.Size = 14
-    NewShp.Font.ColorIndex = 3
     '2019.5.3修订，解决实验课程实验1，实验2，实验3等满分为100分，合计考核分超过100分的情况
     Range("R7").Select
     ActiveCell.FormulaR1C1 = _
@@ -4651,8 +4660,8 @@ End Sub
 
 Sub CreateTXTfile(Content As String)
         MyFile = ThisWorkbook.Path & "\错误检查报告.txt"
-        Set FSO = CreateObject("Scripting.FileSystemObject")
-        Set MyFileobj = FSO.CreateTextFile(MyFile, True, True)
+        Set fso = CreateObject("Scripting.FileSystemObject")
+        Set MyFileobj = fso.CreateTextFile(MyFile, True, True)
         MyFileobj.Write (Content)
         MyFileobj.Close
         For Each Process In GetObject("winmgmts:").ExecQuery("select * from Win32_Process where name='notepad.exe'")
@@ -4677,7 +4686,7 @@ Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As Strin
                     Call 导入教学任务
                     Worksheets("2-课程目标和综合分析（填写）").Activate
                 End If
-                If Range("Q3").Value = "认证未提交成绩" Then
+                If Range("Q3").Value = "认证未提交成绩" Or Range("Q3").Value = "非认证" Then
                     ImportStatus = 导入教学过程登记表
                     Worksheets("0-教学过程登记表（填写+打印)").Activate
                     SumCount = Range("AM1").Value
@@ -5044,4 +5053,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.21
+'[版本号]V5.05.25
