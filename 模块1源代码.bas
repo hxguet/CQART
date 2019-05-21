@@ -18,7 +18,6 @@ Attribute VB_Name = "模块1"
     Public ModuleLastRivise() As String
 ''专业及修订
 Sub 修订公式()
-    Application.MacroOptions Macro:="修订公式", Description:="", ShortcutKey:="q"
     Application.EnableEvents = False
     Call 设置表格主题
     Call 打开文档
