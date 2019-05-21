@@ -5053,4 +5053,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[°æ±¾ºÅ]V5.05.21
+'[°æ±¾ºÅ]V5.05.27
