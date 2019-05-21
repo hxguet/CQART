@@ -305,6 +305,7 @@ Function GetLastLine(FileName As String)
         TempBuf = "文件为空"
         Close #1
     Else
+        Close #1
         Set fso = CreateObject("Scripting.FileSystemObject")
         With fso.OpenTextFile(FileName, 1)
             Buf = .ReadAll
@@ -690,7 +691,7 @@ Sub 修订专业矩阵状态()
     Selection.Font.Bold = True
     ActiveSheet.Shapes.SelectAll
     Selection.Delete
-    Set NewShp = ActiveSheet.Buttons.Add(710, 2.2, 100, 25) '（位置高度，位置宽度，按钮高度，按钮宽度）
+    Set NewShp = ActiveSheet.Buttons.Add(745, 2, 86, 25) '（位置高度，位置宽度，按钮高度，按钮宽度）
     NewShp.Characters.Text = "发布版本"
     NewShp.OnAction = "生成版本号"
     NewShp.Font.Name = "微软雅黑"
