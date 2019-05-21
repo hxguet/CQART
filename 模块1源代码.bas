@@ -229,7 +229,7 @@ Sub 远程更新代码()
     CtrResult = StrComp(CurrentVersion, ModuleLastRivise(1, CVersion), vbTextCompare)
     
     '远程代码版本号比当前代码版本号新
-    If DownComplete <> 0 Then
+    If DownComplete <> "0" Then
         MsgBox ("版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
     ElseIf CtrResult = -1 Then
         ModuleName = ModuleLastRivise(1, CModuleName)
@@ -264,6 +264,7 @@ Sub 远程更新代码()
             Range("H5").Value = Val(Mid(LastVersion, 7, 2))
         End If
         MsgBox ("已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
+        Call 修订公式
     Else
         MsgBox ("该模版代码版本已经为最新版本!")
     End If
@@ -273,7 +274,6 @@ Sub 远程更新代码()
     If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
         Kill ThisWorkbook.Path & "\" & ModuleFile
     End If
-    Call 修订公式
 Error:
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
@@ -5053,4 +5053,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.26
+'[版本号]V5.05.21
