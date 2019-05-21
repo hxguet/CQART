@@ -16,6 +16,7 @@ Attribute VB_Name = "模块1"
     Public MajorCount As Integer
     Public MajorList(4) As String
     Public ModuleLastRivise() As String
+    Public NoMsgBox As Boolean
 ''专业及修订
 Sub 修订公式()
     Application.EnableEvents = False
@@ -210,7 +211,7 @@ Sub 远程更新代码()
     If Dir((LastFilePath & "\" & LastReadme)) <> "" Then
         Kill LastFilePath & "\" & LastReadme
     End If
-    MsgBox ("正在连接远程服务器，检查代码最新版本！")
+    Call MsgInfo(NoMsgBox, "正在连接远程服务器，检查代码最新版本！")
     Status = DownFile(LastFilePath, LastReadme)
     If Status = False Or Dir(LastFilePath & "\" & LastReadme) = "" Or GetLastLine(LastFilePath & "\" & LastReadme) = "文件为空" Then
         GoTo Error
@@ -233,7 +234,7 @@ Sub 远程更新代码()
             DownComplete = StrComp(ModuleLastRivise(1, CVersion), RemoteVersion, vbTextCompare)
         End If
         If DownComplete <> "0" Then
-            MsgBox ("版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
+            Call MsgInfo(NoMsgBox, "版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
         Else
             ModuleName = ModuleLastRivise(1, CModuleName)
             ModuleFile = ModuleLastRivise(1, CFileName)
@@ -266,10 +267,10 @@ Sub 远程更新代码()
                 Range("H4").Value = Val(Mid(LastVersion, 4, 2))
                 Range("H5").Value = Val(Mid(LastVersion, 7, 2))
             End If
-            MsgBox ("已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
+            Call MsgInfo(NoMsgBox, "已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
         End If
     Else
-        MsgBox ("该模版代码版本已经为最新版本!")
+        Call MsgInfo(NoMsgBox, "该模版代码版本已经为最新版本!")
     End If
     If Dir(LastFilePath & "\" & LastReadme) <> "" Then
         Kill LastFilePath & "\" & LastReadme
@@ -403,7 +404,7 @@ Function DownFile(FilePath As String, FileName As String)
     TempFileName = ThisWorkbook.Path & "\wget.exe -O " & FilePath & "\" & FileName & " " & RemoteFile
     Result = ShellAndWait(TempFileName)
     If Result <> "" Then
-        MsgBox ("请检查" & ThisWorkbook.Path & "\wget.exe 文件是否存在！")
+        Call MsgInfo(NoMsgBox, "请检查" & ThisWorkbook.Path & "\wget.exe 文件是否存在！")
         DownFile = False
     Else
         DownFile = True
@@ -474,7 +475,11 @@ Sub GetVersionFromFile(LocalFileName As String)
         End If
     Next i
 End Sub
-
+Sub MsgInfo(NoMsg As Boolean, Msg As String)
+    If Not NoMsg Then
+        MsgBox (Msg)
+    End If
+End Sub
 Sub 修订课程目标和综合分析公式()
     Dim MyShapes As Shapes
     Dim Shp As Shape
@@ -808,7 +813,7 @@ Dim MatrixSheet As String
 On Error Resume Next
     Application.ScreenUpdating = False
     Application.EnableEvents = True
-    MsgBox ("重新导入教学任务，学生名单，专业矩阵等信息，请稍等。。。")
+    Call MsgInfo(NoMsgBox, "重新导入教学任务，学生名单，专业矩阵等信息，请稍等。。。")
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Grade = Range("D9").Value
     Major = Range("B7").Value
@@ -1017,7 +1022,7 @@ Sub 打印()
         End If
     Next i
     If ErrorMsg <> "" Then
-        MsgBox (ErrorMsg)
+        Call MsgInfo(NoMsgBox, ErrorMsg)
         Call CreateTXTfile(ErrorMsg)
         Worksheets("课程目标达成度汇总用数据").Visible = False
         Worksheets("毕业要求达成度汇总用数据").Visible = False
@@ -1146,7 +1151,7 @@ Sub 打印()
                 Sheets("3-综合分析（打印）").Visible = False
             End Select
     Else
-        MsgBox ("2-课程目标和综合分析（填写）工作表中的“是否认证”未选择！")
+        Call MsgInfo(NoMsgBox, "2-课程目标和综合分析（填写）工作表中的“是否认证”未选择！")
     End If
     ActiveWorkbook.Save
     Application.ScreenUpdating = True
@@ -1464,7 +1469,7 @@ Sub 保存文件()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
    
     Application.ScreenUpdating = False
-    MsgBox ("正在进行工作表格式调整，并保存文件，请耐心等待！")
+    Call MsgInfo(NoMsgBox, "正在进行工作表格式调整，并保存文件，请耐心等待！")
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Call 设置教学过程登记表
     Call 设置质量分析报告格式
@@ -3307,7 +3312,7 @@ Sub 导入教学任务()
     SourceWorkBook = "数据源-教学任务.xls"
     FileName = FileName & "\" & SourceWorkBook
     If MyFile.FileExists(FileName) = False Then
-      MsgBox ("数据源-教学任务.xls不存在，请将数据源-教学任务.xls复制到当前文件夹")
+      Call MsgInfo(NoMsgBox, "数据源-教学任务.xls不存在，请将数据源-教学任务.xls复制到当前文件夹")
       FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
     '调用Windows打开文件对话框
     If (FileName = False) Then Exit Sub
@@ -3353,7 +3358,7 @@ Sub 导入毕业要求矩阵(Major As String)
     SourceWorkBook = "数据源-" & Major & "-指标点数据矩阵.xls"
     FileName = FileName & "\" & SourceWorkBook
     If MyFile.FileExists(FileName) = False Then
-      MsgBox ("数据源-" & Major & "-指标点数据矩阵.xls不存在，请将数据源-" & Major & "-指标点数据矩阵.xls复制到当前文件夹")
+      Call MsgInfo(NoMsgBox, "数据源-" & Major & "-指标点数据矩阵.xls不存在，请将数据源-" & Major & "-指标点数据矩阵.xls复制到当前文件夹")
       FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
     '调用Windows打开文件对话框
     If (FileName = False) Then Exit Sub
@@ -3455,7 +3460,7 @@ Sub 导入学生名单()
     SourceWorkBook = "数据源-学生名单.xls"
     FileName = FileName & "\" & SourceWorkBook
     If MyFile.FileExists(FileName) = False Then
-      MsgBox ("数据源-学生名单.xls不存在，请手动指定")
+      Call MsgInfo(NoMsgBox, "数据源-学生名单.xls不存在，请手动指定")
       FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
     '调用Windows打开文件对话框
     If (FileName = False) Then Exit Sub
@@ -3494,7 +3499,7 @@ Sub 导入成绩表()
     Dim CountNum As Integer
     Dim NumExitFlag As Boolean
     Dim NumRow As Integer
-    Dim msg As String
+    Dim Msg As String
     Dim Num2Col As Integer
     Dim ThisSheetName As String
     Dim ScoreType(6) As String
@@ -3522,7 +3527,7 @@ Sub 导入成绩表()
     End If
     Worksheets("2-课程目标和综合分析（填写）").Activate
     If (Range("Q3").Value = "认证未提交成绩") Then
-        MsgBox ("【课程目标和综合分析工作表认证状态为未提交成绩，不需要导入成绩表】")
+        Call MsgInfo(NoMsgBox, "【课程目标和综合分析工作表认证状态为未提交成绩，不需要导入成绩表】")
         Worksheets(ThisSheetName).Activate
         Exit Sub
     End If
@@ -3541,10 +3546,10 @@ Sub 导入成绩表()
         Call 成绩核对表公式
     End If
     If MyFile.FileExists(FileName) = False Then
-        MsgBox ("成绩表-" & CourseNumber & ".xls" & "不存在，请手动指定")
-        msg = "已经在教务系统提交成绩，成绩表导入要求：" & vbCr
-        msg = msg & "成绩表标题栏需要包含【学号、姓名、实验成绩、平时成绩、考核成绩、总评成绩、成绩类别、作业成绩、课堂测验、课程报告】等关键词；" & vbCr
-        MsgBox (msg)
+        Call MsgInfo(NoMsgBox, "成绩表-" & CourseNumber & ".xls" & "不存在，请手动指定")
+        Msg = "已经在教务系统提交成绩，成绩表导入要求：" & vbCr
+        Msg = Msg & "成绩表标题栏需要包含【学号、姓名、实验成绩、平时成绩、考核成绩、总评成绩、成绩类别、作业成绩、课堂测验、课程报告】等关键词；" & vbCr
+        Call MsgInfo(NoMsgBox, Msg)
         FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
         '调用Windows打开文件对话框
         If (FileName = False) Then Exit Sub
@@ -3642,7 +3647,7 @@ Sub 导入教务系统成绩表()
     Dim CountNum As Integer
     Dim NumExitFlag As Boolean
     Dim NumRow As Integer
-    Dim msg As String
+    Dim Msg As String
     Dim Num2Col As Integer
     Dim ThisSheetName As String
     Dim ScoreType(6) As String
@@ -3673,9 +3678,9 @@ Sub 导入教务系统成绩表()
         Call 成绩核对表公式
     End If
     If MyFile.FileExists(FileName) = False Then
-        MsgBox (CourseNumber & "期末成绩.xls" & "不存在，请手动指定")
-        msg = "在学分制管理系统提交成绩前，请下载成绩表，在成绩核对工作表可直接导入，成绩表标题栏需要包含【学号、姓名、实验成绩、平时成绩、考核成绩、总评成绩、成绩类别】等关键词；" & vbCr
-        MsgBox (msg)
+        Call MsgInfo(NoMsgBox, CourseNumber & "期末成绩.xls" & "不存在，请手动指定")
+        Msg = "在学分制管理系统提交成绩前，请下载成绩表，在成绩核对工作表可直接导入，成绩表标题栏需要包含【学号、姓名、实验成绩、平时成绩、考核成绩、总评成绩、成绩类别】等关键词；" & vbCr
+        Call MsgInfo(NoMsgBox, Msg)
         FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
         '调用Windows打开文件对话框
         If (FileName = False) Then Exit Sub
@@ -3788,7 +3793,7 @@ Sub 导入实验成绩表()
     End If
     
     If MyFile.FileExists(FileName) = False Then
-        MsgBox ("实验成绩表-" & CourseNumber & ".xls" & "不存在，请手动指定")
+        Call MsgInfo(NoMsgBox, "实验成绩表-" & CourseNumber & ".xls" & "不存在，请手动指定")
         FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
         '调用Windows打开文件对话框
         If (FileName = False) Then Exit Sub
@@ -3857,7 +3862,7 @@ Function 导入教学过程登记表() As Boolean
         SourceWorkBook = "数据源-" & Xueqi & "学期教学过程登记表.xls"
         FileName = ThisWorkbook.Path & "\" & SourceWorkBook
         If MyFile.FileExists(FileName) = False Then
-            MsgBox (FileName & "不存在，请手动指定" & Xueqi & "学期的教学过程登记表，支持导入学分管理系统下载成绩表名单，也可以从教务系统复制教学过程登记表名单到新EXCEL文档")
+            Call MsgInfo(NoMsgBox, FileName & "不存在，请手动指定" & Xueqi & "学期的教学过程登记表，支持导入学分管理系统下载成绩表名单，也可以从教务系统复制教学过程登记表名单到新EXCEL文档")
             FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
             If FileName = False Then
                 Sheets("教学过程登记表").Visible = False
@@ -3890,7 +3895,7 @@ Function 导入教学过程登记表() As Boolean
         
         Worksheets("2-课程目标和综合分析（填写）").Activate
         If (Range("$T$1").Value = "无名单") Then
-            MsgBox ("导入的教学过程登记表中没有该课号的名单，请手动指定教学过程登记表文件，支持导入学分管理系统下载成绩表名单，也可以从教务系统复制教学过程登记表名单到新EXCEL文档")
+            Call MsgInfo(NoMsgBox, "导入的教学过程登记表中没有该课号的名单，请手动指定教学过程登记表文件，支持导入学分管理系统下载成绩表名单，也可以从教务系统复制教学过程登记表名单到新EXCEL文档")
             FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
             '调用Windows打开文件对话框
             If (FileName = False) Then
@@ -4846,7 +4851,7 @@ End Sub
 
 Sub 认证未提交成绩()
         Dim WorkbookName As String
-        Dim msg As String
+        Dim Msg As String
         Application.ScreenUpdating = False
         Call 设置表格主题
         Sheets("2-课程目标和综合分析（填写）").Select
@@ -4941,7 +4946,7 @@ End Sub
 
 Sub 认证已提交成绩()
     Dim WorkbookName As String
-    Dim msg As String
+    Dim Msg As String
         Application.ScreenUpdating = False
         Call 设置表格主题
         Sheets("2-课程目标和综合分析（填写）").Select
@@ -5066,4 +5071,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.28
+'[版本号]V5.05.29
