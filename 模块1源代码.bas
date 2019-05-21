@@ -231,7 +231,7 @@ Sub 远程更新代码()
     '远程代码版本号比当前代码版本号新
     If DownComplete <> "0" Then
         MsgBox ("版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
-    ElseIf CtrResult = -1 Then
+    ElseIf CtrResult = "-1" Then
         ModuleName = ModuleLastRivise(1, CModuleName)
         ModuleFile = ModuleLastRivise(1, CFileName)
         LastVersion = ModuleLastRivise(1, CVersion)
