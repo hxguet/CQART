@@ -21,7 +21,6 @@ Attribute VB_Name = "模块1"
 ''专业及修订
 Sub 修订公式()
     Application.EnableEvents = False
-    Application.ScreenUpdating = False
     Call 设置表格主题
     Call 打开文档
     Call 重新设置公式按钮
@@ -34,7 +33,6 @@ Sub 修订公式()
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Application.EnableEvents = True
     ActiveWorkbook.Save
-    Application.ScreenUpdating = True
 End Sub
 Sub 其他操作()
 
@@ -500,6 +498,8 @@ Sub 修订课程目标和综合分析公式()
     Dim MyShapes As Shapes
     Dim Shp As Shape
     Dim SchoolName As String
+    Application.ScreenUpdating = False
+    Application.EnableEvents = False
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     SchoolName = Range("B2").Value
@@ -542,10 +542,12 @@ Sub 修订课程目标和综合分析公式()
         "=专业矩阵状态!R[-3]C[-27]&""：""&TEXT(专业矩阵状态!R[-3]C[-26],""YYYY年MM月DD日"")"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Application.EnableEvents = True
+    Application.ScreenUpdating = True
 End Sub
 Sub 修订教学过程登记表公式()
     Dim temp As Boolean
     '"0-教学过程登记表（填写+打印)"工作表修订标题，学号，姓名关键词，设置字体，设置允许编辑区域
+    Application.ScreenUpdating = False
     temp = Worksheets("0-教学过程登记表（填写+打印)").Visible
     Worksheets("0-教学过程登记表（填写+打印)").Visible = True
     Worksheets("0-教学过程登记表（填写+打印)").Activate
@@ -676,8 +678,10 @@ Sub 修订教学过程登记表公式()
     End With
     Worksheets("0-教学过程登记表（填写+打印)").Visible = temp
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Application.ScreenUpdating = True
 End Sub
 Sub 修订平时成绩表()
+    Application.ScreenUpdating = False
     Worksheets("平时成绩表").Visible = True
     Worksheets("平时成绩表").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -685,11 +689,13 @@ Sub 修订平时成绩表()
     ActiveCell.FormulaR1C1 = "=IF(RC25+RC29=0,0,ROUND((RC32)/(R5C25+R5C29),0))"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("平时成绩表").Visible = False
+    Application.ScreenUpdating = True
 End Sub
 Sub 修订专业矩阵状态()
      '修订专业矩阵状态工作表
     Dim MyShapes As Shapes
     Dim Shp As Shape
+    Application.ScreenUpdating = False
     Set MyShapes = Worksheets("专业矩阵状态").Shapes
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
@@ -772,9 +778,11 @@ Sub 修订专业矩阵状态()
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
+    Application.ScreenUpdating = True
 End Sub
 Sub 修订毕业要求达成度评价表()
     Dim SchoolName As String
+    Application.ScreenUpdating = False
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     SchoolName = Range("B2").Value
@@ -792,6 +800,7 @@ Sub 修订毕业要求达成度评价表()
     End If
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("3-综合分析（打印）").Visible = False
+    Application.ScreenUpdating = True
 End Sub
 Sub 课程目标允许编辑区域()
     Dim AllowEditCount As Integer
@@ -838,7 +847,6 @@ Dim CourseCount As Integer
 Dim PointCount As Integer
 Dim MatrixSheet As String
 On Error Resume Next
-    Application.ScreenUpdating = False
     Application.EnableEvents = True
     Call MsgInfo(NoMsgBox, "重新导入教学任务，学生名单，专业矩阵等信息，请稍等。。。")
     Worksheets("2-课程目标和综合分析（填写）").Activate
@@ -873,9 +881,7 @@ On Error Resume Next
     ActiveSheet.Shapes.Range(Array("Button 5")).Select
     Selection.OnAction = "打印"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-       
     Worksheets("2-课程目标和综合分析（填写）").Activate
-    Application.ScreenUpdating = True
 End Sub
 Sub 导入矩阵()
 Dim Major As String
@@ -1060,11 +1066,7 @@ Sub 打印()
     If Range("$Q$3").Value = "非认证" Then
         Worksheets("0-教学过程登记表（填写+打印)").Activate
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-        Call 取消各行颜色
-        
-        
         Call Excel2PDF("0-教学过程登记表（填写+打印)", ThisWorkbook.Path, PDFFileName & "--教学过程登记表.pdf")
-        Call 设置各行颜色
         ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
         
         Worksheets("4-质量分析报告（填写+打印）").Activate
@@ -1076,11 +1078,7 @@ Sub 打印()
         '打印教学过程登记表
         Worksheets("0-教学过程登记表（填写+打印)").Activate
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-        Call 取消各行颜色
-        
-        
         Call Excel2PDF("0-教学过程登记表（填写+打印)", ThisWorkbook.Path, PDFFileName & "--教学过程登记表.pdf")
-        Call 设置各行颜色
         ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
         
         Sheets("2-毕业要求达成度评价（打印）").Visible = True
@@ -1297,6 +1295,7 @@ Sub 毕业要求数据表公式()
     Worksheets("专业矩阵状态").Visible = False
 End Sub
 Sub 设置表格主题()
+    Application.ScreenUpdating = False
     Worksheets("3-毕业要求数据表（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("E1:K1").Select
@@ -1313,6 +1312,7 @@ Sub 设置表格主题()
     Range("A1:N1").Select
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[1]C[1]&""  毕业要求达成情况评价表"""
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Application.ScreenUpdating = True
 End Sub
 Sub 毕业要求达成度评价公式()
     Worksheets("2-毕业要求达成度评价（打印）").Visible = True
