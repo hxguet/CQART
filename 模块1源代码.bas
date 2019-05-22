@@ -207,7 +207,9 @@ Sub 远程更新代码()
     Dim RemoteVersion As String
     Dim DownComplete As String
     isUpdate = False
+    Application.ScreenUpdating = False
     Call 修订专业矩阵状态
+    Application.ScreenUpdating = True
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -287,6 +289,7 @@ Sub 远程更新代码()
 ErrorSub:
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
+    Worksheets("2-课程目标和综合分析（填写）").Activate
 End Sub
 Function ShellAndWait(cmdStr As String) As String
     On Error Resume Next
@@ -5082,4 +5085,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.30
+'[版本号]V5.05.31
