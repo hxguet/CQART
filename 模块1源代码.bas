@@ -21,6 +21,7 @@ Attribute VB_Name = "模块1"
 ''专业及修订
 Sub 修订公式()
     Application.EnableEvents = False
+    Application.ScreenUpdating = False
     Call 设置表格主题
     Call 打开文档
     Call 重新设置公式按钮
@@ -33,6 +34,7 @@ Sub 修订公式()
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Application.EnableEvents = True
     ActiveWorkbook.Save
+    Application.ScreenUpdating = True
 End Sub
 Sub 其他操作()
 
