@@ -17,6 +17,7 @@ Attribute VB_Name = "模块1"
     Public MajorList(4) As String
     Public ModuleLastRivise() As String
     Public NoMsgBox As Boolean
+    Public isUpdate As Boolean
 ''专业及修订
 Sub 修订公式()
     Application.EnableEvents = False
@@ -32,6 +33,9 @@ Sub 修订公式()
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Application.EnableEvents = True
     ActiveWorkbook.Save
+End Sub
+Sub 其他操作()
+
 End Sub
 Sub 工作表加密()
     Dim temp As Boolean
@@ -202,6 +206,7 @@ Sub 远程更新代码()
     Dim Status As Boolean
     Dim RemoteVersion As String
     Dim DownComplete As String
+    isUpdate = False
     Call 修订专业矩阵状态
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
@@ -214,7 +219,7 @@ Sub 远程更新代码()
     Call MsgInfo(NoMsgBox, "正在连接远程服务器，检查代码最新版本！")
     Status = DownFile(LastFilePath, LastReadme)
     If Status = False Or Dir(LastFilePath & "\" & LastReadme) = "" Or GetLastLine(LastFilePath & "\" & LastReadme) = "文件为空" Then
-        GoTo Error
+        GoTo ErrorSub
     End If
     Call GetVersionFromFile(LastFilePath & "\" & LastReadme)
     CurrentVersion = Range("H1").Value
@@ -229,7 +234,7 @@ Sub 远程更新代码()
         Else
             RemoteVersion = Replace(GetLastLine(ThisWorkbook.Path & "\" & ModuleFile), "'[版本号]", "")
             If Status = False Or Dir(ThisWorkbook.Path & "\" & ModuleFile) = "" Then
-                GoTo Error
+                GoTo ErrorSub
             End If
             DownComplete = StrComp(ModuleLastRivise(1, CVersion), RemoteVersion, vbTextCompare)
         End If
@@ -268,6 +273,7 @@ Sub 远程更新代码()
                 Range("H5").Value = Val(Mid(LastVersion, 7, 2))
             End If
             Call MsgInfo(NoMsgBox, "已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
+            isUpdate = True
         End If
     Else
         Call MsgInfo(NoMsgBox, "该模版代码版本已经为最新版本!")
@@ -275,25 +281,25 @@ Sub 远程更新代码()
     If Dir(LastFilePath & "\" & LastReadme) <> "" Then
         Kill LastFilePath & "\" & LastReadme
     End If
-    If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
+    If ModuleFile <> "" And Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
         Kill ThisWorkbook.Path & "\" & ModuleFile
     End If
-Error:
+ErrorSub:
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
 Function ShellAndWait(cmdStr As String) As String
     On Error Resume Next
-    Dim oShell As Object, oExec As Object
+    Dim oShell As Object
+    Dim oRun
     Set oShell = CreateObject("WScript.Shell")
-    Set oExec = oShell.exec(cmdStr)
+    oRun = oShell.Run(cmdStr, vbHide, True)
     If Err.Description <> "" Then
         ShellAndWait = Err.Description
-    Else
-        ShellAndWait = oExec.StdOut.ReadAll
+    ElseIf oRun = 1 Then
+        ShellAndWait = "下载失败"
     End If
     Set oShell = Nothing
-    Set oExec = Nothing
 End Function
 Function GetLastLine(FileName As String)
     Dim Buf As String
@@ -400,15 +406,20 @@ Function DownFile(FilePath As String, FileName As String)
     Dim TempFileName As String
     Dim Result As String
     Dim VersionFilePath As String
+    If Dir(ThisWorkbook.Path & "\wget.exe") = "" Then
+        Call MsgInfo(NoMsgBox, "请检查" & ThisWorkbook.Path & "\wget.exe 文件是否存在！")
+        DownFile = False
+        GoTo ErrorSub
+    End If
     RemoteFile = "https://raw.githubusercontent.com/hxguet/CQART/master/" & FileName
     TempFileName = ThisWorkbook.Path & "\wget.exe -O " & FilePath & "\" & FileName & " " & RemoteFile
     Result = ShellAndWait(TempFileName)
     If Result <> "" Then
-        Call MsgInfo(NoMsgBox, "请检查" & ThisWorkbook.Path & "\wget.exe 文件是否存在！")
         DownFile = False
     Else
         DownFile = True
     End If
+ErrorSub:
 End Function
 Sub GetVersionFromFile(LocalFileName As String)
     Dim StrTxt() As String
@@ -5071,4 +5082,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.29
+'[版本号]V5.05.30
