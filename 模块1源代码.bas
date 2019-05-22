@@ -757,6 +757,17 @@ Sub 修订专业矩阵状态()
         SkipBlanks:=False, Transpose:=False
     Columns("H:H").Select
     Selection.ColumnWidth = 20
+    Range("G1:G7").Select
+    With Selection.Font
+        .Name = "宋体"
+        .Size = 12
+    End With
+    Selection.Font.Bold = True
+    Range("A2:F12").Select
+    With Selection.Font
+        .Name = "宋体"
+        .Size = 12
+    End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
