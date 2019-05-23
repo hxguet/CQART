@@ -4819,7 +4819,6 @@ Sub 非认证()
         Sheets("学生名单").Visible = False
         Sheets("课内实验成绩表").Visible = False
         Sheets("平时成绩表").Visible = False
-        Sheets("课程报告").Visible = False
         Sheets("成绩表").Visible = False
         Sheets("课程目标比例矩阵").Visible = False
         Sheets("评价环节比例设置").Visible = False
@@ -4893,7 +4892,12 @@ End Sub
 Sub 认证未提交成绩()
         Dim WorkbookName As String
         Dim Msg As String
+        Dim SchoolName As String
         Application.ScreenUpdating = False
+        Worksheets("专业矩阵状态").Visible = True
+        Worksheets("专业矩阵状态").Activate
+        SchoolName = Range("B2").Value
+        Worksheets("专业矩阵状态").Visible = False
         Call 设置表格主题
         Sheets("2-课程目标和综合分析（填写）").Select
         '恢复"2-课程目标和综合分析（填写）"达成度评价部分表格
@@ -4919,7 +4923,11 @@ Sub 认证未提交成绩()
         Sheets("1-试卷成绩登记表（填写）").Visible = True
         Sheets("4-质量分析报告（填写+打印）").Visible = True
         Sheets("成绩核对").Visible = True
-        Sheets("3-毕业要求数据表（填写）").Visible = True
+        If SchoolName = "计算机信息与安全学院" Then
+            Sheets("3-毕业要求数据表（填写）").Visible = False
+        Else
+            Sheets("3-毕业要求数据表（填写）").Visible = True
+        End If
         Sheets("1-课程目标达成度评价（打印）").Visible = False
         Sheets("2-毕业要求达成度评价（打印）").Visible = False
         Sheets("3-综合分析（打印）").Visible = False
@@ -4929,7 +4937,6 @@ Sub 认证未提交成绩()
         Sheets("学生名单").Visible = False
         Sheets("课内实验成绩表").Visible = False
         Sheets("平时成绩表").Visible = False
-        Sheets("课程报告").Visible = False
         Sheets("成绩表").Visible = False
         Sheets("课程目标比例矩阵").Visible = False
         Sheets("评价环节比例设置").Visible = False
@@ -4988,7 +4995,12 @@ End Sub
 Sub 认证已提交成绩()
     Dim WorkbookName As String
     Dim Msg As String
+    Dim SchoolName As String
         Application.ScreenUpdating = False
+        Worksheets("专业矩阵状态").Visible = True
+        Worksheets("专业矩阵状态").Activate
+        SchoolName = Range("B2").Value
+        Worksheets("专业矩阵状态").Visible = False
         Call 设置表格主题
         Sheets("2-课程目标和综合分析（填写）").Select
         '恢复"2-课程目标和综合分析（填写）"达成度评价部分表格
@@ -5013,7 +5025,11 @@ Sub 认证已提交成绩()
         Sheets("1-试卷成绩登记表（填写）").Visible = True
         Sheets("4-质量分析报告（填写+打印）").Visible = False
         Sheets("成绩核对").Visible = False
-        Sheets("3-毕业要求数据表（填写）").Visible = True
+        If SchoolName = "计算机信息与安全学院" Then
+            Sheets("3-毕业要求数据表（填写）").Visible = False
+        Else
+            Sheets("3-毕业要求数据表（填写）").Visible = True
+        End If
         Sheets("1-课程目标达成度评价（打印）").Visible = False
         Sheets("2-毕业要求达成度评价（打印）").Visible = False
         Sheets("3-综合分析（打印）").Visible = False
@@ -5023,7 +5039,6 @@ Sub 认证已提交成绩()
         Sheets("学生名单").Visible = False
         Sheets("课内实验成绩表").Visible = False
         Sheets("平时成绩表").Visible = False
-        Sheets("课程报告").Visible = False
         Sheets("成绩表").Visible = False
         Sheets("课程目标比例矩阵").Visible = False
         Sheets("评价环节比例设置").Visible = False
