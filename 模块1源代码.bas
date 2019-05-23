@@ -291,16 +291,26 @@ ErrorSub:
     Worksheets("专业矩阵状态").Visible = False
     Worksheets("2-课程目标和综合分析（填写）").Activate
 End Sub
-Function ShellAndWait(cmdStr As String) As String
+Function ShellAndWait(cmdStr As String, isHide As Boolean) As String
     On Error Resume Next
-    Dim oShell As Object
+    Dim oShell As Object, oExec As Object
     Dim oRun
     Set oShell = CreateObject("WScript.Shell")
-    oRun = oShell.Run(cmdStr, vbHide, True)
-    If Err.Description <> "" Then
-        ShellAndWait = Err.Description
-    ElseIf oRun = 1 Then
-        ShellAndWait = "下载失败"
+    If isHide Then
+        oRun = oShell.Run(cmdStr, vbHide, True)
+        If Err.Description <> "" Then
+            ShellAndWait = Err.Description
+        ElseIf oRun = 1 Then
+            ShellAndWait = "下载失败"
+        End If
+    Else
+        Set oExec = oShell.exec(cmdStr)
+        If Err.Description <> "" Then
+            ShellAndWait = Err.Description
+        Else
+            ShellAndWait = oExec.StdOut.ReadAll
+        End If
+        Set oExec = Nothing
     End If
     Set oShell = Nothing
 End Function
@@ -416,7 +426,11 @@ Function DownFile(FilePath As String, FileName As String)
     End If
     RemoteFile = "https://raw.githubusercontent.com/hxguet/CQART/master/" & FileName
     TempFileName = ThisWorkbook.Path & "\wget.exe -O " & FilePath & "\" & FileName & " " & RemoteFile
-    Result = ShellAndWait(TempFileName)
+    If (FileName = "Readme.txt") Then
+        Result = ShellAndWait(TempFileName, True)
+    Else
+        Result = ShellAndWait(TempFileName, False)
+    End If
     If Result <> "" Then
         DownFile = False
     Else
