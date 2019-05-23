@@ -4820,7 +4820,6 @@ Sub 非认证()
         Sheets("课内实验成绩表").Visible = False
         Sheets("平时成绩表").Visible = False
         Sheets("成绩表").Visible = False
-        Sheets("课程目标比例矩阵").Visible = False
         Sheets("评价环节比例设置").Visible = False
         Sheets("毕业要求-指标点数据表").Visible = False
         Sheets("课程目标达成度汇总用数据").Visible = False
@@ -4938,7 +4937,6 @@ Sub 认证未提交成绩()
         Sheets("课内实验成绩表").Visible = False
         Sheets("平时成绩表").Visible = False
         Sheets("成绩表").Visible = False
-        Sheets("课程目标比例矩阵").Visible = False
         Sheets("评价环节比例设置").Visible = False
         Sheets("毕业要求-指标点数据表").Visible = False
         Sheets("课程目标达成度汇总用数据").Visible = False
@@ -5040,7 +5038,6 @@ Sub 认证已提交成绩()
         Sheets("课内实验成绩表").Visible = False
         Sheets("平时成绩表").Visible = False
         Sheets("成绩表").Visible = False
-        Sheets("课程目标比例矩阵").Visible = False
         Sheets("评价环节比例设置").Visible = False
         Sheets("毕业要求-指标点数据表").Visible = False
         Sheets("课程目标达成度汇总用数据").Visible = False
