@@ -4730,6 +4730,7 @@ Sub CreateTXTfile(Content As String)
 End Sub
 Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As String, TargetColumn As String)
     Dim ImportStatus As Boolean
+    Dim TempMsgBox As Boolean
     Select Case Mode
         Case "认证状态"
             If TargetValue = "非认证" Then
@@ -4753,6 +4754,11 @@ Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As Strin
                         Worksheets("0-教学过程登记表（填写+打印)").Activate
                         Call 设置教学过程登记表
                     End If
+                ElseIf Range("Q3").Value = "认证已提交成绩" Then
+                    TempMsgBox = NoMsgBox
+                    NoMsgBox = True
+                    ImportStatus = 导入教学过程登记表
+                    NoMsgBox = TempMsgBox
                 End If
                 Worksheets("2-课程目标和综合分析（填写）").Activate
             End If
@@ -5124,4 +5130,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.31
+'[版本号]V5.05.32
