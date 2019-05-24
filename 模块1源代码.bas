@@ -1,6 +1,6 @@
 Attribute VB_Name = "模块1"
     Public Const MaxRecord As String = "185"
-    Public Const OldPassword As String = "dpt8hx"
+    Public Const OldPassword As String = "dpt8"
     Public Const Password As String = "dpt8hx"
     Public Const MajorLastRow As String = "12"
     Public Const CSummary = 0
@@ -70,7 +70,7 @@ Sub 生成版本号()
     Commit = Format(Now, "yyyy-mm-dd hh:mm:ss  Commit")
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     MainVer = Range("H3").Value
     SubVer = Range("H4").Value
     RiviseVer = Range("H5").Value
@@ -212,7 +212,7 @@ Sub 远程更新代码()
     Application.ScreenUpdating = True
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     LastFilePath = ThisWorkbook.Path
     LastReadme = "Readme.txt"
     If Dir((LastFilePath & "\" & LastReadme)) <> "" Then
@@ -378,7 +378,7 @@ Sub GetVersionFromLocal()
     Dim Vbc As Object
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     CurrentVersion = Range("H1").Value
     CurrentRiviseDate = Range("H2").Value
     FolderName = ThisWorkbook.Path
@@ -521,7 +521,7 @@ Sub 修订课程目标和综合分析公式()
     '修订"2-课程目标和综合分析（填写）"工作表评价环节课程报告和作业成绩公式
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Application.EnableEvents = False
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     '2019.5.3修订，解决实验课程实验1，实验2，实验3等满分为100分，合计考核分超过100分的情况
     Range("R7").Select
     ActiveCell.FormulaR1C1 = _
@@ -565,7 +565,7 @@ Sub 修订教学过程登记表公式()
     temp = Worksheets("0-教学过程登记表（填写+打印)").Visible
     Worksheets("0-教学过程登记表（填写+打印)").Visible = True
     Worksheets("0-教学过程登记表（填写+打印)").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A2:AG2").Select
     ActiveCell.FormulaR1C1 = _
         "=专业矩阵状态!RC[1]&"" ""&'2-课程目标和综合分析（填写）'!R[2]C[1]&"" 课程(考试/考查/选修)教学过程登记表"""
@@ -698,7 +698,7 @@ Sub 修订平时成绩表()
     Application.ScreenUpdating = False
     Worksheets("平时成绩表").Visible = True
     Worksheets("平时成绩表").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("Z6").Select
     ActiveCell.FormulaR1C1 = "=IF(RC25+RC29=0,0,ROUND((RC32)/(R5C25+R5C29),0))"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
@@ -713,7 +713,7 @@ Sub 修订专业矩阵状态()
     Set MyShapes = Worksheets("专业矩阵状态").Shapes
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("H1").Select
     ActiveCell.FormulaR1C1 = _
         "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
@@ -803,7 +803,7 @@ Sub 修订毕业要求达成度评价表()
     Worksheets("专业矩阵状态").Visible = False
     Worksheets("3-综合分析（打印）").Visible = True
     Worksheets("3-综合分析（打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     If SchoolName = "计算机信息与安全学院" Then
         If Range("A9").Value = "（4）毕业要求达成度评价" Then
             Rows("9:10").Select
@@ -891,7 +891,7 @@ On Error Resume Next
     Call 指标点数据表公式
     Call 课程目标和综合分析公式
     Worksheets("4-质量分析报告（填写+打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     ActiveSheet.Shapes.Range(Array("Button 5")).Select
     Selection.OnAction = "打印"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
@@ -929,7 +929,7 @@ End Sub
 Sub 允许事件触发()
     Application.EnableEvents = True
     Worksheets("2-课程目标和综合分析（填写）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("B7").Select
     With Selection.Validation
         .Delete
@@ -1079,7 +1079,7 @@ Sub 打印()
     Worksheets("2-课程目标和综合分析（填写）").Activate
     If Range("$Q$3").Value = "非认证" Then
         Worksheets("0-教学过程登记表（填写+打印)").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Call Excel2PDF("0-教学过程登记表（填写+打印)", ThisWorkbook.Path, PDFFileName & "--教学过程登记表.pdf")
         ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
         
@@ -1091,7 +1091,7 @@ Sub 打印()
     ElseIf Range("$Q$3").Value = "认证未提交成绩" Then
         '打印教学过程登记表
         Worksheets("0-教学过程登记表（填写+打印)").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Call Excel2PDF("0-教学过程登记表（填写+打印)", ThisWorkbook.Path, PDFFileName & "--教学过程登记表.pdf")
         ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
         
@@ -1102,7 +1102,7 @@ Sub 打印()
         Sheets("1-课程目标达成度评价（打印）").Visible = True
         Worksheets("1-课程目标达成度评价（打印）").Activate
         ActiveSheet.PageSetup.CenterFooter = ""
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Rows("11:20").Select
         Selection.EntireRow.Hidden = False
         SumRow = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
@@ -1160,7 +1160,7 @@ Sub 打印()
         Sheets("1-课程目标达成度评价（打印）").Visible = True
         Worksheets("1-课程目标达成度评价（打印）").Activate
         ActiveSheet.PageSetup.CenterFooter = ""
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Rows("11:20").Select
         Selection.EntireRow.Hidden = False
         SumRow = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
@@ -1204,7 +1204,7 @@ Sub 毕业要求数据表公式()
     Worksheets("专业矩阵状态").Activate
     SchoolName = Range("B2").Value
     Worksheets("3-毕业要求数据表（填写）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Select Case SchoolName
         Case "计算机信息与安全学院"
             '三院专用
@@ -1311,18 +1311,18 @@ End Sub
 Sub 设置表格主题()
     Application.ScreenUpdating = False
     Worksheets("3-毕业要求数据表（填写）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("E1:K1").Select
     ActiveCell.FormulaR1C1 = _
         "='2-课程目标和综合分析（填写）'!R[6]C[-3]&""专业-毕业要求达成情况评价数据表"""
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("1-课程目标达成度评价（打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A1:R1").Select
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[1]C[1]&""  课程目标达成情况评价表"""
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("2-毕业要求达成度评价（打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A1:N1").Select
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[1]C[1]&""  毕业要求达成情况评价表"""
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
@@ -1331,7 +1331,7 @@ End Sub
 Sub 毕业要求达成度评价公式()
     Worksheets("2-毕业要求达成度评价（打印）").Visible = True
     Worksheets("2-毕业要求达成度评价（打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A6").Select
     ActiveCell.FormulaR1C1 = "='3-毕业要求数据表（填写）'!R[1]C"
     Range("B6").Select
@@ -1376,7 +1376,7 @@ Sub 指标点数据表公式()
     MajorCount = Application.WorksheetFunction.CountA(Range("B4:B" & MajorLastRow))
     Sheets("毕业要求-指标点数据表").Visible = True
     Worksheets("毕业要求-指标点数据表").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("B2:C2").Select
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[2]C"
     Range("B3:C3").Select
@@ -1536,7 +1536,7 @@ Sub 调整表格格式()
     '"1-课程目标达成度评价（打印）" 按2页自动设置课程目标行高
     Worksheets("1-课程目标达成度评价（打印）").Visible = True
     Worksheets("1-课程目标达成度评价（打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
 
     CountCell = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
     Rows("11:" & CountCell + 11).Select
@@ -1571,7 +1571,7 @@ Sub 调整表格格式()
     
     Worksheets("2-毕业要求达成度评价（打印）").Visible = True
     Worksheets("2-毕业要求达成度评价（打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Rows("3:17").Select
     Selection.RowHeight = 25
     Worksheets("2-毕业要求达成度评价（打印）").Visible = False
@@ -1580,7 +1580,7 @@ Sub 调整表格格式()
     '"3-综合分析（打印）" 按1页自动设行高
     Worksheets("3-综合分析（打印）").Visible = True
     Worksheets("3-综合分析（打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Rows("3:3").Select
     Selection.Rows.AutoFit
     Rows("5:5").Select
@@ -1607,7 +1607,7 @@ Sub 重新设置公式按钮()
   Application.EnableEvents = False
   Worksheets("0-教学过程登记表（填写+打印)").Activate
   SumCount = Application.WorksheetFunction.Count(Range("A6:A185"))
-  ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+  ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
   Call 设置各行颜色
   ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
   Call 课程目标和综合分析公式
@@ -1651,7 +1651,7 @@ Sub 设置教学过程登记表()
         Application.EnableEvents = True
         Exit Sub
     End If
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     If (CourseNumber <> "") Then
     '获取人数
         'Count = Application.WorksheetFunction.Count(Range("B6:B185"))
@@ -1864,7 +1864,7 @@ End Sub
 Sub 成绩表公式()
     Worksheets("成绩表").Activate
     Sheets("成绩表").Visible = 1
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("T1").Select
     ActiveCell.FormulaR1C1 = "总评成绩"
     Range("P1").Select
@@ -1963,7 +1963,7 @@ Sub 课程目标和综合分析公式()
     Call 导入教学任务
     Application.ScreenUpdating = False
     Worksheets("2-课程目标和综合分析（填写）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Application.EnableEvents = False
     Range("D2:E2").Select
     ActiveCell.FormulaR1C1 = "期中成绩"
@@ -2244,7 +2244,7 @@ Sub 课程目标和综合分析公式()
 End Sub
 Sub 质量分析报告公式()
     Worksheets("4-质量分析报告（填写+打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     ActiveCell.FormulaR1C1 = _
     Range("A2:P2").Select
     ActiveCell.FormulaR1C1 = _
@@ -2352,7 +2352,7 @@ Sub 质量分析报告公式()
 End Sub
 Sub 成绩核对表公式()
     Worksheets("成绩核对").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("P2").Select
     ActiveCell.FormulaR1C1 = "学号"
     Range("Q2").Select
@@ -2452,7 +2452,7 @@ Sub 成绩核对表公式()
 End Sub
 Sub 平时成绩表公式()
     Worksheets("平时成绩表").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
    
     Range("B6").Select
     ActiveCell.FormulaR1C1 = _
@@ -2532,7 +2532,7 @@ End Sub
 
 Sub 试卷成绩登记表公式()
     Worksheets("1-试卷成绩登记表（填写）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("AB3").Select
     ActiveCell.FormulaR1C1 = "剔除不及格学生"
     Columns("AB:AB").Select
@@ -2632,7 +2632,7 @@ Sub 试卷成绩登记表公式()
 End Sub
 Sub 试卷成绩登记表核心公式()
     Worksheets("1-试卷成绩登记表（填写）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("B4").Select
     ActiveCell.FormulaR1C1 = _
         "=IF('2-课程目标和综合分析（填写）'!R3C2="""","""",IF(OR('0-教学过程登记表（填写+打印)'!R[2]C[1]="""",'0-教学过程登记表（填写+打印)'!R[2]C[1]=""请导入名单""),IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",VLOOKUP(RC1,成绩表!C16:C19,MATCH(""文本""&R2C2,成绩表!R1C16:R1C19,0),0),""""),VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)))"
@@ -2688,7 +2688,7 @@ Sub 试卷成绩登记表核心公式()
 End Sub
 Sub 成绩录入公式()
     Worksheets("成绩录入").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A1").Select
     ActiveCell.FormulaR1C1 = _
         "=MID('2-课程目标和综合分析（填写）'!R[1]C[1],1,9)&""-""&MID('2-课程目标和综合分析（填写）'!R[1]C[1],14,1)&""学期 期末成绩"""
@@ -2727,7 +2727,7 @@ Sub 成绩录入公式()
 End Sub
 Sub 实验成绩表公式()
     Worksheets("课内实验成绩表").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("U3").Select
     Range("P1").Select
     ActiveCell.FormulaR1C1 = "序号"
@@ -2790,7 +2790,7 @@ End Sub
 Sub 评价环节比例设置公式()
     Worksheets("评价环节比例设置").Activate
     Sheets("评价环节比例设置").Visible = 1
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("B2").Select
     ActiveCell.FormulaR1C1 = "=INDEX(R[-8]C2:R3C7,MATCH(R[-1]C&""*"",R2C2:R2C7,0))"
     Range("C11").Select
@@ -2904,7 +2904,7 @@ Sub 设置质量分析报告格式()
     Application.ScreenUpdating = False
     Worksheets("4-质量分析报告（填写+打印）").Activate
      '取消保护
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Rows("3:16").Select
     Range("P16").Activate
     Selection.RowHeight = 22
@@ -3175,7 +3175,7 @@ Sub 最后一行表格线(EndRow As String)
 End Sub
 Sub 设置质量分析报告填写区域颜色()
     Worksheets("4-质量分析报告（填写+打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("H4:K5,D18:P18,D17:P17").Select
     Range("D17").Activate
     Range("H4:K5,D18:P18,D17:P17,D19:P19,D20:P20").Select
@@ -3192,7 +3192,7 @@ Sub 设置质量分析报告填写区域颜色()
 End Sub
 Sub 取消质量分析报告填写区域颜色()
     Worksheets("4-质量分析报告（填写+打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("H4:K5,D17:P17").Select
     Range("D17").Activate
     Range("H4:K5,D17:P17,D18:P18").Select
@@ -3211,7 +3211,7 @@ Sub 重新设置公式(EndCell As Integer)
     Dim Count As Integer
     Worksheets("0-教学过程登记表（填写+打印)").Activate
      '取消保护
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A2:AG2").Select
     ActiveCell.FormulaR1C1 = _
         "=专业矩阵状态!RC[1]&"" ""&'2-课程目标和综合分析（填写）'!R[2]C[1]&"" 课程(考试/考查/选修)教学过程登记表"""
@@ -3448,7 +3448,7 @@ Sub 提取毕业要求矩阵信息(Major As String)
     SourceWorkBook = "数据源-" & Major & "-指标点数据矩阵.xls"
     FileName = FileName & "\" & SourceWorkBook
     Sheets("专业矩阵状态").Visible = True
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Worksheets("专业矩阵状态").Activate
     If MyFile.FileExists(FileName) = False Then
         '指标点数据矩阵文件不存在
@@ -3510,7 +3510,7 @@ Sub 导入学生名单()
     Call CopySheet(FileName, SourceWorkBook, "Sheet1", "A:H", ThisWorkBookName, "学生名单", "A:H")
     Worksheets("学生名单").Visible = True
     Worksheets("学生名单").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Count = Application.CountA(Range("C:C"))
     Range("G1").Select
     ActiveCell.FormulaR1C1 = "=RC2&""-""&RC6"
@@ -3601,7 +3601,7 @@ Sub 导入成绩表()
     Application.ScreenUpdating = False
     Worksheets("成绩表").Visible = True
     Worksheets("成绩表").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Columns("A:A").Select
     Selection.ClearContents
     Worksheets("成绩表").Activate
@@ -3613,7 +3613,7 @@ Sub 导入成绩表()
     Call 成绩表公式
     Worksheets("成绩表").Visible = True
     Worksheets("成绩表").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A1:O600").Select
     Selection.UnMerge
 
@@ -3729,14 +3729,14 @@ Sub 导入教务系统成绩表()
     End If
     Worksheets("成绩表").Visible = True
     Worksheets("成绩表").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A1:O600").Select
     Selection.UnMerge
     Call CopySheet(FileName, SourceWorkBook, "Sheet1", "A:N", ThisWorkBookName, "成绩表", "B:O")
     Application.ScreenUpdating = False
     Worksheets("成绩表").Visible = True
     Worksheets("成绩表").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     For i = 0 To 5
          Cells(1, i + 23).Value = ScoreType(i)
     Next i
@@ -3744,7 +3744,7 @@ Sub 导入教务系统成绩表()
     Call 成绩表公式
     Worksheets("成绩表").Visible = True
     Worksheets("成绩表").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A1:O600").Select
     Selection.UnMerge
     Range("A1:A600").Select
@@ -3846,7 +3846,7 @@ Sub 导入实验成绩表()
     Worksheets("课内实验成绩表").Visible = True
     Worksheets("课内实验成绩表").Activate
     Call 实验成绩表公式
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("X3:Y5").Select
     Selection.ClearContents
     Range("AB3:AB5").Select
@@ -3916,14 +3916,14 @@ Function 导入教学过程登记表() As Boolean
         End If
         Sheets("教学过程登记表").Visible = 1
         Worksheets("教学过程登记表").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Range("A1:Z40000").Select
         Selection.ClearContents
         Call CopySheet(FileName, SourceWorkBook, "Sheet1", "A:C", ThisWorkBookName, "教学过程登记表", "C:E")
         Application.ScreenUpdating = False
         Sheets("教学过程登记表").Visible = 1
         Worksheets("教学过程登记表").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Range("A4").Select
         ActiveCell.FormulaR1C1 = _
             "=IF(MID(R[-3]C[2],1,4)=""任课老师"",MID(R[-3]C3,FIND(""课程序号:"",R[-3]C[2],1)+5,LEN(R[-3]C3)-FIND(""课程序号:"",R[-3]C[2],1)),R[-1]C)"
@@ -3958,7 +3958,7 @@ Function 导入教学过程登记表() As Boolean
 
         Sheets("教学过程登记表").Visible = 1
         Worksheets("教学过程登记表").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         
         '导入的名单为教务系统下载的成绩表名单格式
         If Not (IsError(Application.Match("*" & CourseNum & "*", Range("K:K"), 0))) Then
@@ -4166,7 +4166,7 @@ Sub CopySheet(SourceWorkBookFileName As Variant, SourceWorkBook As String, Sourc
 TargetCol As String)
     Workbooks(TargetWorkBook).Activate
     Worksheets(TargetSheet).Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Columns(TargetCol).Select
     Selection.ClearContents
     Workbooks.Open SourceWorkBookFileName
@@ -4188,7 +4188,7 @@ Sub CopySheet1(SourceWorkBookFileName As Variant, SourceWorkBook As String, Sour
 TargetStartRow As Integer, TargetStartCol As Integer, TargetEndRow As Integer, TargetEndCol As Integer, PasteSpecial As String)
     Workbooks(TargetWorkBook).Activate
     Worksheets(TargetSheet).Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range(Cells(TargetStartRow, TargetStartCol), Cells(600, TargetEndCol)).Select
     Selection.ClearContents
     'Workbooks.Open SourceWorkBookFileName
@@ -4245,7 +4245,7 @@ End Sub
     MobanWorkbookName = ThisWorkbook.Name
     
     Sheets("2-课程目标和综合分析（填写）").Select
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     CourseNumber = Range("B3").Value
     Term = Range("AG2").Value
     CourseName = Range("B4").Value
@@ -4266,7 +4266,7 @@ End Sub
     
     Workbooks(MobanWorkbookName).Activate
     Sheets("成绩录入").Select
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     
     Rows("1:200").Select
     Selection.Copy
@@ -4796,14 +4796,14 @@ Sub 非认证()
         Workbooks(WorkbookName).Activate
         Worksheets("2-课程目标和综合分析（填写）").Activate
         '隐藏"2-课程目标和综合分析（填写）"达成度评价部分表格
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Sheets("2-课程目标和综合分析（填写）").Rows("10:28").Select
         Selection.EntireRow.Hidden = True
         Call 课程目标允许编辑区域
         Sheets("1-课程目标达成度评价（打印）").Visible = True
         Worksheets("1-课程目标达成度评价（打印）").Activate
         ActiveSheet.PageSetup.CenterFooter = ""
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Sheets("1-课程目标达成度评价（打印）").Rows("11:20").Select
         Selection.EntireRow.Hidden = False
         SumRow = Application.WorksheetFunction.CountA(Range("B11:B20"))
@@ -4835,7 +4835,7 @@ Sub 非认证()
         
         Workbooks(WorkbookName).Activate
         Worksheets("1-试卷成绩登记表（填写）").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
 
         Sheets("1-试卷成绩登记表（填写）").Columns("O:Y").Select
         Selection.EntireColumn.Hidden = True
@@ -4907,14 +4907,14 @@ Sub 认证未提交成绩()
         Sheets("2-课程目标和综合分析（填写）").Select
         '恢复"2-课程目标和综合分析（填写）"达成度评价部分表格
         Worksheets("2-课程目标和综合分析（填写）").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Sheets("2-课程目标和综合分析（填写）").Rows("10:28").Select
         Selection.EntireRow.Hidden = False
         Call 课程目标允许编辑区域
         Sheets("1-课程目标达成度评价（打印）").Visible = True
         Worksheets("1-课程目标达成度评价（打印）").Activate
         ActiveSheet.PageSetup.CenterFooter = ""
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Sheets("1-课程目标达成度评价（打印）").Rows("11:20").Select
         Selection.EntireRow.Hidden = False
         SumRow = Application.WorksheetFunction.CountA(Range("B11:B20"))
@@ -4949,7 +4949,7 @@ Sub 认证未提交成绩()
         Sheets("毕业要求达成度汇总用数据").Visible = False
         
         Worksheets("1-试卷成绩登记表（填写）").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
 
         '1-试卷成绩登记表（填写）工作表的考核成绩列不允许编辑
         Sheets("1-试卷成绩登记表（填写）").Range("N4:N183").Select
@@ -5009,14 +5009,14 @@ Sub 认证已提交成绩()
         Sheets("2-课程目标和综合分析（填写）").Select
         '恢复"2-课程目标和综合分析（填写）"达成度评价部分表格
         Worksheets("2-课程目标和综合分析（填写）").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Sheets("2-课程目标和综合分析（填写）").Rows("10:28").Select
         Selection.EntireRow.Hidden = False
         Call 课程目标允许编辑区域
         Sheets("1-课程目标达成度评价（打印）").Visible = True
         Worksheets("1-课程目标达成度评价（打印）").Activate
         ActiveSheet.PageSetup.CenterFooter = ""
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         Sheets("1-课程目标达成度评价（打印）").Rows("11:20").Select
         Selection.EntireRow.Hidden = False
         SumRow = Application.WorksheetFunction.CountA(Range("B11:B20"))
@@ -5049,7 +5049,7 @@ Sub 认证已提交成绩()
         Sheets("课程目标达成度汇总用数据").Visible = False
         Sheets("毕业要求达成度汇总用数据").Visible = False
         Worksheets("1-试卷成绩登记表（填写）").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=OldPassword
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
 
         Sheets("1-试卷成绩登记表（填写）").Columns("O:S").Select
         Selection.EntireColumn.Hidden = False
@@ -5130,4 +5130,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.32
+'[版本号]V5.05.33
