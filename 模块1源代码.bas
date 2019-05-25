@@ -21,6 +21,7 @@ Attribute VB_Name = "模块1"
 ''专业及修订
 Sub 修订公式()
     Application.EnableEvents = False
+    NoMsgBox = True
     Call 设置表格主题
     Call 打开文档
     Call 重新设置公式按钮
@@ -30,6 +31,7 @@ Sub 修订公式()
     Call 修订教学过程登记表公式
     Call 修订毕业要求达成度评价表
     Call 允许事件触发
+    NoMsgBox = False
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Application.EnableEvents = True
     ActiveWorkbook.Save
