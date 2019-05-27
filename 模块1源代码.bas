@@ -515,6 +515,9 @@ Sub 修订课程目标和综合分析公式()
     Application.EnableEvents = False
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     '2019.5.3修订，解决实验课程实验1，实验2，实验3等满分为100分，合计考核分超过100分的情况
+    Range("B6").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R[1]C="""","""",COUNTIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证""))"
     Range("R7").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OR(COUNTBLANK(RC[-14]:RC[-1])=14,SUM(R6C4:R6C17)=0),"""",SUM('2-课程目标和综合分析（填写）'!R7C4:R7C17)*100/SUM(R6C4:R6C17))"
