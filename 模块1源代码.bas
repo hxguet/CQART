@@ -365,58 +365,44 @@ Sub WriteLastLine(FileName As String, WriteStr As String)
     Txtfile.Write Str
     Txtfile.Close
 End Sub
-Sub GetVersionFromLocal()
-    Dim ModuleRivise() As String
+Function GetVersionFromLocal(LocalFileName As String)
+    Dim StrTxt() As String
+    Dim n As Integer
+    Dim StrTemp As String
+    Dim i As Integer, x As Integer, y As Integer
+    Dim Module As String
     Dim ModuleCount As Integer
-    Dim ModuleFile As String
-    Dim CurrentVersion As String
-    Dim CurrentRiviseDate As String
-    Dim wbList() As String
-    Dim FileName As String
-    Dim FileType As String
     Dim LastVersion As String
-    Dim LastRiviseDate As String
-    Dim CtrResult As String
-    Dim Vbc As Object
-    Worksheets("专业矩阵状态").Visible = True
-    Worksheets("专业矩阵状态").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    CurrentVersion = Range("H1").Value
-    CurrentRiviseDate = Range("H2").Value
-    FolderName = ThisWorkbook.Path
-    wbName = Dir(FolderName & "\*.bas")
+    
     ModuleCount = 0
-    While wbName <> ""
-        Info = Split(Mid(wbName, 1, Len(wbName) - 4), "-")
-        '文件名必须包含模块名，版本号和修订日期
-        If UBound(Info) - LBound(Info) = 2 Then
-            If Len(Info(0)) = 6 And Len(Info(1)) = 8 And Len(Info(2)) = 8 Then
-                ModuleCount = ModuleCount + 1
-                ReDim Preserve wbList(1 To ModuleCount)
-                wbList(ModuleCount) = wbName
-            End If
-        End If
-        wbName = Dir
-    Wend
-    If ModuleCount = 0 Then
-        ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-        Worksheets("专业矩阵状态").Visible = False
-        Exit Sub
+    UpdateInfo = ""
+    Open LocalFileName For Input As #1
+    Do While Not EOF(1)
+        Line Input #1, StrTemp
+        n = n + 1
+    Loop
+    Close #1
+    x = InStr(1, StrTemp, vbLf, vbTextCompare)
+    If x <> 0 Then
+        StrTxt = Split(StrTemp, vbLf)
+        n = UBound(StrTxt) - LBound(StrTxt)
+    Else
+        Open LocalFileName For Input As #1
+        ReDim Preserve StrTxt(1 To n)
+        i = 1
+        Do While Not EOF(1)
+            Line Input #1, StrTxt(i)
+            i = i + 1
+        Loop
+        Close #1
     End If
-    LastVersion = ""
-    LastRiviseDate = ""
-    ReDim Preserve ModuleLastRivise(0 To ModuleCount, 0 To 4)
-    ModuleLastRivise(0, CModuleCount) = ModuleCount
-    For i = 1 To ModuleCount
-        ModuleLastRivise(i, CFileName) = wbList(i)
-        Info = Split(Mid(wbList(i), 1, Len(wbList(i)) - 4), "-")
-        ModuleLastRivise(i, CModuleName) = Mid(Info(0), 1, 3)
-        ModuleLastRivise(i, CVersion) = Info(1)
-        ModuleLastRivise(i, CRiviseDate) = Info(2)
+    For i = 1 To n
+        If InStr(1, StrTxt(i), "[修订版本]") > 0 Then
+            LastVersion = Replace(StrTxt(i), "[修订版本]", "")
+        End If
     Next i
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-    Worksheets("专业矩阵状态").Visible = False
-End Sub
+    GetVersionFromFile = LastVersion
+End Function
 Function DownFile(FilePath As String, FileName As String)
     Dim TempFileName As String
     Dim Result As String
@@ -455,17 +441,21 @@ Sub GetVersionFromFile(LocalFileName As String)
         Line Input #1, StrTemp
         n = n + 1
     Loop
-    x = InStr(1, StrTemp, vbCrLf)
-    If x = 0 Then
+    x = InStr(1, StrTemp, vbLf)
+    If x <> 0 Then
         StrTxt = Split(StrTemp, vbLf)
         n = UBound(StrTxt) - LBound(StrTxt)
     Else
-        ReDim Preserve StrTxt(0 To n - 1)
+        Open LocalFileName For Input As #1
+        ReDim Preserve StrTxt(1 To n)
+        i = 1
         Do While Not EOF(1)
             Line Input #1, StrTxt(i)
+            i = i + 1
         Loop
+        Close #1
     End If
-    Close #1
+    
     Set fso = CreateObject("Scripting.FileSystemObject")
     Set MyTxtObj = fso.CreateTextFile(LocalFileName, True, False)
     For i = 0 To n - 1
@@ -711,6 +701,7 @@ Sub 修订专业矩阵状态()
      '修订专业矩阵状态工作表
     Dim MyShapes As Shapes
     Dim Shp As Shape
+    Dim LastVersion As String
     Application.ScreenUpdating = False
     Set MyShapes = Worksheets("专业矩阵状态").Shapes
     Worksheets("专业矩阵状态").Visible = True
@@ -774,6 +765,7 @@ Sub 修订专业矩阵状态()
     ActiveCell.FormulaR1C1 = "代码发布路径"
     Range("G7").Select
     ActiveCell.FormulaR1C1 = "代码备份路径"
+
     Range("G5").Select
     Selection.Copy
     Range("G6:G7").Select
@@ -5132,4 +5124,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.33
+'[版本号]V5.05.34
