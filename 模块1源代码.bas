@@ -3544,6 +3544,7 @@ Sub 导入成绩表()
     strCurPath = CurDir$
     strWbkPath = ThisWorkbook.Path
     On Error Resume Next
+    Application.EnableEvents = False
     ThisSheetName = ActiveSheet.Name
     ' /* 应用程序的当前路径不是工作簿所在的路径. */
     Worksheets("2-课程目标和综合分析（填写）").Activate
@@ -3657,7 +3658,8 @@ Sub 导入成绩表()
     Next i
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("成绩表").Visible = False
-    Worksheets(ThisSheetName).Activate
+    Worksheets("1 - 试卷成绩登记表(填写)").Activate
+    Application.EnableEvents = True
     Application.ScreenUpdating = True
 End Sub '选择打开文件后并没有真实的把它打开。
 
