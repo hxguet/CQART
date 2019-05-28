@@ -20,16 +20,79 @@ Attribute VB_Name = "模块1"
     Public isUpdate As Boolean
 ''专业及修订
 Sub 修订公式()
+    Dim FormulaRivise As String
     Application.EnableEvents = False
     NoMsgBox = True
-    Call 设置表格主题
-    Call 打开文档
-    Call 重新设置公式按钮
-    Call 修订专业矩阵状态
-    Call 修订课程目标和综合分析公式
-    Call 修订平时成绩表
-    Call 修订教学过程登记表公式
-    Call 修订毕业要求达成度评价表
+    Worksheets("专业矩阵状态").Visible = True
+    Worksheets("专业矩阵状态").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("G8").Value = "公式修订状态"
+    FormulaRivise = Range("H8").Value
+    Select Case FormulaRivise
+        Case ""
+            'V5.05.34修订
+            Worksheets("1-试卷成绩登记表（填写）").Activate
+            ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+            Range("N4").Select
+            ActiveCell.FormulaR1C1 = _
+                "=IF(OR(RC2="""",COUNT(RC[-9]:RC[-1])=0),"""",SUM(RC[-9]:RC[-1]))"
+            Selection.AutoFill Destination:=Range("N4:N400"), Type:=xlFillDefault
+            ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+                
+            Worksheets("4-质量分析报告（填写+打印）").Activate
+            ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+            Range("F10:I10").Select
+            ActiveCell.FormulaR1C1 = "=""最高""&MAX('1-试卷成绩登记表（填写）'!R4C14:R400C14)&""分"""
+            Range("J10:L10").Select
+            ActiveCell.FormulaR1C1 = "=""最低""&MIN('1-试卷成绩登记表（填写）'!R4C14:R400C14)&""分"""
+            Range("F12:H12").Select
+            ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=90"")"
+            Range("I12:J12").Select
+            ActiveCell.FormulaR1C1 = _
+                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=80"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=90"")"
+            Range("K12:L12").Select
+            ActiveCell.FormulaR1C1 = _
+                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=70"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=80"")"
+            Range("M12:O12").Select
+            ActiveCell.FormulaR1C1 = _
+                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=70"")"
+            Range("P12").Select
+            ActiveCell.FormulaR1C1 = _
+                "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""))"
+            Range("F15:H15").Select
+            ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=90"")"
+            Range("I15:J15").Select
+            ActiveCell.FormulaR1C1 = _
+                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=80"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=90"")"
+            Range("K15:L15").Select
+            ActiveCell.FormulaR1C1 = _
+                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=70"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=80"")"
+            Range("M15:O15").Select
+            ActiveCell.FormulaR1C1 = _
+                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=70"")"
+            Range("P15").Select
+            ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""<60"")"
+            ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+            Worksheets("专业矩阵状态").Activate
+            Range("H8").Value = Range("H1").Value
+            
+            
+        Case "V5.05.34"
+            
+    End Select
+            
+    'Call 设置表格主题
+    'Call 打开文档
+    'Call 重新设置公式按钮
+    'Call 修订专业矩阵状态
+    'Call 修订课程目标和综合分析公式
+    'Call 修订平时成绩表
+    'Call 修订教学过程登记表公式
+    'Call 修订毕业要求达成度评价表
+    
+    Worksheets("专业矩阵状态").Activate
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("专业矩阵状态").Visible = False
     Call 允许事件触发
     NoMsgBox = False
     Worksheets("2-课程目标和综合分析（填写）").Activate
@@ -37,7 +100,8 @@ Sub 修订公式()
     ActiveWorkbook.Save
 End Sub
 Sub 其他操作()
-
+    Worksheets("专业矩阵状态").Activate
+    Worksheets("专业矩阵状态").Visible = False
 End Sub
 Sub 工作表加密()
     Dim temp As Boolean
@@ -5129,4 +5193,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.33
+'[版本号]V5.05.34
