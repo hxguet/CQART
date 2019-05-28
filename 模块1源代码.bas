@@ -104,6 +104,7 @@ Sub 其他操作()
     Worksheets("专业矩阵状态").Visible = False
 End Sub
 Sub 工作表加密()
+    On Error Resume Next
     Dim temp As Boolean
     For Each sht In Sheets
         temp = Worksheets(sht.Name).Visible
@@ -114,6 +115,7 @@ Sub 工作表加密()
     Next
 End Sub
 Sub 生成版本号()
+    On Error Resume Next
     Dim MainVer As Integer
     Dim SubVer As Integer
     Dim RiviseVer As Integer
@@ -216,6 +218,7 @@ Sub 生成版本号()
     Worksheets("专业矩阵状态").Visible = False
 End Sub
 Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFilePath As String, BackupReadmeFile As String, ModuleName As String, ReleaseFile As String, Version As String, RiviseDate As String)
+    On Error Resume Next
     Dim ModuleCount As Integer
     Dim i As Integer
     Dim k As Integer
@@ -251,6 +254,7 @@ Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFil
     Set MyTxtObj = Nothing
 End Sub
 Sub 远程更新代码()
+    On Error Resume Next
     Dim ModuleCount As Integer
     Dim ModuleName As String
     Dim ModuleFile As String
@@ -565,6 +569,7 @@ Sub MsgInfo(NoMsg As Boolean, Msg As String)
     End If
 End Sub
 Sub 修订课程目标和综合分析公式()
+    On Error Resume Next
     Dim MyShapes As Shapes
     Dim Shp As Shape
     Dim SchoolName As String
@@ -618,6 +623,7 @@ Sub 修订课程目标和综合分析公式()
     Application.ScreenUpdating = True
 End Sub
 Sub 修订教学过程登记表公式()
+    On Error Resume Next
     Dim temp As Boolean
     '"0-教学过程登记表（填写+打印)"工作表修订标题，学号，姓名关键词，设置字体，设置允许编辑区域
     Application.ScreenUpdating = False
@@ -754,6 +760,7 @@ Sub 修订教学过程登记表公式()
     Application.ScreenUpdating = True
 End Sub
 Sub 修订平时成绩表()
+    On Error Resume Next
     Application.ScreenUpdating = False
     Worksheets("平时成绩表").Visible = True
     Worksheets("平时成绩表").Activate
@@ -765,6 +772,7 @@ Sub 修订平时成绩表()
     Application.ScreenUpdating = True
 End Sub
 Sub 修订专业矩阵状态()
+    On Error Resume Next
      '修订专业矩阵状态工作表
     Dim MyShapes As Shapes
     Dim Shp As Shape
@@ -856,6 +864,7 @@ Sub 修订专业矩阵状态()
     Application.ScreenUpdating = True
 End Sub
 Sub 修订毕业要求达成度评价表()
+    On Error Resume Next
     Dim SchoolName As String
     Application.ScreenUpdating = False
     Worksheets("专业矩阵状态").Visible = True
@@ -878,6 +887,7 @@ Sub 修订毕业要求达成度评价表()
     Application.ScreenUpdating = True
 End Sub
 Sub 课程目标允许编辑区域()
+    On Error Resume Next
     Dim AllowEditCount As Integer
     Dim i As Integer
     Worksheets("2-课程目标和综合分析（填写）").Activate
@@ -915,6 +925,7 @@ Sub 课程目标允许编辑区域()
     End With
 End Sub
 Sub 打开文档()
+On Error Resume Next
 Dim Grade As String
 Dim Major As String
 Dim i As Integer
@@ -959,6 +970,7 @@ On Error Resume Next
     Worksheets("2-课程目标和综合分析（填写）").Activate
 End Sub
 Sub 导入矩阵()
+On Error Resume Next
 Dim Major As String
 Dim MatrixSheet As String
     Worksheets("2-课程目标和综合分析（填写）").Activate
@@ -988,6 +1000,7 @@ Dim MatrixSheet As String
     Sheets("专业矩阵状态").Visible = False
 End Sub
 Sub 允许事件触发()
+    On Error Resume Next
     Application.EnableEvents = True
     Worksheets("2-课程目标和综合分析（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -1024,6 +1037,7 @@ Sub 允许事件触发()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 打印()
+    On Error Resume Next
 ' 设置格式 宏
     Dim CurrentWorksheet As String
     Dim CourseName As String
@@ -1258,6 +1272,7 @@ Sub 打印()
     Worksheets(CurrentWorksheet).Activate
 End Sub
 Sub 毕业要求数据表公式()
+    On Error Resume Next
     Dim SchoolName As String
     Dim AllowEditCount As Integer
     Dim i As Integer
@@ -1370,6 +1385,7 @@ Sub 毕业要求数据表公式()
     Worksheets("专业矩阵状态").Visible = False
 End Sub
 Sub 设置表格主题()
+    On Error Resume Next
     Application.ScreenUpdating = False
     Worksheets("3-毕业要求数据表（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -1390,6 +1406,7 @@ Sub 设置表格主题()
     Application.ScreenUpdating = True
 End Sub
 Sub 毕业要求达成度评价公式()
+    On Error Resume Next
     Worksheets("2-毕业要求达成度评价（打印）").Visible = True
     Worksheets("2-毕业要求达成度评价（打印）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -1425,6 +1442,7 @@ End Sub
 
 
 Sub 指标点数据表公式()
+    On Error Resume Next
     Dim SchoolName As String
     Dim Major As String
     Dim i As Integer
@@ -1468,6 +1486,7 @@ Sub 指标点数据表公式()
     Worksheets("专业矩阵状态").Visible = False
 End Sub
 Sub MergePDF(PDFFile1Name As String, PDFFile2Name As String, MergePDFFileName As String)
+    On Error Resume Next
     Dim ok As Boolean
     Dim PDFApp As Acrobat.AcroApp
     Dim pddoc As Acrobat.AcroPDDoc
@@ -1498,6 +1517,7 @@ Sub MergePDF(PDFFile1Name As String, PDFFile2Name As String, MergePDFFileName As
     Set PDFApp = Nothing
 End Sub
 Public Sub Excel2PDF(WorkSheetName As String, PathName As String, FileName As String)
+    On Error Resume Next
     Dim PDFFileName As String
     Dim WorkSheetVisble As Boolean
     WorkSheetVisble = Worksheets(WorkSheetName).Visible
@@ -1520,6 +1540,7 @@ End Sub
 
 Sub 保存文件()
 ' 保存文件 宏
+    On Error Resume Next
     Dim CellHeight As Integer
     Dim SumCellHeight As Integer
     Dim AverageCellHeight As Integer
@@ -1594,6 +1615,7 @@ Sub 保存文件()
     Worksheets(CurrentWorksheet).Activate
 End Sub
 Sub 调整表格格式()
+    On Error Resume Next
     '"1-课程目标达成度评价（打印）" 按2页自动设置课程目标行高
     Worksheets("1-课程目标达成度评价（打印）").Visible = True
     Worksheets("1-课程目标达成度评价（打印）").Activate
@@ -1663,6 +1685,7 @@ Sub 调整表格格式()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 重新设置公式按钮()
+  On Error Resume Next
   Dim SumCount As Integer
   Application.ScreenUpdating = False
   Application.EnableEvents = False
@@ -1690,6 +1713,7 @@ Sub 重新设置公式按钮()
 End Sub
 
 Sub 设置教学过程登记表()
+    On Error Resume Next
     Dim i As Integer
     Dim Count As Integer
     Dim DataRecord As String
@@ -1923,6 +1947,7 @@ Sub 设置教学过程登记表()
     Application.ScreenUpdating = True
 End Sub
 Sub 成绩表公式()
+    On Error Resume Next
     Worksheets("成绩表").Activate
     Sheets("成绩表").Visible = 1
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -2021,6 +2046,7 @@ Sub 成绩表公式()
     Sheets("成绩表").Visible = 0
 End Sub
 Sub 课程目标和综合分析公式()
+    On Error Resume Next
     Call 导入教学任务
     Application.ScreenUpdating = False
     Worksheets("2-课程目标和综合分析（填写）").Activate
@@ -2304,6 +2330,7 @@ Sub 课程目标和综合分析公式()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 质量分析报告公式()
+    On Error Resume Next
     Worksheets("4-质量分析报告（填写+打印）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     ActiveCell.FormulaR1C1 = _
@@ -2344,43 +2371,49 @@ Sub 质量分析报告公式()
     Range("P9").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OFFSET(评价环节比例设置!R3C1,,MATCH(R9C12,评价环节比例设置!R2,0)-1,1,1)=0,"""",OFFSET(评价环节比例设置!R3C1,,MATCH(R9C12,评价环节比例设置!R2,0)-1,1,1))"
+    
+    
+    Range("F10:I10").Select
+    ActiveCell.FormulaR1C1 = "=""最高""&MAX('1-试卷成绩登记表（填写）'!R4C14:R400C14)&""分"""
+    Range("J10:L10").Select
+    ActiveCell.FormulaR1C1 = "=""最低""&MIN('1-试卷成绩登记表（填写）'!R4C14:R400C14)&""分"""
+    Range("F12:H12").Select
+    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=90"")"
+    Range("I12:J12").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=80"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=90"")"
+    Range("K12:L12").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=70"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=80"")"
+    Range("M12:O12").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=70"")"
+    Range("P12").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""))"
+    Range("F15:H15").Select
+    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=90"")"
+    Range("I15:J15").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=80"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=90"")"
+    Range("K15:L15").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=70"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=80"")"
+    Range("M15:O15").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=70"")"
+    Range("P15").Select
+    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""<60"")"
+    
+    
     Range("A9:C9").Select
     ActiveCell.FormulaR1C1 = "='0-教学过程登记表（填写+打印)'!R[-5]C[26]"
     Range("L9:O9").Select
     ActiveCell.FormulaR1C1 = "='0-教学过程登记表（填写+打印)'!R[-5]C[13]"
-    Range("F10:I10").Select
-    ActiveCell.FormulaR1C1 = "=""最高""&MAX('0-教学过程登记表（填写+打印)'!C57)&""分"""
-    Range("J10:L10").Select
-    ActiveCell.FormulaR1C1 = "=""最低""&MIN('0-教学过程登记表（填写+打印)'!C57)&""分"""
+    
     Range("P10").Select
     ActiveCell.FormulaR1C1 = "=IF(R[3]C="""","""",(100-R[3]C)/100)"
-    Range("F12:H12").Select
-    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R183C14,"">=90"")"
-    Range("I12:J12").Select
-    ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R183C14,"">=80"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R183C14,"">=90"")"
-    Range("K12:L12").Select
-    ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R183C14,"">=70"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R183C14,"">=80"")"
-    Range("M12:O12").Select
-    ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R183C14,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R183C14,"">=70"")"
-    Range("P12").Select
-    ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R183C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考"")"
-    Range("F15:H15").Select
-    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R183C20,"">=90"")"
-    Range("I15:J15").Select
-    ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R183C20,"">=80"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R183C20,"">=90"")"
-    Range("K15:L15").Select
-    ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R183C20,"">=70"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R183C20,"">=80"")"
-    Range("M15:O15").Select
-    ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R183C20,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R183C20,"">=70"")"
-    Range("P15").Select
-    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R183C20,""<60"")"
+    
     
     Range("F13:H13").Select
     ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
@@ -2412,6 +2445,7 @@ Sub 质量分析报告公式()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 成绩核对表公式()
+    On Error Resume Next
     Worksheets("成绩核对").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("P2").Select
@@ -2512,6 +2546,7 @@ Sub 成绩核对表公式()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 平时成绩表公式()
+    On Error Resume Next
     Worksheets("平时成绩表").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
    
@@ -2592,6 +2627,7 @@ Sub 平时成绩表公式()
 End Sub
 
 Sub 试卷成绩登记表公式()
+On Error Resume Next
     Worksheets("1-试卷成绩登记表（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("AB3").Select
@@ -2692,6 +2728,7 @@ Sub 试卷成绩登记表公式()
 
 End Sub
 Sub 试卷成绩登记表核心公式()
+On Error Resume Next
     Worksheets("1-试卷成绩登记表（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("B4").Select
@@ -2701,8 +2738,9 @@ Sub 试卷成绩登记表核心公式()
     ActiveCell.FormulaR1C1 = _
         "=IF('2-课程目标和综合分析（填写）'!R3C2="""","""",IF(OR('0-教学过程登记表（填写+打印)'!R[2]C="""",'0-教学过程登记表（填写+打印)'!R[2]C=""请导入名单""),IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",VLOOKUP(RC2,成绩表!C18:C19,MATCH(R2C3,成绩表!R1C18:R1C19,0),0),""""),VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)))"
     Range("N4").Select
-    ActiveCell.FormulaR1C1 = "=IF(OR(RC2=""""),"""",SUM(RC[-9]:RC[-1]))"
-    
+    ActiveCell.FormulaR1C1 = _
+                "=IF(OR(RC2="""",COUNT(RC[-9]:RC[-1])=0),"""",SUM(RC[-9]:RC[-1]))"
+
     Range("O4").Select
     ActiveCell.FormulaR1C1 = _
         "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(OR(RC[-13]="""",ISNA(VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0))),"""",VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0)),IF(OR(RC2=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C,'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)))"
@@ -2748,6 +2786,7 @@ Sub 试卷成绩登记表核心公式()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 成绩录入公式()
+On Error Resume Next
     Worksheets("成绩录入").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A1").Select
@@ -2787,6 +2826,7 @@ Sub 成绩录入公式()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 实验成绩表公式()
+On Error Resume Next
     Worksheets("课内实验成绩表").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("U3").Select
@@ -2849,6 +2889,7 @@ Sub 实验成绩表公式()
 End Sub
 
 Sub 评价环节比例设置公式()
+On Error Resume Next
     Worksheets("评价环节比例设置").Activate
     Sheets("评价环节比例设置").Visible = 1
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -2938,6 +2979,7 @@ Sub 评价环节比例设置公式()
     Sheets("评价环节比例设置").Visible = 0
 End Sub
 Sub 设置质量分析报告格式()
+On Error Resume Next
     Dim i As Integer
     Dim Count As Integer
     Dim DataRecord As String
