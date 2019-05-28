@@ -28,59 +28,72 @@ Sub 修订公式()
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("G8").Value = "公式修订状态"
     FormulaRivise = Range("H8").Value
-    Select Case FormulaRivise
-        Case ""
-            'V5.05.34修订
-            Worksheets("1-试卷成绩登记表（填写）").Activate
-            ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-            Range("N4").Select
-            ActiveCell.FormulaR1C1 = _
-                "=IF(OR(RC2="""",COUNT(RC[-9]:RC[-1])=0),"""",SUM(RC[-9]:RC[-1]))"
-            Selection.AutoFill Destination:=Range("N4:N400"), Type:=xlFillDefault
-            ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("专业矩阵状态").Activate
+    Range("H8").Value = Range("H1").Value
+    Worksheets("1-试卷成绩登记表（填写）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("N4").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(RC2="""",COUNT(RC[-9]:RC[-1])=0),"""",SUM(RC[-9]:RC[-1]))"
+    Selection.AutoFill Destination:=Range("N4:N400"), Type:=xlFillDefault
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+        
+    Worksheets("4-质量分析报告（填写+打印）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("F10:I10").Select
+    ActiveCell.FormulaR1C1 = "=""最高""&MAX('1-试卷成绩登记表（填写）'!R4C14:R400C14)&""分"""
+    Range("J10:L10").Select
+    ActiveCell.FormulaR1C1 = "=""最低""&MIN('1-试卷成绩登记表（填写）'!R4C14:R400C14)&""分"""
+    Range("F12:H12").Select
+    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=90"")"
+    Range("I12:J12").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=80"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=90"")"
+    Range("K12:L12").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=70"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=80"")"
+    Range("M12:O12").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=70"")"
+    Range("P12").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""))"
+    Range("F15:H15").Select
+    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=90"")"
+    Range("I15:J15").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=80"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=90"")"
+    Range("K15:L15").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=70"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=80"")"
+    Range("M15:O15").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=70"")"
+    Range("P15").Select
+    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""<60"")"
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
                 
-            Worksheets("4-质量分析报告（填写+打印）").Activate
-            ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-            Range("F10:I10").Select
-            ActiveCell.FormulaR1C1 = "=""最高""&MAX('1-试卷成绩登记表（填写）'!R4C14:R400C14)&""分"""
-            Range("J10:L10").Select
-            ActiveCell.FormulaR1C1 = "=""最低""&MIN('1-试卷成绩登记表（填写）'!R4C14:R400C14)&""分"""
-            Range("F12:H12").Select
-            ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=90"")"
-            Range("I12:J12").Select
-            ActiveCell.FormulaR1C1 = _
-                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=80"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=90"")"
-            Range("K12:L12").Select
-            ActiveCell.FormulaR1C1 = _
-                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=70"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=80"")"
-            Range("M12:O12").Select
-            ActiveCell.FormulaR1C1 = _
-                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=70"")"
-            Range("P12").Select
-            ActiveCell.FormulaR1C1 = _
-                "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""))"
-            Range("F15:H15").Select
-            ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=90"")"
-            Range("I15:J15").Select
-            ActiveCell.FormulaR1C1 = _
-                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=80"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=90"")"
-            Range("K15:L15").Select
-            ActiveCell.FormulaR1C1 = _
-                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=70"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=80"")"
-            Range("M15:O15").Select
-            ActiveCell.FormulaR1C1 = _
-                "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=70"")"
-            Range("P15").Select
-            ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""<60"")"
-            ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-            Worksheets("专业矩阵状态").Activate
-            Range("H8").Value = Range("H1").Value
-            
-            
-        Case "V5.05.34"
-            
-    End Select
-            
+    Worksheets("2-课程目标和综合分析（填写）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Application.EnableEvents = False
+    Range("M6").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)="""",OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)=0),"""",100)"
+    Selection.AutoFill Destination:=Range("M6:Q6"), Type:=xlFillDefault
+    Range("R7").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(COUNTBLANK(RC[-14]:RC[-6])=14,SUM(R6C4:R6C12)=0),"""",SUM('2-课程目标和综合分析（填写）'!R7C4:R7C12)*100/SUM(R6C4:R6C12))"
+    Dim Evaluation1 As String
+    Dim Evaluation2 As String
+    Evaluation1 = Range("D2").Value
+    Range("D2:E2").Select
+    ActiveCell.FormulaR1C1 = Evaluation1
+    Evaluation2 = Range("L2").Value
+    Range("L2:M2").Select
+    ActiveCell.FormulaR1C1 = Evaluation2
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Application.EnableEvents = True
+                    
     'Call 设置表格主题
     'Call 打开文档
     'Call 重新设置公式按钮
@@ -2064,14 +2077,17 @@ Sub 成绩表公式()
     Sheets("成绩表").Visible = 0
 End Sub
 Sub 课程目标和综合分析公式()
+    Dim Evaluation1 As String
+    Dim Evaluation2 As String
     On Error Resume Next
     Call 导入教学任务
     Application.ScreenUpdating = False
     Worksheets("2-课程目标和综合分析（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Application.EnableEvents = False
+    Evaluation1 = Range("D2").Value
     Range("D2:E2").Select
-    ActiveCell.FormulaR1C1 = "期中成绩"
+    ActiveCell.FormulaR1C1 = Evaluation1
     Range("F2:G2").Select
     ActiveSheet.Unprotect
     ActiveCell.FormulaR1C1 = "作业成绩"
@@ -2079,8 +2095,9 @@ Sub 课程目标和综合分析公式()
     ActiveCell.FormulaR1C1 = "实验成绩"
     Range("J2:K2").Select
     ActiveCell.FormulaR1C1 = "课堂测验"
+    Evaluation2 = Range("L2").Value
     Range("L2:M2").Select
-    ActiveCell.FormulaR1C1 = "课程报告"
+    ActiveCell.FormulaR1C1 = Evaluation2
     Range("N2:O2").Select
     ActiveCell.FormulaR1C1 = "考核成绩"
     Range("F2:K2").Select
@@ -2217,7 +2234,8 @@ Sub 课程目标和综合分析公式()
     Selection.AutoFill Destination:=Range("D6:L8"), Type:=xlFillDefault
     Range("D6:L8").Select
     Range("M6").Select
-    ActiveCell.FormulaR1C1 = "=IF(OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)="""","""",100)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)="""",OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)=0),"""",100)"
     Range("M7").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OR(R6C2=0,R6C2="""",R[-1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"")=0,COUNT(OFFSET('1-试卷成绩登记表（填写）'!R4C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,205))=0),"""",SUMIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,183))/R6C2)"
@@ -2228,7 +2246,7 @@ Sub 课程目标和综合分析公式()
     Range("M6:R8").Select
     Range("R7").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(OR(COUNTBLANK(RC[-14]:RC[-1])=14,SUM(R6C4:R6C17)=0),"""",SUM('2-课程目标和综合分析（填写）'!R7C4:R7C17)*100/SUM(R6C4:R6C17))"
+        "=IF(OR(COUNTBLANK(RC[-14]:RC[-6])=14,SUM(R6C4:R6C12)=0),"""",SUM('2-课程目标和综合分析（填写）'!R7C4:R7C12)*100/SUM(R6C4:R6C12))"
     Range("R8").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OR(R7C18="""",R7C18=0),"""",ROUND(R7C18*100/R6C18,1))"
@@ -5253,4 +5271,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.34
+'[版本号]V5.05.35
