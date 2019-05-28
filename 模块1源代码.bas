@@ -516,13 +516,13 @@ Sub GetVersionFromFile(LocalFileName As String)
     ModuleCount = 0
     UpdateInfo = ""
 
-    Open FileName For Input As #1
+    Open LocalFileName For Input As #1
     isError = Err.Description
     If isError = "文件已打开" Then
         Close #1
-        Open FileName For Input As #1
+        Open LocalFileName For Input As #1
     End If
-    Open LocalFileName For Input As #1
+    
     Do While Not EOF(1)
         Line Input #1, StrTemp
         n = n + 1
