@@ -365,17 +365,20 @@ Function ShellAndWait(cmdStr As String, isHide As Boolean) As String
     On Error Resume Next
     Dim oShell As Object, oExec As Object
     Dim oRun
+    Dim isError As String
     Set oShell = CreateObject("WScript.Shell")
     If isHide Then
         oRun = oShell.Run(cmdStr, vbHide, True)
-        If Err.Description <> "" Then
+        isError = Err.Description
+        If isError <> "" Then
             ShellAndWait = Err.Description
         ElseIf oRun = 1 Then
             ShellAndWait = "下载失败"
         End If
     Else
         Set oExec = oShell.exec(cmdStr)
-        If Err.Description <> "" Then
+        isError = Err.Description
+        If isError <> "" Then
             ShellAndWait = Err.Description
         Else
             ShellAndWait = oExec.StdOut.ReadAll
@@ -385,11 +388,18 @@ Function ShellAndWait(cmdStr As String, isHide As Boolean) As String
     Set oShell = Nothing
 End Function
 Function GetLastLine(FileName As String)
+    On Error Resume Next
     Dim Buf As String
     Dim LastRow As Long
     Dim fso As Object
     Dim TempBuf As String
+    Dim isError As String
     Open FileName For Input As #1
+    isError = Err.Description
+    If isError = "文件已打开" Then
+        Close #1
+        Open FileName For Input As #1
+    End If
     If EOF(1) Then
         TempBuf = "文件为空"
         Close #1
@@ -502,8 +512,16 @@ Sub GetVersionFromFile(LocalFileName As String)
     Dim Module As String
     Dim ModuleCount As Integer
     Dim UpdateInfo As String
+    Dim isError As String
     ModuleCount = 0
     UpdateInfo = ""
+
+    Open FileName For Input As #1
+    isError = Err.Description
+    If isError = "文件已打开" Then
+        Close #1
+        Open FileName For Input As #1
+    End If
     Open LocalFileName For Input As #1
     Do While Not EOF(1)
         Line Input #1, StrTemp
@@ -3729,12 +3747,12 @@ Sub 导入成绩表()
     '确定成绩表的栏数
 
     For j = 1 To 10
-        If Not (IsError(Application.Match("学号", Range("A" & j & ":" & "O" & j), 0))) Then
+        If Not (isError(Application.Match("学号", Range("A" & j & ":" & "O" & j), 0))) Then
             NumRow = j
             CountNum = Application.WorksheetFunction.CountIf(Range("A" & j & ":" & "O" & j), "学号")
             Num2Col = Application.Match("总评*", Range("A" & j & ":" & "O" & j), 0) + 2
         End If
-        If Not (IsError(Application.Match("序号", Range("A" & j & ":" & "O" & j), 0))) Then
+        If Not (isError(Application.Match("序号", Range("A" & j & ":" & "O" & j), 0))) Then
             NumExitFlag = True
         End If
     Next j
@@ -3750,16 +3768,16 @@ Sub 导入成绩表()
     For i = 3 To 15
         For j = 1 To 10
             If (CountNum = 1) Then
-                If Not (IsError(Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "O" & j), 0))) Then
+                If Not (isError(Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "O" & j), 0))) Then
                     Range(KeyRow & i).Value = j
                     Range(Key1Col & i).Value = Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "O" & j), 0)
                 End If
             ElseIf (CountNum = 2) Then
-                If Not (IsError(Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "I" & j), 0))) Then
+                If Not (isError(Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "I" & j), 0))) Then
                     Range(KeyRow & i).Value = j
                     Range(Key1Col & i).Value = Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "I" & j), 0)
                 End If
-                If Not (IsError(Application.Match("*" & Range(Num & i).Value & "*", Range(Cells(j, Num2Col), Cells(j, 15)), 0))) Then
+                If Not (isError(Application.Match("*" & Range(Num & i).Value & "*", Range(Cells(j, Num2Col), Cells(j, 15)), 0))) Then
                     Range(Key2Col & i).Value = Application.Match("*" & Range(Num & i).Value & "*", Range(Cells(j, Num2Col), Cells(j, 15)), 0) + Range(Cells(1, 1), Cells(1, Num2Col)).Cells.Count - 1
                 End If
             End If
@@ -3862,12 +3880,12 @@ Sub 导入教务系统成绩表()
     '确定成绩表的栏数
 
     For j = 1 To 10
-        If Not (IsError(Application.Match("学号", Range("A" & j & ":" & "O" & j), 0))) Then
+        If Not (isError(Application.Match("学号", Range("A" & j & ":" & "O" & j), 0))) Then
             NumRow = j
             CountNum = Application.WorksheetFunction.CountIf(Range("A" & j & ":" & "O" & j), "学号")
             Num2Col = Application.Match("总评*", Range("A" & j & ":" & "O" & j), 0) + 2
         End If
-        If Not (IsError(Application.Match("序号", Range("A" & j & ":" & "O" & j), 0))) Then
+        If Not (isError(Application.Match("序号", Range("A" & j & ":" & "O" & j), 0))) Then
             NumExitFlag = True
         End If
     Next j
@@ -3883,16 +3901,16 @@ Sub 导入教务系统成绩表()
     For i = 3 To 15
         For j = 1 To 10
             If (CountNum = 1) Then
-                If Not (IsError(Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "O" & j), 0))) Then
+                If Not (isError(Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "O" & j), 0))) Then
                     Range(KeyRow & i).Value = j
                     Range(Key1Col & i).Value = Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "O" & j), 0)
                 End If
             ElseIf (CountNum = 2) Then
-                If Not (IsError(Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "I" & j), 0))) Then
+                If Not (isError(Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "I" & j), 0))) Then
                     Range(KeyRow & i).Value = j
                     Range(Key1Col & i).Value = Application.Match("*" & Range(Num & i).Value & "*", Range("A" & j & ":" & "I" & j), 0)
                 End If
-                If Not (IsError(Application.Match("*" & Range(Num & i).Value & "*", Range(Cells(j, Num2Col), Cells(j, 15)), 0))) Then
+                If Not (isError(Application.Match("*" & Range(Num & i).Value & "*", Range(Cells(j, Num2Col), Cells(j, 15)), 0))) Then
                     Range(Key2Col & i).Value = Application.Match("*" & Range(Num & i).Value & "*", Range(Cells(j, Num2Col), Cells(j, 15)), 0) + Range(Cells(1, 1), Cells(1, Num2Col)).Cells.Count - 1
                 End If
             End If
@@ -3958,11 +3976,11 @@ Sub 导入实验成绩表()
     Selection.ClearContents
     For i = 3 To 5
         For j = 1 To 5
-            If Not (IsError(Application.Match(Mid(Range(Num & i).Value, 1, 1) & "*", Range("A" & j & ":" & "G" & j), 0))) Then
+            If Not (isError(Application.Match(Mid(Range(Num & i).Value, 1, 1) & "*", Range("A" & j & ":" & "G" & j), 0))) Then
                 Range(KeyRow & i).Value = j
                 Range(Key1Col & i).Value = Application.Match(Mid(Range(Num & i).Value, 1, 1) & "*", Range("A" & j & ":" & "G" & j), 0)
             End If
-            If Not (IsError(Application.Match(Mid(Range(Num & i).Value, 1, 1) & "*", Range("H" & j & ":" & "N" & j), 0))) Then
+            If Not (isError(Application.Match(Mid(Range(Num & i).Value, 1, 1) & "*", Range("H" & j & ":" & "N" & j), 0))) Then
                 Range(Key2Col & i).Value = Application.Match(Mid(Range(Num & i).Value, 1, 1) & "*", Range("H" & j & ":" & "N" & j), 0) + Range("A1:H1").Cells.Count - 1
             End If
          Next j
@@ -4066,7 +4084,7 @@ Function 导入教学过程登记表() As Boolean
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         
         '导入的名单为教务系统下载的成绩表名单格式
-        If Not (IsError(Application.Match("*" & CourseNum & "*", Range("K:K"), 0))) Then
+        If Not (isError(Application.Match("*" & CourseNum & "*", Range("K:K"), 0))) Then
             Count = Application.WorksheetFunction.CountA(Range("C4:C200"))
             Range("C1:K200").Select
             Selection.UnMerge
@@ -4871,7 +4889,7 @@ Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As Strin
             If TargetValue <> "" Then
                 Sheets("专业矩阵状态").Visible = True
                 Worksheets("专业矩阵状态").Activate
-                If Not IsError(Application.Match(TargetValue, Range("B4:B" & MajorLastRow), 0)) Then
+                If Not isError(Application.Match(TargetValue, Range("B4:B" & MajorLastRow), 0)) Then
                     Sheets("专业矩阵状态").Visible = False
                     Worksheets("2-课程目标和综合分析（填写）").Activate
                     If (Range("B6").Value = 0) Then
