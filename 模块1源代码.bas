@@ -23,6 +23,7 @@ Sub 修订公式()
     On Error Resume Next
     Dim FormulaRivise As String
     Application.EnableEvents = False
+    Application.ScreenUpdating = False
     NoMsgBox = True
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
@@ -119,6 +120,7 @@ Sub 修订公式()
     Call 允许事件触发
     NoMsgBox = False
     Worksheets("2-课程目标和综合分析（填写）").Activate
+    Application.ScreenUpdating = True
     Application.EnableEvents = True
     ActiveWorkbook.Save
 End Sub
@@ -299,6 +301,7 @@ Sub 远程更新代码()
     Dim Status As Boolean
     Dim RemoteVersion As String
     Dim DownComplete As String
+    Dim isError As String
     isUpdate = False
     Application.ScreenUpdating = False
     Call 修订专业矩阵状态
@@ -309,6 +312,11 @@ Sub 远程更新代码()
     LastFilePath = ThisWorkbook.Path
     LastReadme = "Readme.txt"
     If Dir((LastFilePath & "\" & LastReadme)) <> "" Then
+        Open LastFilePath & "\" & LastReadme For Input As #1
+        isError = Err.Description
+        If isError = "文件已打开" Then
+            Close #1
+        End If
         Kill LastFilePath & "\" & LastReadme
     End If
     Call MsgInfo(NoMsgBox, "正在连接远程服务器，检查代码最新版本！")
@@ -374,9 +382,19 @@ Sub 远程更新代码()
         Call MsgInfo(NoMsgBox, "该模版代码版本已经为最新版本!")
     End If
     If Dir(LastFilePath & "\" & LastReadme) <> "" Then
+        Open LastFilePath & "\" & LastReadme For Input As #1
+        isError = Err.Description
+        If isError = "文件已打开" Then
+            Close #1
+        End If
         Kill LastFilePath & "\" & LastReadme
     End If
     If ModuleFile <> "" And Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
+        Open ThisWorkbook.Path & "\" & ModuleFile For Input As #1
+        isError = Err.Description
+        If isError = "文件已打开" Then
+            Close #1
+        End If
         Kill ThisWorkbook.Path & "\" & ModuleFile
     End If
 ErrorSub:
