@@ -20,6 +20,7 @@ Attribute VB_Name = "模块1"
     Public isUpdate As Boolean
 ''专业及修订
 Sub 修订公式()
+    On Error Resume Next
     Dim FormulaRivise As String
     Application.EnableEvents = False
     NoMsgBox = True
@@ -93,7 +94,16 @@ Sub 修订公式()
     ActiveCell.FormulaR1C1 = Evaluation2
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Application.EnableEvents = True
-                    
+
+    Worksheets("平时成绩表").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("D6").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR('0-教学过程登记表（填写+打印)'!RC=INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""已交未批改"",'0-教学过程登记表（填写+打印)'!C46,0)),ISNUMBER(MATCH('0-教学过程登记表（填写+打印)'!RC,'0-教学过程登记表（填写+打印)'!R18C48:R23C48,0)),'0-教学过程登记表（填写+打印)'!RC=""X""),'0-教学过程登记表（填写+打印)'!RC,IF(ISNA(MATCH('0-教学过程登记表（填写+打印)'!RC,'0-教学过程登记表（填写+打印)'!R6C48:R23C48,0)),0,INDEX('0-教学过程登记表（填写+打印)'!R6C49:R23C49,MATCH('0-教学过程登记表（填写+打印)'!RC,'0" & _
+        "-教学过程登记表（填写+打印)'!R6C48:R23C48,0))))" & _
+        ""
+    Selection.AutoFill Destination:=Range("D6:U185"), Type:=xlFillDefault
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     'Call 设置表格主题
     'Call 打开文档
     'Call 重新设置公式按钮
@@ -2585,7 +2595,7 @@ Sub 平时成绩表公式()
     On Error Resume Next
     Worksheets("平时成绩表").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-   
+
     Range("B6").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(ISNA(MATCH(RC1,'0-教学过程登记表（填写+打印)'!C1,0)),"""",INDEX('0-教学过程登记表（填写+打印)'!C,MATCH(RC1,'0-教学过程登记表（填写+打印)'!C1,0)))"
@@ -2594,8 +2604,8 @@ Sub 平时成绩表公式()
         "=IF(ISNA(MATCH(RC1,'0-教学过程登记表（填写+打印)'!C1,0)),"""",INDEX('0-教学过程登记表（填写+打印)'!C,MATCH(RC1,'0-教学过程登记表（填写+打印)'!C1,0)))"
     Range("D6").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(OR('0-教学过程登记表（填写+打印)'!RC=INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""已交未批改"",'0-教学过程登记表（填写+打印)'!C46,0)),ISNUMBER(MATCH('0-教学过程登记表（填写+打印)'!RC,'0-教学过程登记表（填写+打印)'!R18C48:R20C48,0)),'0-教学过程登记表（填写+打印)'!RC=""X""),'0-教学过程登记表（填写+打印)'!RC,IF(ISNA(MATCH('0-教学过程登记表（填写+打印)'!RC,'0-教学过程登记表（填写+打印)'!R6C48:R23C48,0)),0,INDEX('0-教学过程登记表（填写+打印)'!R6C49:R" & _
-        "23C49,MATCH('0-教学过程登记表（填写+打印)'!RC,'0-教学过程登记表（填写+打印)'!R6C48:R23C48,0))))" & _
+        "=IF(OR('0-教学过程登记表（填写+打印)'!RC=INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""已交未批改"",'0-教学过程登记表（填写+打印)'!C46,0)),ISNUMBER(MATCH('0-教学过程登记表（填写+打印)'!RC,'0-教学过程登记表（填写+打印)'!R18C48:R23C48,0)),'0-教学过程登记表（填写+打印)'!RC=""X""),'0-教学过程登记表（填写+打印)'!RC,IF(ISNA(MATCH('0-教学过程登记表（填写+打印)'!RC,'0-教学过程登记表（填写+打印)'!R6C48:R23C48,0)),0,INDEX('0-教学过程登记表（填写+打印)'!R6C49:R23C49,MATCH('0-教学过程登记表（填写+打印)'!RC,'0" & _
+        "-教学过程登记表（填写+打印)'!R6C48:R23C48,0))))" & _
         ""
     Range("D6").Select
     Selection.AutoFill Destination:=Range("D6:U6"), Type:=xlFillDefault
@@ -5271,4 +5281,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.35
+'[版本号]V5.05.36
