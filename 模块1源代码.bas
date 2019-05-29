@@ -379,6 +379,7 @@ Sub 更新工作表代码()
 Dim FileList() As String
 Dim SheetList() As String
 Dim VBSheetName As String
+Dim Status As String
 Set vbPro = ActiveWorkbook.VBProject
     j = 1
     With vbPro
@@ -388,7 +389,10 @@ Set vbPro = ActiveWorkbook.VBProject
                 .VBComponents(i).CodeModule.DeleteLines 1, LCount
                 .VBComponents.Remove .VBComponents(i)
                 If (CodeFileName(j, Name) = "更新") Then
-                    Call ImportCode(ThisWorkbook.Name, CodeFileName(j, Release), CodeFileName(j, Name))
+                    Status = DownFile(ThisWorkbook.Path, CodeFileName(j, Release))
+                    If Status = True And Dir(ThisWorkbook.Path & "\" & CodeFileName(j, Release)) <> "" Then
+                        Call ImportCode(ThisWorkbook.Name, CodeFileName(j, Release), CodeFileName(j, Name))
+                    End If
                 End If
                 j = j + 1
             End If
@@ -485,14 +489,7 @@ Sub 远程更新代码()
                         Exit For
                     End If
                 Next Vbc
-                Status = DownFile(ThisWorkbook.Path, CodeFileName(1, Release))
-                If Status = False Or Dir(ThisWorkbook.Path & "\" & CodeFileName(1, Release)) = "" Then
-                    GoTo ErrorSub
-                End If
-                Status = DownFile(ThisWorkbook.Path, CodeFileName(2, Release))
-                If Status = False Or Dir(ThisWorkbook.Path & "\" & CodeFileName(2, Release)) = "" Then
-                    GoTo ErrorSub
-                End If
+
                 Call 更新工作表代码
                 Range("H1").Select
                 ActiveCell.FormulaR1C1 = _
@@ -5426,4 +5423,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.40
+'[版本号]V5.05.39
