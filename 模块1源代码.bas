@@ -12,17 +12,12 @@ Attribute VB_Name = "模块1"
     Public Const CVersion = 3
     Public Const CRiviseDate = 4
     Public Const CUpdateInfo = 5
-    Public Const Status As Integer = 0
-    Public Const MName As Integer = 1
-    Public Const Backup As Integer = 2
-    Public Const Release As Integer = 3
     Public School As String
     Public MajorCount As Integer
     Public MajorList(4) As String
     Public ModuleLastRivise() As String
     Public NoMsgBox As Boolean
     Public isUpdate As Boolean
-    Public CodeFileName(0 To 3, 0 To 3) As String
 ''专业及修订
 Sub 修订公式()
     On Error Resume Next
@@ -144,40 +139,12 @@ Sub 工作表加密()
         Worksheets(sht.Name).Visible = temp
     Next
 End Sub
-Sub 设置备份文件信息()
-Dim BackupFilePath As String
-Dim ReleaseFile As String
-Dim RiviseDate As String
-    Worksheets("专业矩阵状态").Visible = True
-    Worksheets("专业矩阵状态").Activate
-    BackupFilePath = Range("H7").Value
-    ReleaseFile = "模块1源代码.bas"
-    RiviseDate = Format(Now, "yyyy-mm-dd")
-    CodeFileName(0, Status) = "更新"
-    CodeFileName(0, MName) = "模块1"
-    CodeFileName(0, Backup) = BackupFilePath & "\模块1源代码-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".bas"
-    CodeFileName(0, Release) = ReleaseFile
-    
-    CodeFileName(1, Status) = "更新"
-    CodeFileName(1, MName) = "Sheet13"
-    CodeFileName(1, Backup) = BackupFilePath & "\Sheet13-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
-    CodeFileName(1, Release) = "Sheet13.cls"
-    
-    CodeFileName(2, Status) = "清除"
-    CodeFileName(2, MName) = "Sheet20"
-    CodeFileName(2, Backup) = BackupFilePath & "\Sheet20-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
-    CodeFileName(2, Release) = "Sheet20.cls"
-    
-    CodeFileName(3, Status) = "清除"
-    CodeFileName(3, MName) = "Sheet3"
-    CodeFileName(3, Backup) = BackupFilePath & "\Sheet20-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
-    CodeFileName(3, Release) = "Sheet20.cls"
-End Sub
 Sub 生成版本号()
     On Error Resume Next
     Dim MainVer As Integer
     Dim SubVer As Integer
     Dim RiviseVer As Integer
+    Dim CodeFileName(3, 3) As String
     Dim ModuleFileName As String
     Dim Version As String
     Dim RiviseDate As String
@@ -193,7 +160,9 @@ Sub 生成版本号()
     Dim n As Integer
     Dim BatFile As String
     Dim TempStr As String
-
+    Const MName As Integer = 1
+    Const Backup As Integer = 2
+    Const Release As Integer = 3
     BatFile = "发布代码.bat"
     Commit = Format(Now, "yyyy-mm-dd hh:mm:ss  Commit")
     Worksheets("专业矩阵状态").Visible = True
@@ -202,9 +171,9 @@ Sub 生成版本号()
     MainVer = Range("H3").Value
     SubVer = Range("H4").Value
     RiviseVer = Range("H5").Value
-    ReleaseFile = "模块1源代码.bas"
-    BackupFilePath = Range("H7").Value
     ReleaseFilePath = Range("H6").Value
+    BackupFilePath = Range("H7").Value
+    ReleaseFile = "模块1源代码.bas"
     BatFile = "发布代码.bat"
     If (RiviseVer < 40) Then
         RiviseVer = RiviseVer + 1
@@ -221,6 +190,39 @@ Sub 生成版本号()
     End If
     Version = "V" & MainVer & "." & Format(SubVer, "00") & "." & Format(RiviseVer, "00")
     RiviseDate = Format(Now, "yyyy-mm-dd")
+    Commit = Format(Now, "yyyy-mm-dd hh:mm:ss") & "Commit"
+    
+    CodeFileName(0, MName) = "模块1"
+    CodeFileName(0, Backup) = BackupFilePath & "\模块1源代码-" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".bas"
+    CodeFileName(0, Release) = ReleaseFilePath & "\" & ReleaseFile
+    
+    CodeFileName(1, MName) = "Sheet13"
+    CodeFileName(1, Backup) = BackupFilePath & "\Sheet13" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(1, Release) = ReleaseFilePath & "\Sheet13.cls"
+    
+    CodeFileName(2, MName) = "Sheet20"
+    CodeFileName(2, Backup) = BackupFilePath & "\Sheet20" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(2, Release) = ReleaseFilePath & "Sheet20.cls"
+    
+    CodeFileName(3, MName) = "ThisWorkbook"
+    CodeFileName(3, Backup) = BackupFilePath & "\ThisWorkbook" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(3, Release) = ReleaseFilePath & "\ThisWorkbook.cls"
+    
+    For i = 0 To 3
+        If Dir(BackupFilePath & "\") = "" Then
+            MkDir BackupFilePath
+        End If
+        If Dir(ReleaseFilePath & "\") = "" Then
+            MkDir ReleaseFilePath
+        End If
+        If Dir(CodeFileName(i, Backup)) <> "" Then
+            Kill CodeFileName(i, Backup)
+        End If
+        If Dir(CodeFileName(i, Release)) <> "" Then
+            Kill CodeFileName(i, Release)
+        End If
+    Next i
+    
     ModuleCount = 0
     For Each Vbc In ThisWorkbook.VBProject.VBComponents
         If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
@@ -231,7 +233,6 @@ Sub 生成版本号()
         End If
     Next Vbc
     If ModuleCount = 1 Then
-    
         Range("H1").Select
         ActiveCell.FormulaR1C1 = _
             "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
@@ -239,29 +240,12 @@ Sub 生成版本号()
         Range("H3").Value = MainVer
         Range("H4").Value = SubVer
         Range("H5").Value = RiviseVer
-        Call 设置备份文件信息
-        
         For i = 0 To 3
-            If Dir(BackupFilePath & "\") = "" Then
-                MkDir BackupFilePath
-            End If
-            If Dir(ReleaseFilePath & "\") = "" Then
-                MkDir ReleaseFilePath
-            End If
-            If Dir(CodeFileName(i, Backup)) <> "" Then
-                Kill CodeFileName(i, Backup)
-            End If
-            If Dir(CodeFileName(i, Release)) <> "" Then
-                Kill CodeFileName(i, Release)
-            End If
-            If (CodeFileName(i, Status) = "更新") Then
-                Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (CodeFileName(i, Backup))
-                Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (ReleaseFilePath & "\" & CodeFileName(i, Release))
-            End If
+            Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (CodeFileName(i, Backup))
+            Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (CodeFileName(i, Release))
         Next i
-        
         Call WriteLastLine(CodeFileName(0, Backup), "'[版本号]" & Range("H1").Value)
-        Call WriteLastLine(ReleaseFilePath & "\" & CodeFileName(0, Release), "'[版本号]" & Range("H1").Value)
+        Call WriteLastLine(CodeFileName(0, Release), "'[版本号]" & Range("H1").Value)
         
         Call 生成Readme(ReleaseFilePath, "Readme.txt", BackupFilePath, "Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
         '生成Git发布批处理文件
@@ -336,7 +320,6 @@ Sub ImportCode(Workbook As String, CodeFileName As String, wbSheetName As String
     Workbooks(ThisWorkBookName).Activate
     Dim vbPro
     Dim WorkBookName As String
-    Dim LineStart As Integer
     WorkBookName = ActiveWorkbook.Name
     Set vbPro = ActiveWorkbook.VBProject
     ModuleCount = 0
@@ -346,23 +329,17 @@ Sub ImportCode(Workbook As String, CodeFileName As String, wbSheetName As String
                 ModuleCount = ModuleCount + 1
             End If
             If Workbook <> ThisWorkbook.Name And .VBComponents(i).Name = wbSheetName Then
-                Set fso = CreateObject("scripting.filesystemobject")
+                 Set fso = CreateObject("scripting.filesystemobject")
                 Set Txtfile = fso.OpenTextFile(CodeFileName, 1)
                 Str = Txtfile.ReadAll
                 Txtfile.Close
                 StrTxt = Split(Str, vbLf)
                 LineCount = UBound(StrTxt)
-                j = LineCount
-                While (StrTxt(j) = "")
+                While (StrTxt(i) = "")
                     LineCount = LineCount - 1
-                    j = j - 1
-                Wend
-                LineStart = 1
-                While (InStr(1, StrTxt(LineStart), "Private Sub") <> 1)
-                    LineStart = LineStart + 1
                 Wend
                 CodeTXT = ""
-                For j = LineStart To LineCount
+                For j = 9 To LineCount
                     CodeTXT = CodeTXT & StrTxt(j) & vbLf
                 Next j
                 .VBComponents(i).CodeModule.AddFromString CodeTXT
@@ -376,29 +353,22 @@ Sub ImportCode(Workbook As String, CodeFileName As String, wbSheetName As String
     End With
 End Sub
 Sub 更新工作表代码()
-Dim FileList() As String
-Dim SheetList() As String
-Dim VBSheetName As String
-Dim Status As String
+
 Set vbPro = ActiveWorkbook.VBProject
-    j = 1
-    With vbPro
-        For i = .VBComponents.Count To 1 Step -1
-            LCount = .VBComponents(i).CodeModule.CountOfLines
-            If Mid(.VBComponents(i).Name, 1, 5) = CodeFileName(j, Name) Then
-                .VBComponents(i).CodeModule.DeleteLines 1, LCount
-                .VBComponents.Remove .VBComponents(i)
-                If (CodeFileName(j, Name) = "更新") Then
-                    Status = DownFile(ThisWorkbook.Path, CodeFileName(j, Release))
-                    If Status = True And Dir(ThisWorkbook.Path & "\" & CodeFileName(j, Release)) <> "" Then
-                        Call ImportCode(ThisWorkbook.Name, CodeFileName(j, Release), CodeFileName(j, Name))
-                    End If
-                End If
-                j = j + 1
-            End If
-        Next i
-    End With
+                With vbPro
+                    For i = .VBComponents.Count To 1 Step -1
+                        LCount = .VBComponents(i).CodeModule.CountOfLines
+                        .VBComponents(i).CodeModule.DeleteLines 1, LCount
+                        If (.VBComponents(i).Type = vbext_ct_StdModule) Then
+                            .VBComponents.Remove .VBComponents(i)
+                        End If
+                    Next i
+                End With
+                For i = 1 To FileCount
+                    Call ImportCode(ThisWorkBookName, FileList(i), SheetList(i))
+                Next i
 End Sub
+
 Sub 远程更新代码()
     On Error Resume Next
     Dim ModuleCount As Integer
@@ -426,8 +396,7 @@ Sub 远程更新代码()
     isUpdate = False
     Application.ScreenUpdating = False
     Call 修订专业矩阵状态
-    Call 设置备份文件信息
-    Application.ScreenUpdating = False
+    Application.ScreenUpdating = True
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -489,8 +458,6 @@ Sub 远程更新代码()
                         Exit For
                     End If
                 Next Vbc
-
-                Call 更新工作表代码
                 Range("H1").Select
                 ActiveCell.FormulaR1C1 = _
                     "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
