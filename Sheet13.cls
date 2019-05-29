@@ -39,15 +39,4 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     End If
     Application.EnableEvents = True
 End Sub
-
-Private Sub Worksheet_SelectionChange(ByVal Target As Range)
-    If Not Application.Intersect(Target, Range("A1:AG200")) Is Nothing Then
-        Application.CellDragAndDrop = False
-    Else
-        Application.CellDragAndDrop = True
-    End If
-End Sub
-Private Sub Worksheet_Deactivate()
-    Application.CellDragAndDrop = True
-End Sub
-'修订日期：2019年5月6日
+'修订日期：2019年5月28日
