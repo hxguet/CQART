@@ -202,10 +202,9 @@ Sub 生成版本号()
     MainVer = Range("H3").Value
     SubVer = Range("H4").Value
     RiviseVer = Range("H5").Value
-    ReleaseFilePath = Range("H6").Value
-    BackupFilePath = Range("H7").Value
-    
     ReleaseFile = "模块1源代码.bas"
+    BackupFilePath = Range("H7").Value
+    ReleaseFilePath = Range("H6").Value
     BatFile = "发布代码.bat"
     If (RiviseVer < 40) Then
         RiviseVer = RiviseVer + 1
@@ -380,18 +379,22 @@ Sub 更新工作表代码()
 Dim FileList() As String
 Dim SheetList() As String
 Dim VBSheetName As String
+Dim Status As String
 Set vbPro = ActiveWorkbook.VBProject
     j = 1
     With vbPro
         For i = .VBComponents.Count To 1 Step -1
             LCount = .VBComponents(i).CodeModule.CountOfLines
-            If .VBComponents(i).Name = CodeFileName(j, Name) Then
+            If Mid(.VBComponents(i).Name, 1, 5) = CodeFileName(j, Name) Then
                 .VBComponents(i).CodeModule.DeleteLines 1, LCount
                 .VBComponents.Remove .VBComponents(i)
                 If (CodeFileName(j, Name) = "更新") Then
-                    Call ImportCode(ThisWorkbook.Name, CodeFileName(j, Release), CodeFileName(j, Name))
+                    Status = DownFile(ThisWorkbook.Path, CodeFileName(j, Release))
+                    If Status = True And Dir(ThisWorkbook.Path & "\" & CodeFileName(j, Release)) <> "" Then
+                        Call ImportCode(ThisWorkbook.Name, CodeFileName(j, Release), CodeFileName(j, Name))
+                        j = j + 1
+                    End If
                 End If
-                j = j + 1
             End If
         Next i
     End With
@@ -486,14 +489,7 @@ Sub 远程更新代码()
                         Exit For
                     End If
                 Next Vbc
-                Status = DownFile(ThisWorkbook.Path, CodeFileName(1, Release))
-                If Status = False Or Dir(ThisWorkbook.Path & "\" & CodeFileName(1, Release)) = "" Then
-                    GoTo ErrorSub
-                End If
-                Status = DownFile(ThisWorkbook.Path, CodeFileName(2, Release))
-                If Status = False Or Dir(ThisWorkbook.Path & "\" & CodeFileName(2, Release)) = "" Then
-                    GoTo ErrorSub
-                End If
+
                 Call 更新工作表代码
                 Range("H1").Select
                 ActiveCell.FormulaR1C1 = _
