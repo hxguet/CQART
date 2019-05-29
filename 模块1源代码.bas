@@ -466,6 +466,7 @@ Sub 远程更新代码()
         If DownComplete <> "0" Then
             Call MsgInfo(NoMsgBox, "版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
         Else
+            Call 更新工作表代码
             ModuleName = ModuleLastRivise(1, CModuleName)
             ModuleFile = ModuleLastRivise(1, CFileName)
             LastVersion = ModuleLastRivise(1, CVersion)
@@ -489,8 +490,7 @@ Sub 远程更新代码()
                         Exit For
                     End If
                 Next Vbc
-
-                Call 更新工作表代码
+                
                 Range("H1").Select
                 ActiveCell.FormulaR1C1 = _
                     "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
