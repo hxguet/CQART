@@ -144,6 +144,7 @@ Sub 生成版本号()
     Dim MainVer As Integer
     Dim SubVer As Integer
     Dim RiviseVer As Integer
+    Dim CodeFileName(3, 3) As String
     Dim ModuleFileName As String
     Dim Version As String
     Dim RiviseDate As String
@@ -159,6 +160,9 @@ Sub 生成版本号()
     Dim n As Integer
     Dim BatFile As String
     Dim TempStr As String
+    Const MName As Integer = 1
+    Const Backup As Integer = 2
+    Const Release As Integer = 3
     BatFile = "发布代码.bat"
     Commit = Format(Now, "yyyy-mm-dd hh:mm:ss  Commit")
     Worksheets("专业矩阵状态").Visible = True
@@ -187,13 +191,38 @@ Sub 生成版本号()
     Version = "V" & MainVer & "." & Format(SubVer, "00") & "." & Format(RiviseVer, "00")
     RiviseDate = Format(Now, "yyyy-mm-dd")
     Commit = Format(Now, "yyyy-mm-dd hh:mm:ss") & "Commit"
-    ModuleFileName = BackupFilePath & "\模块1源代码-" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".bas"
-    If Dir(ModuleFileName) <> "" Then
-        Kill ModuleFileName
-    End If
-    If Dir(ReleaseFilePath & "\") = "" Then
-        MkDir ReleaseFilePath
-    End If
+    
+    CodeFileName(0, MName) = "模块1"
+    CodeFileName(0, Backup) = BackupFilePath & "\模块1源代码-" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".bas"
+    CodeFileName(0, Release) = ReleaseFilePath & "\" & ReleaseFile
+    
+    CodeFileName(1, MName) = "Sheet13"
+    CodeFileName(1, Backup) = BackupFilePath & "\Sheet13" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(1, Release) = ReleaseFilePath & "\Sheet13.cls"
+    
+    CodeFileName(2, MName) = "Sheet20"
+    CodeFileName(2, Backup) = BackupFilePath & "\Sheet20" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(2, Release) = ReleaseFilePath & "Sheet20.cls"
+    
+    CodeFileName(3, MName) = "ThisWorkbook"
+    CodeFileName(3, Backup) = BackupFilePath & "\ThisWorkbook" & Version & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(3, Release) = ReleaseFilePath & "\ThisWorkbook.cls"
+    
+    For i = 0 To 3
+        If Dir(BackupFilePath & "\") = "" Then
+            MkDir BackupFilePath
+        End If
+        If Dir(ReleaseFilePath & "\") = "" Then
+            MkDir ReleaseFilePath
+        End If
+        If Dir(CodeFileName(i, Backup)) <> "" Then
+            Kill CodeFileName(i, Backup)
+        End If
+        If Dir(CodeFileName(i, Release)) <> "" Then
+            Kill CodeFileName(i, Release)
+        End If
+    Next i
+    
     ModuleCount = 0
     For Each Vbc In ThisWorkbook.VBProject.VBComponents
         If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
@@ -204,9 +233,6 @@ Sub 生成版本号()
         End If
     Next Vbc
     If ModuleCount = 1 Then
-        If Dir(ModuleFileName) <> "" Then
-            Kill ModuleFileName
-        End If
         Range("H1").Select
         ActiveCell.FormulaR1C1 = _
             "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
@@ -214,13 +240,13 @@ Sub 生成版本号()
         Range("H3").Value = MainVer
         Range("H4").Value = SubVer
         Range("H5").Value = RiviseVer
-        Application.VBE.ActiveVBProject.VBComponents("模块1").Export (ModuleFileName)
-        Call WriteLastLine(ModuleFileName, "'[版本号]" & Range("H1").Value)
-        If Dir(ReleaseFilePath & "\" & ReleaseFile) <> "" Then
-            Kill ReleaseFilePath & "\" & ReleaseFile
-        End If
-        Application.VBE.ActiveVBProject.VBComponents("模块1").Export (ReleaseFilePath & "\" & ReleaseFile)
-        Call WriteLastLine(ReleaseFilePath & "\" & ReleaseFile, "'[版本号]" & Range("H1").Value)
+        For i = 0 To 3
+            Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (CodeFileName(i, Backup))
+            Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (CodeFileName(i, Release))
+        Next i
+        Call WriteLastLine(CodeFileName(0, Backup), "'[版本号]" & Range("H1").Value)
+        Call WriteLastLine(CodeFileName(0, Release), "'[版本号]" & Range("H1").Value)
+        
         Call 生成Readme(ReleaseFilePath, "Readme.txt", BackupFilePath, "Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
         '生成Git发布批处理文件
         Set fso = CreateObject("Scripting.FileSystemObject")
@@ -278,6 +304,71 @@ Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFil
     Set fso = Nothing
     Set MyTxtObj = Nothing
 End Sub
+Sub ImportCode(Workbook As String, CodeFileName As String, wbSheetName As String)
+    Dim fso As Object
+    Dim Txtfile As Object
+    Dim Str$
+    Dim StrTxt
+    Dim i, j As Integer
+    Dim LineCount As Integer
+    Dim CodeTXT$
+    Dim CodeLineCount As Integer
+    Dim ModuleCount As Integer
+    On Error Resume Next
+    Dim xlsApp As New Excel.Application '需要在工程里引用EXCEL对象哦
+    Dim xlsWorkBook As Excel.Workbook
+    Workbooks(ThisWorkBookName).Activate
+    Dim vbPro
+    Dim WorkBookName As String
+    WorkBookName = ActiveWorkbook.Name
+    Set vbPro = ActiveWorkbook.VBProject
+    ModuleCount = 0
+    With vbPro
+         For i = .VBComponents.Count To 1 Step -1
+            If (Mid(.VBComponents(i).Name, 1, 2) = "模块") Then
+                ModuleCount = ModuleCount + 1
+            End If
+            If Workbook <> ThisWorkbook.Name And .VBComponents(i).Name = wbSheetName Then
+                 Set fso = CreateObject("scripting.filesystemobject")
+                Set Txtfile = fso.OpenTextFile(CodeFileName, 1)
+                Str = Txtfile.ReadAll
+                Txtfile.Close
+                StrTxt = Split(Str, vbLf)
+                LineCount = UBound(StrTxt)
+                While (StrTxt(i) = "")
+                    LineCount = LineCount - 1
+                Wend
+                CodeTXT = ""
+                For j = 9 To LineCount
+                    CodeTXT = CodeTXT & StrTxt(j) & vbLf
+                Next j
+                .VBComponents(i).CodeModule.AddFromString CodeTXT
+            End If
+        Next i
+        If ModuleCount = 0 Then
+            If Dir(CodeFileName) <> "" Then
+                ActiveWorkbook.VBProject.VBComponents.Import CodeFileName
+            End If
+        End If
+    End With
+End Sub
+Sub 更新工作表代码()
+
+Set vbPro = ActiveWorkbook.VBProject
+                With vbPro
+                    For i = .VBComponents.Count To 1 Step -1
+                        LCount = .VBComponents(i).CodeModule.CountOfLines
+                        .VBComponents(i).CodeModule.DeleteLines 1, LCount
+                        If (.VBComponents(i).Type = vbext_ct_StdModule) Then
+                            .VBComponents.Remove .VBComponents(i)
+                        End If
+                    Next i
+                End With
+                For i = 1 To FileCount
+                    Call ImportCode(ThisWorkBookName, FileList(i), SheetList(i))
+                Next i
+End Sub
+
 Sub 远程更新代码()
     On Error Resume Next
     Dim ModuleCount As Integer
@@ -4652,11 +4743,11 @@ Public Sub SetColCenter(SetMultiCol As String)
 End Sub
 Sub CreateNewWorkbook(FolderName As String, FileName As String)
     Dim Wk As Workbook
-    Dim WorkbookName As String
+    Dim WorkBookName As String
     On Error Resume Next
-    WorkbookName = FileName
+    WorkBookName = FileName
     Application.DisplayAlerts = False
-    Workbooks(WorkbookName).Activate
+    Workbooks(WorkBookName).Activate
     If Err.Number <> 0 Then
       If FileExists(FolderName & "/" & FileName) Then
         Workbooks.Open FolderName & "/" & FileName
@@ -4957,12 +5048,12 @@ Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As Strin
     End Select
 End Sub
 Sub 非认证()
-    Dim WorkbookName As String
+    Dim WorkBookName As String
       '不需要进行达成度评价的课程，只需要填写教学过程登记表和2-课程目标和综合分析（填写）表中的课号，评价环节比例等信息，打印教学过程登记表和质量分析报告。
         Application.ScreenUpdating = False
         Call 设置表格主题
-        WorkbookName = ThisWorkbook.Name
-        Workbooks(WorkbookName).Activate
+        WorkBookName = ThisWorkbook.Name
+        Workbooks(WorkBookName).Activate
         Worksheets("2-课程目标和综合分析（填写）").Activate
         '隐藏"2-课程目标和综合分析（填写）"达成度评价部分表格
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -5002,7 +5093,7 @@ Sub 非认证()
         '1-试卷成绩登记表（填写）工作表中的其中成绩，平时成绩，实验成绩，课堂测验，课程报告列隐藏
         '1-试卷成绩登记表（填写）工作表的考核成绩列允许编辑，但不删除公式
         
-        Workbooks(WorkbookName).Activate
+        Workbooks(WorkBookName).Activate
         Worksheets("1-试卷成绩登记表（填写）").Activate
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
 
@@ -5064,7 +5155,7 @@ Sub 非认证()
 End Sub
 
 Sub 认证未提交成绩()
-        Dim WorkbookName As String
+        Dim WorkBookName As String
         Dim Msg As String
         Dim SchoolName As String
         Application.ScreenUpdating = False
@@ -5166,7 +5257,7 @@ Sub 认证未提交成绩()
 End Sub
 
 Sub 认证已提交成绩()
-    Dim WorkbookName As String
+    Dim WorkBookName As String
     Dim Msg As String
     Dim SchoolName As String
         Application.ScreenUpdating = False
@@ -5299,4 +5390,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.36
+'[版本号]V5.05.39
