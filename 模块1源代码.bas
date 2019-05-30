@@ -160,17 +160,17 @@ Dim RiviseDate As String
     
     CodeFileName(1, CStatus) = "更新"
     CodeFileName(1, CMName) = "Sheet13"
-    CodeFileName(1, CBackup) = BackupFilePath & "\Sheet13-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(1, CBackup) = BackupFilePath & "\Sheet13.cls"
     CodeFileName(1, CRelease) = "Sheet13.cls"
     
     CodeFileName(2, CStatus) = "清除"
     CodeFileName(2, CCMName) = "Sheet20"
-    CodeFileName(2, CBackup) = BackupFilePath & "\Sheet20-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(2, CBackup) = BackupFilePath & "\Sheet20.cls"
     CodeFileName(2, CRelease) = "Sheet20.cls"
     
     CodeFileName(3, CStatus) = "清除"
     CodeFileName(3, CMName) = "Sheet3"
-    CodeFileName(3, CBackup) = BackupFilePath & "\Sheet3-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(3, CBackup) = BackupFilePath & "\Sheet3.cls"
     CodeFileName(3, CRelease) = "Sheet3.cls"
 End Sub
 Sub 生成版本号()
@@ -260,7 +260,7 @@ Sub 生成版本号()
             End If
             If (CodeFileName(i, CStatus) = "更新") Then
                 Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, CMName)).Export (CodeFileName(i, CBackup))
-                If TestCode = "发布版本" Then
+                If TestCode = "发布版本" And CodeFileName(i, CStatus) <> "清除" Then
                     Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, CMName)).Export (ReleaseFilePath & "\" & CodeFileName(i, CRelease))
                 End If
             End If
@@ -5458,5 +5458,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-
 '[版本号]V5.05.40
