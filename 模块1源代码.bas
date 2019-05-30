@@ -195,24 +195,26 @@ Sub 生成版本号()
     Dim TempStr As String
 
     BatFile = "发布代码.bat"
-    Commit = Format(Now, "yyyy-mm-dd hh:mm:ss") & "   Commit"
+
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     MainVer = Range("H3").Value
     SubVer = Range("H4").Value
     RiviseVer = Range("H5").Value
-    ReleaseFile = "模块1源代码.bas"
-    BackupFilePath = Range("H7").Value
     ReleaseFilePath = Range("H6").Value
+    BackupFilePath = Range("H7").Value
+    ReleaseFile = "模块1源代码.bas"
     BatFile = "发布代码.bat"
     If (RiviseVer < 40) Then
         RiviseVer = RiviseVer + 1
     Else
+        RiviseVer = 1
         Range("H5").Value = 1
         If (SubVer < 20) Then
             SubVer = SubVer + 1
         Else
+            SubVer = 1
             Range("H4").Value = 1
             If (MainVer < 10) Then
                 MainVer = MainVer + 1
@@ -221,6 +223,7 @@ Sub 生成版本号()
     End If
     Version = "V" & MainVer & "." & Format(SubVer, "00") & "." & Format(RiviseVer, "00")
     RiviseDate = Format(Now, "yyyy-mm-dd")
+    Commit = Format(Now, "yyyy-mm-dd hh:mm:ss") & "  Commit"
     ModuleCount = 0
     For Each Vbc In ThisWorkbook.VBProject.VBComponents
         If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
@@ -231,7 +234,6 @@ Sub 生成版本号()
         End If
     Next Vbc
     If ModuleCount = 1 Then
-    
         Range("H1").Select
         ActiveCell.FormulaR1C1 = _
             "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
@@ -240,7 +242,6 @@ Sub 生成版本号()
         Range("H4").Value = SubVer
         Range("H5").Value = RiviseVer
         Call 设置备份文件信息
-        
         For i = 0 To 3
             If Dir(BackupFilePath & "\") = "" Then
                 MkDir BackupFilePath
@@ -5423,4 +5424,7 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.06.40
+'[版本号]V5.05.40
+
+
+'[版本号]V5.05.39
