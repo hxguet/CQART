@@ -193,9 +193,9 @@ Sub 生成版本号()
     Dim n As Integer
     Dim BatFile As String
     Dim TempStr As String
-
+    Dim TestCode As String
+    Call 修订专业矩阵状态
     BatFile = "发布代码.bat"
-
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -206,20 +206,23 @@ Sub 生成版本号()
     BackupFilePath = Range("H7").Value
     ReleaseFile = "模块1源代码.bas"
     BatFile = "发布代码.bat"
-    If (RiviseVer < 40) Then
-        RiviseVer = RiviseVer + 1
-    Else
-        RiviseVer = 1
-        Range("H5").Value = 1
-        If (SubVer < 20) Then
-            SubVer = SubVer + 1
+    TestCode = Range("H9").Value
+    If (TestCode = "发布版本") Then
+        If (RiviseVer < 40) Then
+            RiviseVer = RiviseVer + 1
         Else
-            SubVer = 1
-            Range("H4").Value = 1
-            If (MainVer < 10) Then
-                MainVer = MainVer + 1
-             End If
-       End If
+            RiviseVer = 1
+            Range("H5").Value = 1
+            If (SubVer < 20) Then
+                SubVer = SubVer + 1
+            Else
+                SubVer = 1
+                Range("H4").Value = 1
+                If (MainVer < 10) Then
+                    MainVer = MainVer + 1
+                 End If
+           End If
+        End If
     End If
     Version = "V" & MainVer & "." & Format(SubVer, "00") & "." & Format(RiviseVer, "00")
     RiviseDate = Format(Now, "yyyy-mm-dd")
@@ -257,28 +260,32 @@ Sub 生成版本号()
             End If
             If (CodeFileName(i, Status) = "更新") Then
                 Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (CodeFileName(i, Backup))
-                Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (ReleaseFilePath & "\" & CodeFileName(i, Release))
+                If TestCode = "发布版本" Then
+                    Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (ReleaseFilePath & "\" & CodeFileName(i, Release))
+                End If
             End If
         Next i
-        
-        Call WriteLastLine(CodeFileName(0, Backup), "'[版本号]" & Range("H1").Value)
-        Call WriteLastLine(ReleaseFilePath & "\" & CodeFileName(0, Release), "'[版本号]" & Range("H1").Value)
-        
-        Call 生成Readme(ReleaseFilePath, "Readme.txt", BackupFilePath, "Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
-        '生成Git发布批处理文件
-        Set fso = CreateObject("Scripting.FileSystemObject")
-        Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & BatFile, True, False)
-        MyTxtObj.WriteLine (Mid(ReleaseFilePath, 1, 2))
-        MyTxtObj.WriteLine ("cd " & Mid(ReleaseFilePath, 3, Len(ReleaseFilePath) - 2))
-        MyTxtObj.WriteLine ("git add .")
-        TempStr = "git commit -m """
-        TempStr = TempStr & Commit
-        TempStr = TempStr & """"
-        MyTxtObj.WriteLine (TempStr)
-        MyTxtObj.WriteLine ("git push -u origin master")
-        MyTxtObj.WriteLine ("exit")
-        MyTxtObj.Close
-        Shell (ReleaseFilePath & "\" & BatFile)
+        If TestCode = "发布版本" Then
+            Call WriteLastLine(CodeFileName(0, Backup), "'[版本号]" & Range("H1").Value)
+            Call WriteLastLine(ReleaseFilePath & "\" & CodeFileName(0, Release), "'[版本号]" & Range("H1").Value)
+            
+            Call 生成Readme(ReleaseFilePath, "Readme.txt", BackupFilePath, "Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
+            
+            '生成Git发布批处理文件
+            Set fso = CreateObject("Scripting.FileSystemObject")
+            Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & BatFile, True, False)
+            MyTxtObj.WriteLine (Mid(ReleaseFilePath, 1, 2))
+            MyTxtObj.WriteLine ("cd " & Mid(ReleaseFilePath, 3, Len(ReleaseFilePath) - 2))
+            MyTxtObj.WriteLine ("git add .")
+            TempStr = "git commit -m """
+            TempStr = TempStr & Commit
+            TempStr = TempStr & """"
+            MyTxtObj.WriteLine (TempStr)
+            MyTxtObj.WriteLine ("git push -u origin master")
+            MyTxtObj.WriteLine ("exit")
+            MyTxtObj.Close
+            Shell (ReleaseFilePath & "\" & BatFile)
+        End If
     End If
     Set MyTxtObj = Nothing
     Set fso = Nothing
@@ -966,6 +973,10 @@ Sub 修订专业矩阵状态()
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("A1:I12").Select
+    With Selection.Validation
+        .Delete
+    End With
     Range("H1").Select
     ActiveCell.FormulaR1C1 = _
         "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
@@ -1000,6 +1011,25 @@ Sub 修订专业矩阵状态()
     ActiveSheet.Protection.AllowEditRanges.Add Title:="专业", Range:=Range("B4:C12")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="学院", Range:=Range("B2:D2")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="修复版本号", Range:=Range("H5")
+    ActiveSheet.Protection.AllowEditRanges.Add Title:="代码发布版本", Range:=Range("H9")
+    Range("G9").Select
+    ActiveCell.FormulaR1C1 = "代码发布版本"
+    Range("H9").Select
+    With Selection.Validation
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+        xlBetween, Formula1:="测试版本,发布版本"
+        .IgnoreBlank = True
+        .InCellDropdown = True
+        .InputTitle = ""
+        .ErrorTitle = ""
+        .InputMessage = ""
+        .ErrorMessage = ""
+        .IMEMode = xlIMEModeNoControl
+        .ShowInput = True
+        .ShowError = True
+    End With
+    
     Range("B4:C12,B2:F2").Select
     Range("B2").Activate
     With Selection.Interior
@@ -1017,10 +1047,7 @@ Sub 修订专业矩阵状态()
     Rows("1:12").Select
     Selection.RowHeight = 30
     Call 设置表格线("A2", "H12", 12)
-    Range("A1:I12").Select
-    With Selection.Validation
-        .Delete
-    End With
+
     Range("G6").Select
     ActiveCell.FormulaR1C1 = "代码发布路径"
     Range("G7").Select
@@ -1033,7 +1060,7 @@ Sub 修订专业矩阵状态()
         SkipBlanks:=False, Transpose:=False
     Columns("H:H").Select
     Selection.ColumnWidth = 20
-    Range("G1:G7").Select
+    Range("G1:G12").Select
     With Selection.Font
         .Name = "宋体"
         .Size = 12
