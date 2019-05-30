@@ -1741,10 +1741,6 @@ Public Sub Excel2PDF(WorkSheetName As String, PathName As String, FileName As St
         Worksheets(WorkSheetName).Visible = False
     End If
 End Sub
-    
-    '抽样数量所在单元格
-
-
 Sub 保存文件()
 ' 保存文件 宏
     On Error Resume Next
@@ -1759,6 +1755,9 @@ Sub 保存文件()
     CurrentWorksheet = ActiveSheet.Name
     
     Application.ScreenUpdating = False
+    Call 设置区域颜色("1-试卷成绩登记表（填写）", "E2:M403", xlThemeColorDark1)
+    Call 设置区域颜色("3-毕业要求数据表（填写）", "E7:N18", xlThemeColorDark1)
+
     Worksheets("2-课程目标和综合分析（填写）").Activate
     CourseName = Range("$B$4").Value
     
@@ -5446,8 +5445,18 @@ Dim ImportStatus As Boolean
     End If
     Application.ScreenUpdating = True
 End
-
-'[版本号]V5.05.40
-
+Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
+    Worksheets(SetSheetName).Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range(SetRange).Select
+    With Selection.Interior
+        .Pattern = xlSolid
+        .PatternColorIndex = xlAutomatic
+        .ThemeColor = SetColor
+        .TintAndShade = -0.14996795556505
+        .PatternTintAndShade = 0
+    End With
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+End Sub
 
 '[版本号]V5.05.40
