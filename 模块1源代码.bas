@@ -353,7 +353,7 @@ Sub ImportCode(Workbook As String, CodeFileName As String, wbSheetName As String
             If (Mid(.VBComponents(i).Name, 1, 2) = "模块") Then
                 ModuleCount = ModuleCount + 1
             End If
-            If Workbook <> ThisWorkbook.Name And .VBComponents(i).Name = wbSheetName Then
+            If .VBComponents(i).Name = wbSheetName Then
                 Set fso = CreateObject("scripting.filesystemobject")
                 Set Txtfile = fso.OpenTextFile(CodeFileName, 1)
                 Str = Txtfile.ReadAll
@@ -394,7 +394,7 @@ Set vbPro = ActiveWorkbook.VBProject
         For i = .VBComponents.Count To 1 Step -1
             LCount = .VBComponents(i).CodeModule.CountOfLines
             If .VBComponents(i).Name = CodeFileName(j, CMName) Then
-                .VBComponents(i).CodeModule.DeleteLines 1, LCount
+                '.VBComponents(i).CodeModule.DeleteLines 1, LCount
                 '.VBComponents.Remove .VBComponents(i)
                 If (CodeFileName(j, CStatus) = "更新") Then
                     Status = DownFile(ThisWorkbook.Path, CodeFileName(j, CRelease), True)
@@ -992,7 +992,11 @@ Sub 修订专业矩阵状态()
     ActiveCell.FormulaR1C1 = "副版本号"
     Range("G5").Select
     ActiveCell.FormulaR1C1 = "修复版本号"
-    Range("G1:G5").Select
+    Range("G6").Select
+    ActiveCell.FormulaR1C1 = "代码发布路径"
+    Range("G7").Select
+    ActiveCell.FormulaR1C1 = "代码备份路径"
+    Range("G1:G12").Select
     Selection.Font.Bold = True
     ActiveSheet.Shapes.SelectAll
     Selection.Delete
@@ -1049,17 +1053,6 @@ Sub 修订专业矩阵状态()
     Rows("1:12").Select
     Selection.RowHeight = 30
     Call 设置表格线("A2", "H12", 12)
-
-    Range("G6").Select
-    ActiveCell.FormulaR1C1 = "代码发布路径"
-    Range("G7").Select
-    ActiveCell.FormulaR1C1 = "代码备份路径"
-
-    Range("G5").Select
-    Selection.Copy
-    Range("G6:G7").Select
-    Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, _
-        SkipBlanks:=False, Transpose:=False
     Columns("H:H").Select
     Selection.ColumnWidth = 20
     Range("G1:G12").Select
