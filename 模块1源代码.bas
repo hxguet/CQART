@@ -12,10 +12,10 @@ Attribute VB_Name = "模块1"
     Public Const CVersion = 3
     Public Const CRiviseDate = 4
     Public Const CUpdateInfo = 5
-    Public Const Status As Integer = 0
-    Public Const MName As Integer = 1
-    Public Const Backup As Integer = 2
-    Public Const Release As Integer = 3
+    Public Const CStatus As Integer = 0
+    Public Const CMName As Integer = 1
+    Public Const CBackup As Integer = 2
+    Public Const CRelease As Integer = 3
     Public School As String
     Public MajorCount As Integer
     Public MajorList(4) As String
@@ -153,25 +153,25 @@ Dim RiviseDate As String
     BackupFilePath = Range("H7").Value
     ReleaseFile = "模块1源代码.bas"
     RiviseDate = Format(Now, "yyyy-mm-dd")
-    CodeFileName(0, Status) = "更新"
-    CodeFileName(0, MName) = "模块1"
-    CodeFileName(0, Backup) = BackupFilePath & "\模块1源代码-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".bas"
-    CodeFileName(0, Release) = ReleaseFile
+    CodeFileName(0, CStatus) = "更新"
+    CodeFileName(0, CMName) = "模块1"
+    CodeFileName(0, CBackup) = BackupFilePath & "\模块1源代码-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".bas"
+    CodeFileName(0, CRelease) = ReleaseFile
     
-    CodeFileName(1, Status) = "更新"
-    CodeFileName(1, MName) = "Sheet13"
-    CodeFileName(1, Backup) = BackupFilePath & "\Sheet13-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
-    CodeFileName(1, Release) = "Sheet13.cls"
+    CodeFileName(1, CStatus) = "更新"
+    CodeFileName(1, CMName) = "Sheet13"
+    CodeFileName(1, CBackup) = BackupFilePath & "\Sheet13-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(1, CRelease) = "Sheet13.cls"
     
-    CodeFileName(2, Status) = "清除"
-    CodeFileName(2, MName) = "Sheet20"
-    CodeFileName(2, Backup) = BackupFilePath & "\Sheet20-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
-    CodeFileName(2, Release) = "Sheet20.cls"
+    CodeFileName(2, CStatus) = "清除"
+    CodeFileName(2, CCMName) = "Sheet20"
+    CodeFileName(2, CBackup) = BackupFilePath & "\Sheet20-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(2, CRelease) = "Sheet20.cls"
     
-    CodeFileName(3, Status) = "清除"
-    CodeFileName(3, MName) = "Sheet3"
-    CodeFileName(3, Backup) = BackupFilePath & "\Sheet20-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
-    CodeFileName(3, Release) = "Sheet20.cls"
+    CodeFileName(3, CStatus) = "清除"
+    CodeFileName(3, CMName) = "Sheet3"
+    CodeFileName(3, CBackup) = BackupFilePath & "\Sheet3-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(3, CRelease) = "Sheet3.cls"
 End Sub
 Sub 生成版本号()
     On Error Resume Next
@@ -252,22 +252,22 @@ Sub 生成版本号()
             If Dir(ReleaseFilePath & "\") = "" Then
                 MkDir ReleaseFilePath
             End If
-            If Dir(CodeFileName(i, Backup)) <> "" Then
-                Kill CodeFileName(i, Backup)
+            If Dir(CodeFileName(i, CBackup)) <> "" Then
+                Kill CodeFileName(i, CBackup)
             End If
-            If Dir(CodeFileName(i, Release)) <> "" Then
-                Kill CodeFileName(i, Release)
+            If Dir(CodeFileName(i, CRelease)) <> "" Then
+                Kill CodeFileName(i, CRelease)
             End If
-            If (CodeFileName(i, Status) = "更新") Then
-                Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (CodeFileName(i, Backup))
+            If (CodeFileName(i, CStatus) = "更新") Then
+                Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, CMName)).Export (CodeFileName(i, CBackup))
                 If TestCode = "发布版本" Then
-                    Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, MName)).Export (ReleaseFilePath & "\" & CodeFileName(i, Release))
+                    Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, CMName)).Export (ReleaseFilePath & "\" & CodeFileName(i, CRelease))
                 End If
             End If
         Next i
         If TestCode = "发布版本" Then
-            Call WriteLastLine(CodeFileName(0, Backup), "'[版本号]" & Range("H1").Value)
-            Call WriteLastLine(ReleaseFilePath & "\" & CodeFileName(0, Release), "'[版本号]" & Range("H1").Value)
+            Call WriteLastLine(CodeFileName(0, CBackup), "'[版本号]" & Range("H1").Value)
+            Call WriteLastLine(ReleaseFilePath & "\" & CodeFileName(0, CRelease), "'[版本号]" & Range("H1").Value)
             
             Call 生成Readme(ReleaseFilePath, "Readme.txt", BackupFilePath, "Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
             
@@ -383,7 +383,7 @@ Sub ImportCode(Workbook As String, CodeFileName As String, wbSheetName As String
         End If
     End With
 End Sub
-Sub 更新工作表代码()
+Sub 更新工作表代码(FilePath As String)
 Dim FileList() As String
 Dim SheetList() As String
 Dim VBSheetName As String
@@ -393,13 +393,13 @@ Set vbPro = ActiveWorkbook.VBProject
     With vbPro
         For i = .VBComponents.Count To 1 Step -1
             LCount = .VBComponents(i).CodeModule.CountOfLines
-            If .VBComponents(i).Name = CodeFileName(j, MName) Then
+            If .VBComponents(i).Name = CodeFileName(j, CMName) Then
                 .VBComponents(i).CodeModule.DeleteLines 1, LCount
-                .VBComponents.Remove .VBComponents(i)
-                If (CodeFileName(j, Status) = "更新") Then
-                    Status = DownFile(ThisWorkbook.Path, CodeFileName(j, Release))
-                    If Status = True And Dir(ThisWorkbook.Path & "\" & CodeFileName(j, Release)) <> "" Then
-                        Call ImportCode(ThisWorkbook.Name, CodeFileName(j, Release), CodeFileName(j, MName))
+                '.VBComponents.Remove .VBComponents(i)
+                If (CodeFileName(j, CStatus) = "更新") Then
+                    Status = DownFile(ThisWorkbook.Path, CodeFileName(j, CRelease))
+                    If Status = True And Dir(ThisWorkbook.Path & "\" & CodeFileName(j, CRelease)) <> "" Then
+                        Call ImportCode(ThisWorkbook.Name, FilePath & "\" & CodeFileName(j, CRelease), CodeFileName(j, CMName))
                         j = j + 1
                     End If
                 End If
@@ -474,7 +474,7 @@ Sub 远程更新代码()
         If DownComplete <> "0" Then
             Call MsgInfo(NoMsgBox, "版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
         Else
-            Call 更新工作表代码
+            Call 更新工作表代码(ThisWorkbook.Path)
             ModuleName = ModuleLastRivise(1, CModuleName)
             ModuleFile = ModuleLastRivise(1, CFileName)
             LastVersion = ModuleLastRivise(1, CVersion)
