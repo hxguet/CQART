@@ -394,7 +394,7 @@ Set vbPro = ActiveWorkbook.VBProject
         For i = .VBComponents.Count To 1 Step -1
             LCount = .VBComponents(i).CodeModule.CountOfLines
             If .VBComponents(i).Name = CodeFileName(j, CMName) Then
-                '.VBComponents(i).CodeModule.DeleteLines 1, LCount
+                .VBComponents(i).CodeModule.DeleteLines 1, LCount
                 '.VBComponents.Remove .VBComponents(i)
                 If (CodeFileName(j, CStatus) = "¸üÐÂ") Then
                     Status = DownFile(ThisWorkbook.Path, CodeFileName(j, CRelease), True)
