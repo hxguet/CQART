@@ -195,7 +195,7 @@ Sub 生成版本号()
     Dim TempStr As String
 
     BatFile = "发布代码.bat"
-    Commit = Format(Now, "yyyy-mm-dd hh:mm:ss  Commit")
+    Commit = Format(Now, "yyyy-mm-dd hh:mm:ss") & "   Commit"
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -5423,4 +5423,4 @@ Dim ImportStatus As Boolean
     Application.ScreenUpdating = True
 End
 
-'[版本号]V5.05.40
+'[版本号]V5.06.40
