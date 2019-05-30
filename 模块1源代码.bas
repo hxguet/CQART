@@ -301,7 +301,7 @@ Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFil
     Dim UpdateInfo As String
     Dim Status As String
     On Error Resume Next
-    Status = DownFile(ReleaseFilePath, ReleaseReadmeFile)
+    Status = DownFile(ReleaseFilePath, ReleaseReadmeFile, True)
     If Status = False Then
         Exit Sub
     End If
@@ -397,7 +397,7 @@ Set vbPro = ActiveWorkbook.VBProject
                 .VBComponents(i).CodeModule.DeleteLines 1, LCount
                 '.VBComponents.Remove .VBComponents(i)
                 If (CodeFileName(j, CStatus) = "更新") Then
-                    Status = DownFile(ThisWorkbook.Path, CodeFileName(j, CRelease))
+                    Status = DownFile(ThisWorkbook.Path, CodeFileName(j, CRelease), True)
                     If Status = True And Dir(ThisWorkbook.Path & "\" & CodeFileName(j, CRelease)) <> "" Then
                         Call ImportCode(ThisWorkbook.Name, FilePath & "\" & CodeFileName(j, CRelease), CodeFileName(j, CMName))
                         j = j + 1
@@ -450,7 +450,7 @@ Sub 远程更新代码()
         Kill LastFilePath & "\" & LastReadme
     End If
     Call MsgInfo(NoMsgBox, "正在连接远程服务器，检查代码最新版本！")
-    Status = DownFile(LastFilePath, LastReadme)
+    Status = DownFile(LastFilePath, LastReadme, True)
     If Status = False Or Dir(LastFilePath & "\" & LastReadme) = "" Or GetLastLine(LastFilePath & "\" & LastReadme) = "文件为空" Then
         GoTo ErrorSub
     End If
@@ -461,7 +461,7 @@ Sub 远程更新代码()
      '远程代码版本号比当前代码版本号新
     If CtrResult = "-1" Then
         ModuleFile = ModuleLastRivise(1, CFileName)
-        Status = DownFile(ThisWorkbook.Path, ModuleFile)
+        Status = DownFile(ThisWorkbook.Path, ModuleFile, False)
         If GetLastLine(ThisWorkbook.Path & "\" & ModuleFile) = "文件为空" Then
             DownComplete = "1"
         Else
@@ -654,7 +654,7 @@ Function GetVersionFromLocal(LocalFileName As String)
     Next i
     GetVersionFromFile = LastVersion
 End Function
-Function DownFile(FilePath As String, FileName As String)
+Function DownFile(FilePath As String, FileName As String, isHide As Boolean)
     Dim TempFileName As String
     Dim Result As String
     Dim VersionFilePath As String
@@ -666,9 +666,9 @@ Function DownFile(FilePath As String, FileName As String)
     RemoteFile = "https://raw.githubusercontent.com/hxguet/CQART/master/" & FileName
     TempFileName = ThisWorkbook.Path & "\wget.exe -O " & FilePath & "\" & FileName & " " & RemoteFile
     If (FileName = "Readme.txt") Then
-        Result = ShellAndWait(TempFileName, True)
+        Result = ShellAndWait(TempFileName, isHide)
     Else
-        Result = ShellAndWait(TempFileName, False)
+        Result = ShellAndWait(TempFileName, isHide)
     End If
     If Result <> "" Then
         DownFile = False
