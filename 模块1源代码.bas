@@ -999,6 +999,7 @@ Sub 修订专业矩阵状态()
     End If
     ActiveSheet.Protection.AllowEditRanges.Add Title:="专业", Range:=Range("B4:C12")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="学院", Range:=Range("B2:D2")
+    ActiveSheet.Protection.AllowEditRanges.Add Title:="修复版本号", Range:=Range("H5")
     Range("B4:C12,B2:F2").Select
     Range("B2").Activate
     With Selection.Interior
