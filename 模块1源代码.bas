@@ -386,13 +386,13 @@ Set vbPro = ActiveWorkbook.VBProject
     With vbPro
         For i = .VBComponents.Count To 1 Step -1
             LCount = .VBComponents(i).CodeModule.CountOfLines
-            If .VBComponents(i).Name = CodeFileName(j, Name) Then
+            If .VBComponents(i).Name = CodeFileName(j, MName) Then
                 .VBComponents(i).CodeModule.DeleteLines 1, LCount
                 .VBComponents.Remove .VBComponents(i)
-                If (CodeFileName(j, Name) = "更新") Then
+                If (CodeFileName(j, Status) = "更新") Then
                     Status = DownFile(ThisWorkbook.Path, CodeFileName(j, Release))
                     If Status = True And Dir(ThisWorkbook.Path & "\" & CodeFileName(j, Release)) <> "" Then
-                        Call ImportCode(ThisWorkbook.Name, CodeFileName(j, Release), CodeFileName(j, Name))
+                        Call ImportCode(ThisWorkbook.Name, CodeFileName(j, Release), CodeFileName(j, MName))
                         j = j + 1
                     End If
                 End If
