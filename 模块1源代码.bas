@@ -385,7 +385,7 @@ Set vbPro = ActiveWorkbook.VBProject
     With vbPro
         For i = .VBComponents.Count To 1 Step -1
             LCount = .VBComponents(i).CodeModule.CountOfLines
-            If Mid(.VBComponents(i).Name, 1, 5) = CodeFileName(j, Name) Then
+            If .VBComponents(i).Name = CodeFileName(j, Name) Then
                 .VBComponents(i).CodeModule.DeleteLines 1, LCount
                 .VBComponents.Remove .VBComponents(i)
                 If (CodeFileName(j, Name) = "¸üÐÂ") Then
