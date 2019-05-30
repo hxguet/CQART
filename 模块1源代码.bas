@@ -521,14 +521,16 @@ Sub 远程更新代码()
         End If
         Kill LastFilePath & "\" & LastReadme
     End If
-    If ModuleFile <> "" And Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
-        Open ThisWorkbook.Path & "\" & ModuleFile For Input As #1
-        isError = Err.Description
-        If isError = "文件已打开" Then
-            Close #1
+    For i = 0 To 3
+        If Dir(ThisWorkbook.Path & "\" & CodeFileName(i, CRelease)) <> "" Then
+            Open ThisWorkbook.Path & "\" & CodeFileName(i, CRelease) For Input As #1
+            isError = Err.Description
+            If isError = "文件已打开" Then
+                Close #1
+            End If
+            Kill ThisWorkbook.Path & "\" & CodeFileName(i, CRelease)
         End If
-        Kill ThisWorkbook.Path & "\" & ModuleFile
-    End If
+    Next i
 ErrorSub:
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
