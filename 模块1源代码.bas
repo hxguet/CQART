@@ -83,6 +83,10 @@ Sub 修订公式()
     Worksheets("2-课程目标和综合分析（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Application.EnableEvents = False
+    Range("B22:R22,B23:R23,B27:R27,B28:R28").Select
+    Selection.Locked = False
+    Selection.FormulaHidden = False
+    
     Range("M6").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OR(OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)="""",OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)=0),"""",100)"
@@ -1243,9 +1247,164 @@ Sub 允许事件触发()
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
+Function 提交前检查()
+    Dim CourseName As String
+    Dim Term As String
+    Dim Major As String
+    Dim CourseNum As String
+    Dim ShoolName As String
+    Dim Teacher As String
+    Dim DateCompleted As String
+    Dim CourseTargetCount As Integer
+    Dim RequirementCount As Integer
+    Dim RequirementReachCount As Integer
+    Dim i As Integer
+    Dim LinkCount As Integer
+    Dim ErrorMsg  As String
+    Dim ErrNum As Integer
+    Dim NoError As Boolean
+    Dim ThisFileName As String
+    NoError = True
+    Application.ScreenUpdating = False
+    Worksheets("专业矩阵状态").Visible = True
+    Worksheets("专业矩阵状态").Activate
+    ShoolName = Range("B2").Value
+    ErrNum = 0
+    ErrorMsg = ""
+    ThisFileName = Mid(ActiveWorkbook.Name, 1, InStrRev(ActiveWorkbook.Name, ".") - 1)
+    '检查2-课程目标和综合分析（填写） 工作表
+    Worksheets("2-课程目标和综合分析（填写）").Activate
+    CourseTargetCount = Application.CountA(Range("B11:B20"))
+    If Range("$B$3").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【课程序号】" & vbCr & vbLf
+    End If
+    If Range("$Q$3").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未选择【认证状态】" & vbCr & vbLf
+    End If
+    If Range("$B$7").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未选择【认证专业】" & vbCr & vbLf
+    End If
+    If CourseTargetCount = 0 Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【课程目标】" & vbCr & vbLf
+    End If
+    If Range("$B$8").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【填写日期】" & vbCr & vbLf
+    End If
+    LinkCount = Application.CountA(Range("D7:Q7")) - Application.CountBlank(Range("D7:Q7"))
+    For i = 4 To LinkCount + 4
+        If Cells(7, i).Value <> "" Then
+            If Application.CountBlank(Cells(11, i).Resize(10, 1)) = 10 Then
+                ErrNum = ErrNum + 1
+                ErrorMsg = ErrorMsg & ErrNum & "、评价环节" & Cells(5, i).Value & "有平均成绩，但该评价环节未支撑课程目标。" & vbCr & vbLf
+            End If
+        Else
+            If Application.CountBlank(Cells(11, i).Resize(10, 1)) <> 10 Then
+                ErrNum = ErrNum + 1
+                ErrorMsg = ErrorMsg & ErrNum & "、评价环节" & Cells(5, i).Value & "没有平均成绩，但该评价环节支撑了课程目标。" & vbCr & vbLf
+            End If
+        End If
+    Next i
+    
+    For i = 11 To 20
+        If Range("B" & i).Value <> "" Then
+            If (Range("R" & i).Value = "") Or (Range("R" & i).Value <> 100) Then
+                ErrNum = ErrNum + 1
+                ErrorMsg = ErrorMsg & ErrNum & "、课程目标" & i - 10 & "支撑比例合计不是100%！" & Chr(13) & Chr(10)
+            End If
+        ElseIf (Range("R" & i).Value <> "") Then
+            ErrNum = ErrNum + 1
+            ErrorMsg = ErrorMsg & ErrNum & "、没有课程目标" & i - 10 & "，请删除对应的支撑比例"
+        End If
+    Next i
+    If Range("$B$22").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、缺少（1）考核结果分析" & vbCr & vbLf
+    End If
+    If Range("$B$23").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、缺少（2）有效的教学方法和措施" & vbCr & vbLf
+    End If
+    If Range("$B$25").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、缺少（3）课程目标达成度评价" & vbCr & vbLf
+    End If
+    If Range("$B$27").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、缺少（4）毕业要求达成度评价" & vbCr & vbLf
+    End If
+    If Range("$B$28").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、缺少（5）改进措施" & vbCr & vbLf
+    End If
+
+    For i = 0 To CourseTargetCount - 1
+        Worksheets("课程目标达成度汇总用数据").Activate
+        If (Not IsNumeric(Cells(2, 2 * i + 9).Value) Or Cells(2, 2 * i + 9).Value = "" Or Cells(2, 2 * i + 9).Value = 0) Then
+            ErrNum = ErrNum + 1
+            ErrorMsg = ErrorMsg & ErrNum & "、课程目标" & i + 1 & "达成情况不正确请检查。" & vbCr & vbLf
+        End If
+    Next i
+    
+    If (ShoolName = "电子工程与自动化学院") Then
+        Worksheets("3-毕业要求数据表（填写）").Visible = True
+        Worksheets("3-毕业要求数据表（填写）").Activate
+        RequirementCount = Application.CountA(Range("C7:C18")) - Application.CountBlank(Range("C7:C18"))
+        RequirementReachCount = Application.Count(Range("D7:D18"))
+            For i = 0 To Application.CountA(Range("B7:B18")) - 1
+            If Range("O" & i + 11).Value <> "" And Range("O" & i + 11).Value <> 100 Then
+                ErrNum = ErrNum + 1
+                ErrorMsg = ErrorMsg & ErrNum & "、" & Cells(i + 7, 2).Value & "支撑比例合计不为100。" & vbCr & vbLf
+            End If
+            If (Cells(i + 7, 3).Value = "√") And (Not IsNumeric(Cells(i + 7, 4).Value) Or Cells(i + 7, 4).Value = "" Or Cells(i + 7, 4).Value = 0) Then
+                ErrNum = ErrNum + 1
+                ErrorMsg = ErrorMsg & ErrNum & "、" & Cells(i + 7, 2).Value & "达成情况不正确" & vbCr & vbLf
+            End If
+        Next i
+    End If
+
+    Worksheets("课程目标达成度汇总用数据").Visible = True
+    Worksheets("课程目标达成度汇总用数据").Activate
+    If (Range("B2").Value = "") Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【学期】" & vbCr & vbLf
+    ElseIf Range("C2").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【课程名称】" & vbCr & vbLf
+    ElseIf Range("E2").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【主讲教师】" & vbCr & vbLf
+    ElseIf Range("G2").Value = "" Then
+        ErrNum = ErrNum + 1
+        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【学分】" & vbCr & vbLf
+    End If
+    Worksheets("课程目标达成度汇总用数据").Visible = False
+    Worksheets("毕业要求达成度汇总用数据").Visible = False
+    
+    Worksheets("2-课程目标和综合分析（填写）").Activate
+    Term = Range("$B$2").Value
+    Term = Mid(Term, 3, 2) & "-" & Mid(Term, 8, 2) & "-" & Mid(Term, 14, 1)
+    CourseNum = Range("$B$3").Value
+    CourseName = Range("$B$4").Value
+    Teacher = Range("$B$5").Value
+    Major = Range("$B$7").Value
+    If ErrorMsg <> "" Then
+        If Dir(ThisWorkbook.Path & "\错误报告\") = "" Then
+            MkDir ThisWorkbook.Path & "\错误报告\"
+        End If
+        Call CreateTXTfile(ThisWorkbook.Path & "\错误报告\" & ThisFileName & "-错误检查报告.txt", ErrorMsg, False)
+        NoError = False
+    End If
+    提交前检查 = NoError
+End Function
+
 Sub 打印()
     On Error Resume Next
-' 设置格式 宏
+    '设置格式 宏
     Dim CurrentWorksheet As String
     Dim CourseName As String
     Dim Term As String
@@ -1263,216 +1422,129 @@ Sub 打印()
     Dim LinkCount As Integer
     Dim ErrorMsg  As String
     Dim ErrNum As Integer
+    Dim NoError As Boolean
     CurrentWorksheet = ActiveSheet.Name
     Application.ScreenUpdating = False
-    Worksheets("专业矩阵状态").Visible = True
-    Worksheets("专业矩阵状态").Activate
-    SchoolName = Range("B2").Value
-    ErrNum = 0
-    ErrorMsg = ""
-    Worksheets("2-课程目标和综合分析（填写）").Activate
-    CourseTargetCount = Application.CountA(Range("B11:B20"))
-    If CourseTargetCount = 0 Then
-        ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【课程目标】" & vbCr & vbLf
-    End If
-    '简单文档检查
-    DateCompleted = Range("$B$8").Value
-    Term = Range("$B$2").Value
-    Term = Mid(Term, 3, 2) & "-" & Mid(Term, 8, 2) & "-" & Mid(Term, 14, 1)
-    CourseNum = Range("$B$3").Value
-    CourseName = Range("$B$4").Value
-    Teacher = Range("$B$5").Value
-    Major = Range("$B$7").Value
     PDFFileName = Term & "-" & CourseNum & "-" & Major & "-" & Teacher & "-" & CourseName
-    If DateCompleted = "" Then
-        ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【填写日期】" & vbCr & vbLf
-    End If
-    Worksheets("课程目标达成度汇总用数据").Visible = True
-    Worksheets("课程目标达成度汇总用数据").Activate
-    If Range("D2").Value = 0 Then
-        ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【课程序号】" & vbCr & vbLf
-    ElseIf (Range("B2").Value = "") Then
-        ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【学期】" & vbCr & vbLf
-    ElseIf Range("C2").Value = "" Then
-        ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【课程名称】" & vbCr & vbLf
-    ElseIf Range("E2").Value = "" Then
-        ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【主讲教师】" & vbCr & vbLf
-    ElseIf Range("G2").Value = "" Then
-        ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【学分】" & vbCr & vbLf
-    End If
-    Worksheets("2-课程目标和综合分析（填写）").Activate
-    LinkCount = Application.CountA(Range("D7:Q7")) - Application.CountBlank(Range("D7:Q7"))
-    For i = 4 To LinkCount + 4
-        If Cells(7, i).Value <> "" Then
-            If Application.CountBlank(Cells(11, i).Resize(10, 1)) = 10 Then
-                ErrNum = ErrNum + 1
-                ErrorMsg = ErrorMsg & ErrNum & "、评价环节" & Cells(5, i).Value & "有平均成绩，但该评价环节未支撑课程目标。" & vbCr & vbLf
-            End If
-        Else
-            If Application.CountBlank(Cells(11, i).Resize(10, 1)) <> 10 Then
-                ErrNum = ErrNum + 1
-                ErrorMsg = ErrorMsg & ErrNum & "、评价环节" & Cells(5, i).Value & "没有平均成绩，但该评价环节支撑了课程目标。" & vbCr & vbLf
-            End If
-        End If
-    Next i
-    
-    For i = 0 To CourseTargetCount - 1
+    NoError = 提交前检查
+    If NoError Then
+        Call 调整表格格式
         Worksheets("2-课程目标和综合分析（填写）").Activate
-        If Range("R" & i + 11).Value <> 100 Then
-            ErrNum = ErrNum + 1
-            ErrorMsg = ErrorMsg & ErrNum & "、课程目标" & i + 1 & "支撑比例合计不为100。" & vbCr & vbLf
+        If Range("$Q$3").Value = "非认证" Then
+            Worksheets("0-教学过程登记表（填写+打印)").Activate
+            ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+            Call Excel2PDF("0-教学过程登记表（填写+打印)", ThisWorkbook.Path, PDFFileName & "--教学过程登记表.pdf")
+            ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+            
+            Worksheets("4-质量分析报告（填写+打印）").Activate
+            Call 取消质量分析报告填写区域颜色
+            
+            Call Excel2PDF("4-质量分析报告（填写+打印）", ThisWorkbook.Path, PDFFileName & "--质量分析报告.pdf")
+            Call 设置质量分析报告填写区域颜色
+        ElseIf Range("$Q$3").Value = "认证未提交成绩" Then
+            '打印教学过程登记表
+            Worksheets("0-教学过程登记表（填写+打印)").Activate
+            ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+            Call Excel2PDF("0-教学过程登记表（填写+打印)", ThisWorkbook.Path, PDFFileName & "--教学过程登记表.pdf")
+            ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+            
+            Sheets("2-毕业要求达成度评价（打印）").Visible = True
+            Worksheets("2-毕业要求达成度评价（打印）").Activate
+            ActiveSheet.PageSetup.CenterFooter = ""
+            
+            Sheets("1-课程目标达成度评价（打印）").Visible = True
+            Worksheets("1-课程目标达成度评价（打印）").Activate
+            ActiveSheet.PageSetup.CenterFooter = ""
+            ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+            Rows("11:20").Select
+            Selection.EntireRow.Hidden = False
+            SumRow = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
+            Rows(SumRow + 11 & ":20").Select
+            Selection.EntireRow.Hidden = True
+            ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+            
+            Call Excel2PDF("1-课程目标达成度评价（打印）", ThisWorkbook.Path, PDFFileName & "--课程目标达成情况评价.pdf")
+            Sheets("1-课程目标达成度评价（打印）").Visible = False
+    
+            Select Case SchoolName
+                Case "计算机信息与安全学院"
+                    Sheets("2-毕业要求达成度评价（打印）").Visible = False
+                    Sheets("3-综合分析（打印）").Visible = True
+                    Worksheets("3-综合分析（打印）").Activate
+                    ActiveSheet.PageSetup.CenterFooter = ""
+                    
+                    
+                    Call Excel2PDF("3-综合分析（打印）", ThisWorkbook.Path, PDFFileName & "--课程综合分析.pdf")
+                    Sheets("3-综合分析（打印）").Visible = False
+                    
+                    Worksheets("4-质量分析报告（填写+打印）").Activate
+                    Call 取消质量分析报告填写区域颜色
+                    
+                    Call Excel2PDF("4-质量分析报告（填写+打印）", ThisWorkbook.Path, PDFFileName & "--质量分析报告.pdf")
+                    
+                    Call 设置质量分析报告填写区域颜色
+                Case "电子工程与自动化学院"
+                    Sheets("2-毕业要求达成度评价（打印）").Visible = True
+                    Worksheets("2-毕业要求达成度评价（打印）").Activate
+                    ActiveSheet.PageSetup.CenterFooter = ""
+                    
+                    Call Excel2PDF("2-毕业要求达成度评价（打印）", ThisWorkbook.Path, PDFFileName & "--毕业要求达成情况评价.pdf")
+                    Sheets("2-毕业要求达成度评价（打印）").Visible = False
+                    Sheets("3-综合分析（打印）").Visible = True
+                    Worksheets("3-综合分析（打印）").Activate
+                    ActiveSheet.PageSetup.CenterFooter = ""
+                    
+                    
+                    Call Excel2PDF("3-综合分析（打印）", ThisWorkbook.Path, PDFFileName & "--课程综合分析.pdf")
+                    Sheets("3-综合分析（打印）").Visible = False
+                    
+                    Worksheets("4-质量分析报告（填写+打印）").Activate
+                    Call 取消质量分析报告填写区域颜色
+                    
+                    Call Excel2PDF("4-质量分析报告（填写+打印）", ThisWorkbook.Path, PDFFileName & "--质量分析报告.pdf")
+                    
+                    Call 设置质量分析报告填写区域颜色
+                End Select
+        ElseIf Range("$Q$3").Value = "认证已提交成绩" Then
+            Sheets("2-毕业要求达成度评价（打印）").Visible = True
+            Worksheets("2-毕业要求达成度评价（打印）").Activate
+            ActiveSheet.PageSetup.CenterFooter = ""
+            
+            Sheets("1-课程目标达成度评价（打印）").Visible = True
+            Worksheets("1-课程目标达成度评价（打印）").Activate
+            ActiveSheet.PageSetup.CenterFooter = ""
+            ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+            Rows("11:20").Select
+            Selection.EntireRow.Hidden = False
+            SumRow = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
+            Rows(SumRow + 11 & ":20").Select
+            Selection.EntireRow.Hidden = True
+            ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+            
+            Call Excel2PDF("1-课程目标达成度评价（打印）", ThisWorkbook.Path, PDFFileName & "--课程目标达成情况评价.pdf")
+            Sheets("1-课程目标达成度评价（打印）").Visible = False
+            Select Case SchoolName
+                Case "计算机信息与安全学院"
+                    Sheets("2-毕业要求达成度评价（打印）").Visible = False
+                    Worksheets("3-综合分析（打印）").Activate
+                    ActiveSheet.PageSetup.CenterFooter = ""
+                    Call Excel2PDF("3-综合分析（打印）", ThisWorkbook.Path, PDFFileName & "--课程综合分析.pdf")
+                    Sheets("3-综合分析（打印）").Visible = False
+                Case "电子工程与自动化学院"
+                    Sheets("2-毕业要求达成度评价（打印）").Visible = True
+                    Worksheets("2-毕业要求达成度评价（打印）").Activate
+                    ActiveSheet.PageSetup.CenterFooter = ""
+                    Call Excel2PDF("2-毕业要求达成度评价（打印）", ThisWorkbook.Path, PDFFileName & "--毕业要求达成情况评价.pdf")
+                    Sheets("2-毕业要求达成度评价（打印）").Visible = False
+                    Sheets("3-综合分析（打印）").Visible = True
+                    Worksheets("3-综合分析（打印）").Activate
+                    ActiveSheet.PageSetup.CenterFooter = ""
+                    Call Excel2PDF("3-综合分析（打印）", ThisWorkbook.Path, PDFFileName & "--课程综合分析.pdf")
+                    Sheets("3-综合分析（打印）").Visible = False
+                End Select
+        Else
+            Call MsgInfo(NoMsgBox, "2-课程目标和综合分析（填写）工作表中的“是否认证”未选择！")
         End If
-        Worksheets("课程目标达成度汇总用数据").Activate
-        If (Not IsNumeric(Cells(2, 2 * i + 9).Value) Or Cells(2, 2 * i + 9).Value = "" Or Cells(2, 2 * i + 9).Value = 0) Then
-            ErrNum = ErrNum + 1
-            ErrorMsg = ErrorMsg & ErrNum & "、课程目标" & i + 1 & "达成情况不正确请检查。" & vbCr & vbLf
-        End If
-    Next i
-    Worksheets("课程目标达成度汇总用数据").Visible = False
-    Worksheets("3-毕业要求数据表（填写）").Activate
-    RequirementCount = Application.CountA(Range("C7:C18")) - Application.CountBlank(Range("C7:C18"))
-    RequirementReachCount = Application.Count(Range("D7:D18"))
-
-    For i = 0 To Application.CountA(Range("B7:B18")) - 1
-        If Range("O" & i + 11).Value <> "" And Range("O" & i + 11).Value <> 100 Then
-            ErrNum = ErrNum + 1
-            ErrorMsg = ErrorMsg & ErrNum & "、" & Cells(i + 7, 2).Value & "支撑比例合计不为100。" & vbCr & vbLf
-        End If
-        If (Cells(i + 7, 3).Value = "√") And (Not IsNumeric(Cells(i + 7, 4).Value) Or Cells(i + 7, 4).Value = "" Or Cells(i + 7, 4).Value = 0) Then
-            ErrNum = ErrNum + 1
-            ErrorMsg = ErrorMsg & ErrNum & "、" & Cells(i + 7, 2).Value & "达成情况不正确" & vbCr & vbLf
-        End If
-    Next i
-    If ErrorMsg <> "" Then
-        Call MsgInfo(NoMsgBox, ErrorMsg)
-        Call CreateTXTfile(ErrorMsg)
-        Worksheets("课程目标达成度汇总用数据").Visible = False
-        Worksheets("毕业要求达成度汇总用数据").Visible = False
-        Exit Sub
-    End If
-    Call 调整表格格式
-    Worksheets("2-课程目标和综合分析（填写）").Activate
-    If Range("$Q$3").Value = "非认证" Then
-        Worksheets("0-教学过程登记表（填写+打印)").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-        Call Excel2PDF("0-教学过程登记表（填写+打印)", ThisWorkbook.Path, PDFFileName & "--教学过程登记表.pdf")
-        ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-        
-        Worksheets("4-质量分析报告（填写+打印）").Activate
-        Call 取消质量分析报告填写区域颜色
-        
-        Call Excel2PDF("4-质量分析报告（填写+打印）", ThisWorkbook.Path, PDFFileName & "--质量分析报告.pdf")
-        Call 设置质量分析报告填写区域颜色
-    ElseIf Range("$Q$3").Value = "认证未提交成绩" Then
-        '打印教学过程登记表
-        Worksheets("0-教学过程登记表（填写+打印)").Activate
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-        Call Excel2PDF("0-教学过程登记表（填写+打印)", ThisWorkbook.Path, PDFFileName & "--教学过程登记表.pdf")
-        ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-        
-        Sheets("2-毕业要求达成度评价（打印）").Visible = True
-        Worksheets("2-毕业要求达成度评价（打印）").Activate
-        ActiveSheet.PageSetup.CenterFooter = ""
-        
-        Sheets("1-课程目标达成度评价（打印）").Visible = True
-        Worksheets("1-课程目标达成度评价（打印）").Activate
-        ActiveSheet.PageSetup.CenterFooter = ""
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-        Rows("11:20").Select
-        Selection.EntireRow.Hidden = False
-        SumRow = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
-        Rows(SumRow + 11 & ":20").Select
-        Selection.EntireRow.Hidden = True
-        ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-        
-        Call Excel2PDF("1-课程目标达成度评价（打印）", ThisWorkbook.Path, PDFFileName & "--课程目标达成情况评价.pdf")
-        Sheets("1-课程目标达成度评价（打印）").Visible = False
-
-        Select Case SchoolName
-            Case "计算机信息与安全学院"
-                Sheets("2-毕业要求达成度评价（打印）").Visible = False
-                Sheets("3-综合分析（打印）").Visible = True
-                Worksheets("3-综合分析（打印）").Activate
-                ActiveSheet.PageSetup.CenterFooter = ""
-                
-                
-                Call Excel2PDF("3-综合分析（打印）", ThisWorkbook.Path, PDFFileName & "--课程综合分析.pdf")
-                Sheets("3-综合分析（打印）").Visible = False
-                
-                Worksheets("4-质量分析报告（填写+打印）").Activate
-                Call 取消质量分析报告填写区域颜色
-                
-                Call Excel2PDF("4-质量分析报告（填写+打印）", ThisWorkbook.Path, PDFFileName & "--质量分析报告.pdf")
-                
-                Call 设置质量分析报告填写区域颜色
-            Case "电子工程与自动化学院"
-                Sheets("2-毕业要求达成度评价（打印）").Visible = True
-                Worksheets("2-毕业要求达成度评价（打印）").Activate
-                ActiveSheet.PageSetup.CenterFooter = ""
-                
-                Call Excel2PDF("2-毕业要求达成度评价（打印）", ThisWorkbook.Path, PDFFileName & "--毕业要求达成情况评价.pdf")
-                Sheets("2-毕业要求达成度评价（打印）").Visible = False
-                Sheets("3-综合分析（打印）").Visible = True
-                Worksheets("3-综合分析（打印）").Activate
-                ActiveSheet.PageSetup.CenterFooter = ""
-                
-                
-                Call Excel2PDF("3-综合分析（打印）", ThisWorkbook.Path, PDFFileName & "--课程综合分析.pdf")
-                Sheets("3-综合分析（打印）").Visible = False
-                
-                Worksheets("4-质量分析报告（填写+打印）").Activate
-                Call 取消质量分析报告填写区域颜色
-                
-                Call Excel2PDF("4-质量分析报告（填写+打印）", ThisWorkbook.Path, PDFFileName & "--质量分析报告.pdf")
-                
-                Call 设置质量分析报告填写区域颜色
-            End Select
-    ElseIf Range("$Q$3").Value = "认证已提交成绩" Then
-        Sheets("2-毕业要求达成度评价（打印）").Visible = True
-        Worksheets("2-毕业要求达成度评价（打印）").Activate
-        ActiveSheet.PageSetup.CenterFooter = ""
-        
-        Sheets("1-课程目标达成度评价（打印）").Visible = True
-        Worksheets("1-课程目标达成度评价（打印）").Activate
-        ActiveSheet.PageSetup.CenterFooter = ""
-        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-        Rows("11:20").Select
-        Selection.EntireRow.Hidden = False
-        SumRow = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
-        Rows(SumRow + 11 & ":20").Select
-        Selection.EntireRow.Hidden = True
-        ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-        
-        Call Excel2PDF("1-课程目标达成度评价（打印）", ThisWorkbook.Path, PDFFileName & "--课程目标达成情况评价.pdf")
-        Sheets("1-课程目标达成度评价（打印）").Visible = False
-        Select Case SchoolName
-            Case "计算机信息与安全学院"
-                Sheets("2-毕业要求达成度评价（打印）").Visible = False
-                Worksheets("3-综合分析（打印）").Activate
-                ActiveSheet.PageSetup.CenterFooter = ""
-                Call Excel2PDF("3-综合分析（打印）", ThisWorkbook.Path, PDFFileName & "--课程综合分析.pdf")
-                Sheets("3-综合分析（打印）").Visible = False
-            Case "电子工程与自动化学院"
-                Sheets("2-毕业要求达成度评价（打印）").Visible = True
-                Worksheets("2-毕业要求达成度评价（打印）").Activate
-                ActiveSheet.PageSetup.CenterFooter = ""
-                Call Excel2PDF("2-毕业要求达成度评价（打印）", ThisWorkbook.Path, PDFFileName & "--毕业要求达成情况评价.pdf")
-                Sheets("2-毕业要求达成度评价（打印）").Visible = False
-                Sheets("3-综合分析（打印）").Visible = True
-                Worksheets("3-综合分析（打印）").Activate
-                ActiveSheet.PageSetup.CenterFooter = ""
-                Call Excel2PDF("3-综合分析（打印）", ThisWorkbook.Path, PDFFileName & "--课程综合分析.pdf")
-                Sheets("3-综合分析（打印）").Visible = False
-            End Select
-    Else
-        Call MsgInfo(NoMsgBox, "2-课程目标和综合分析（填写）工作表中的“是否认证”未选择！")
     End If
     ActiveWorkbook.Save
     Application.ScreenUpdating = True
@@ -5033,16 +5105,17 @@ Sub 文档填写检查()
     
 End Sub
 
-Sub CreateTXTfile(Content As String)
-        MyFile = ThisWorkbook.Path & "\错误检查报告.txt"
-        Set fso = CreateObject("Scripting.FileSystemObject")
-        Set MyFileobj = fso.CreateTextFile(MyFile, True, True)
-        MyFileobj.Write (Content)
-        MyFileobj.Close
+Sub CreateTXTfile(FileName As String, Content As String, AfterOpen As Boolean)
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set MyFileobj = fso.CreateTextFile(FileName, True, True)
+    MyFileobj.Write (Content)
+    MyFileobj.Close
+    If AfterOpen Then
         For Each Process In GetObject("winmgmts:").ExecQuery("select * from Win32_Process where name='notepad.exe'")
             Process.Terminate (0)
         Next
         Shell "notepad.exe " & MyFile
+    End If
 End Sub
 Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As String, TargetColumn As String)
     Dim ImportStatus As Boolean
@@ -5458,4 +5531,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.05.40
+'[版本号]V5.06.01
