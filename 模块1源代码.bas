@@ -86,7 +86,9 @@ Sub 修订公式()
     Range("B22:R22,B23:R23,B27:R27,B28:R28").Select
     Selection.Locked = False
     Selection.FormulaHidden = False
-    
+    Range("R8").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(R6C18="""",R7C18="""",R7C18=0),"""",ROUND(R7C18*100/R6C18,1))"
     Range("M6").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OR(OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)="""",OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)=0),"""",100)"
@@ -1264,6 +1266,7 @@ Function 提交前检查()
     Dim ErrNum As Integer
     Dim NoError As Boolean
     Dim ThisFileName As String
+    Dim IdentifyStatus As String
     NoError = True
     Application.ScreenUpdating = False
     Worksheets("专业矩阵状态").Visible = True
@@ -1275,37 +1278,53 @@ Function 提交前检查()
     '检查2-课程目标和综合分析（填写） 工作表
     Worksheets("2-课程目标和综合分析（填写）").Activate
     CourseTargetCount = Application.CountA(Range("B11:B20"))
+    IdentifyStatus = Range("$Q$3").Value
     If Range("$B$3").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【课程序号】" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【课程序号】" & vbCrLf
     End If
-    If Range("$Q$3").Value = "" Then
+    If IdentifyStatus = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未选择【认证状态】" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未选择【认证状态】" & vbCrLf
     End If
     If Range("$B$7").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未选择【认证专业】" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未选择【认证专业】" & vbCrLf
     End If
     If CourseTargetCount = 0 Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【课程目标】" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【课程目标】" & vbCrLf
     End If
     If Range("$B$8").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【填写日期】" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表未填写【填写日期】" & vbCrLf
     End If
+
+    For i = 1 To 5
+        Mark = Application.Index(Range("M7:Q7"), Application.Match(Cells(2, 2 * i + 2).Value, Range("M5:Q5"), 0))
+        If Cells(3, 2 * i + 2).Value <> "" And Cells(3, 2 * i + 2).Value <> "0" Then
+            If Mark = "" Then
+                ErrNum = ErrNum + 1
+                ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表评价环节" & Cells(2, 2 * i + 2).Value & "平均得分为空,请检查：（1）如果没有该评价环节，删除比例；（2）试卷成绩登记表中缺少该项成绩" & vbCrLf
+            End If
+        ElseIf Cells(3, 2 * i + 2).Value = "" Then
+            If Mark <> "" Then
+                ErrNum = ErrNum + 1
+                ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表评价环节" & Cells(2, 2 * i + 2).Value & "比例为空，但平均得分不为空,请检查：（1）是否缺少该评价环节；（2）试卷成绩登记表导入成绩时是否多导入了该项成绩" & vbCrLf
+            End If
+        End If
+    Next i
     LinkCount = Application.CountA(Range("D7:Q7")) - Application.CountBlank(Range("D7:Q7"))
     For i = 4 To LinkCount + 4
         If Cells(7, i).Value <> "" Then
             If Application.CountBlank(Cells(11, i).Resize(10, 1)) = 10 Then
                 ErrNum = ErrNum + 1
-                ErrorMsg = ErrorMsg & ErrNum & "、评价环节" & Cells(5, i).Value & "有平均成绩，但该评价环节未支撑课程目标。" & vbCr & vbLf
+                ErrorMsg = ErrorMsg & ErrNum & "、评价环节" & Cells(5, i).Value & "有平均成绩，但该评价环节未支撑课程目标。" & vbCrLf
             End If
         Else
             If Application.CountBlank(Cells(11, i).Resize(10, 1)) <> 10 Then
                 ErrNum = ErrNum + 1
-                ErrorMsg = ErrorMsg & ErrNum & "、评价环节" & Cells(5, i).Value & "没有平均成绩，但该评价环节支撑了课程目标。" & vbCr & vbLf
+                ErrorMsg = ErrorMsg & ErrNum & "、评价环节" & Cells(5, i).Value & "没有平均成绩，但该评价环节支撑了课程目标。" & vbCrLf
             End If
         End If
     Next i
@@ -1314,39 +1333,39 @@ Function 提交前检查()
         If Range("B" & i).Value <> "" Then
             If (Range("R" & i).Value = "") Or (Range("R" & i).Value <> 100) Then
                 ErrNum = ErrNum + 1
-                ErrorMsg = ErrorMsg & ErrNum & "、课程目标" & i - 10 & "支撑比例合计不是100%！" & Chr(13) & Chr(10)
+                ErrorMsg = ErrorMsg & ErrNum & "、课程目标" & i - 10 & "支撑比例合计不是100%！" & vbCrLf
             End If
         ElseIf (Range("R" & i).Value <> "") Then
             ErrNum = ErrNum + 1
-            ErrorMsg = ErrorMsg & ErrNum & "、没有课程目标" & i - 10 & "，请删除对应的支撑比例"
+            ErrorMsg = ErrorMsg & ErrNum & "、没有课程目标" & i - 10 & "，请删除对应的支撑比例" & vbCrLf
         End If
     Next i
     If Range("$B$22").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、缺少（1）考核结果分析" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、缺少（1）考核结果分析" & vbCrLf
     End If
     If Range("$B$23").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、缺少（2）有效的教学方法和措施" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、缺少（2）有效的教学方法和措施" & vbCrLf
     End If
     If Range("$B$25").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、缺少（3）课程目标达成度评价" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、缺少（3）课程目标达成度评价" & vbCrLf
     End If
     If Range("$B$27").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、缺少（4）毕业要求达成度评价" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、缺少（4）毕业要求达成度评价" & vbCrLf
     End If
     If Range("$B$28").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、缺少（5）改进措施" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、缺少（5）改进措施" & vbCrLf
     End If
 
     For i = 0 To CourseTargetCount - 1
         Worksheets("课程目标达成度汇总用数据").Activate
         If (Not IsNumeric(Cells(2, 2 * i + 9).Value) Or Cells(2, 2 * i + 9).Value = "" Or Cells(2, 2 * i + 9).Value = 0) Then
             ErrNum = ErrNum + 1
-            ErrorMsg = ErrorMsg & ErrNum & "、课程目标" & i + 1 & "达成情况不正确请检查。" & vbCr & vbLf
+            ErrorMsg = ErrorMsg & ErrNum & "、课程目标" & i + 1 & "达成情况不正确请检查。" & vbCrLf
         End If
     Next i
     
@@ -1355,14 +1374,14 @@ Function 提交前检查()
         Worksheets("3-毕业要求数据表（填写）").Activate
         RequirementCount = Application.CountA(Range("C7:C18")) - Application.CountBlank(Range("C7:C18"))
         RequirementReachCount = Application.Count(Range("D7:D18"))
-            For i = 0 To Application.CountA(Range("B7:B18")) - 1
+        For i = 0 To Application.CountA(Range("B7:B18")) - 1
             If Range("O" & i + 11).Value <> "" And Range("O" & i + 11).Value <> 100 Then
                 ErrNum = ErrNum + 1
-                ErrorMsg = ErrorMsg & ErrNum & "、" & Cells(i + 7, 2).Value & "支撑比例合计不为100。" & vbCr & vbLf
+                ErrorMsg = ErrorMsg & ErrNum & "、" & Cells(i + 7, 2).Value & "支撑比例合计不为100。" & vbCrLf
             End If
             If (Cells(i + 7, 3).Value = "√") And (Not IsNumeric(Cells(i + 7, 4).Value) Or Cells(i + 7, 4).Value = "" Or Cells(i + 7, 4).Value = 0) Then
                 ErrNum = ErrNum + 1
-                ErrorMsg = ErrorMsg & ErrNum & "、" & Cells(i + 7, 2).Value & "达成情况不正确" & vbCr & vbLf
+                ErrorMsg = ErrorMsg & ErrNum & "、" & Cells(i + 7, 2).Value & "达成情况不正确" & vbCrLf
             End If
         Next i
     End If
@@ -1371,20 +1390,52 @@ Function 提交前检查()
     Worksheets("课程目标达成度汇总用数据").Activate
     If (Range("B2").Value = "") Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【学期】" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【学期】" & vbCrLf
     ElseIf Range("C2").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【课程名称】" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【课程名称】" & vbCrLf
     ElseIf Range("E2").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【主讲教师】" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【主讲教师】" & vbCrLf
     ElseIf Range("G2").Value = "" Then
         ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【学分】" & vbCr & vbLf
+        ErrorMsg = ErrorMsg & ErrNum & "、课程信息提取不完整，请在数据源-教学任务.xls中补充【学分】" & vbCrLf
     End If
     Worksheets("课程目标达成度汇总用数据").Visible = False
     Worksheets("毕业要求达成度汇总用数据").Visible = False
     
+
+    If IdentifyStatus = "非认证" Or IdentifyStatus = "认证未提交成绩" Then
+        Worksheets("0-教学过程登记表（填写+打印)").Activate
+        If (Application.WorksheetFunction.CountIf(Range("Z6:Z185"), "取消") <> Application.WorksheetFunction.CountIf(Range("AD6:AD185"), "取消")) Then
+            ErrNum = ErrNum + 1
+            ErrorMsg = ErrorMsg & ErrNum & "、以下同学平时成绩为0，请核实是否取消考试资格，若取消，请在成绩类别列选择“取消”" & vbCrLf
+            For i = 6 To 185
+                If (Range("B" & i).Value <> "") And (Range("Z" & i).Value = "取消") Then
+                    If (Range("AD" & i).Value = "") Then
+                        ErrorMsg = ErrorMsg & Range("B" & i).Value & "  "
+                    End If
+                End If
+            Next i
+            ErrorMsg = ErrorMsg & vbCrLf
+        End If
+    End If
+    '检查“1-试卷成绩登记表（填写）”工作表
+    Worksheets("1-试卷成绩登记表（填写）").Activate
+    For i = 1 To 9
+        If Cells(3, i + 4) = "" Then
+            If Application.WorksheetFunction.Count(Cells(4, i + 4).Resize(403, 1)) <> 0 Then
+                ErrNum = ErrNum + 1
+                ErrorMsg = ErrorMsg & ErrNum & "、试卷成绩登记表中" & Cells(2, i + 4) & "满分为空，但该列有成绩，请填写满分。" & vbCrLf
+            End If
+        Else
+            If Application.WorksheetFunction.Count(Cells(4, i + 4).Resize(403, 1)) = 0 Then
+                ErrNum = ErrNum + 1
+                ErrorMsg = ErrorMsg & ErrNum & "、试卷成绩登记表中" & Cells(2, i + 4) & "满分不为空，但该列没有成绩。" & vbCrLf
+            End If
+        End If
+    Next i
+ 
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Term = Range("$B$2").Value
     Term = Mid(Term, 3, 2) & "-" & Mid(Term, 8, 2) & "-" & Mid(Term, 14, 1)
@@ -1396,7 +1447,7 @@ Function 提交前检查()
         If Dir(ThisWorkbook.Path & "\错误报告\") = "" Then
             MkDir ThisWorkbook.Path & "\错误报告\"
         End If
-        Call CreateTXTfile(ThisWorkbook.Path & "\错误报告\" & ThisFileName & "-错误检查报告.txt", ErrorMsg, False)
+        Call CreateTXTfile(ThisWorkbook.Path & "\错误报告\" & ThisFileName & "-错误检查报告.txt", ErrorMsg, True)
         NoError = False
     End If
     提交前检查 = NoError
@@ -2496,7 +2547,7 @@ Sub 课程目标和综合分析公式()
         "=IF(OR(COUNTBLANK(RC[-14]:RC[-6])=14,SUM(R6C4:R6C12)=0),"""",SUM('2-课程目标和综合分析（填写）'!R7C4:R7C12)*100/SUM(R6C4:R6C12))"
     Range("R8").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(OR(R7C18="""",R7C18=0),"""",ROUND(R7C18*100/R6C18,1))"
+        "=IF(OR(R6C18="""",R7C18="""",R7C18=0),"""",ROUND(R7C18*100/R6C18,1))"
     Range("D9:E9").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(R[-6]C[-2]="""","""",IF(R4C2=""请在数据源-教学任务中添加该课号的课程信息"","""",VLOOKUP(R3C2,教学任务!R1C1:R65536C13,8,0)))"
@@ -4900,211 +4951,6 @@ Sub CreateNewSheet(SheetName As String)
     ActiveSheet.Clear
   End If
 End Sub
-'修订日期：2019年1月25日
-''成绩导入表
-''文档检查
-Sub 文档填写检查()
-    Dim i As Integer
-    Dim ErrorLog As String
-    Dim CurrentWorksheet As String
-    CurrentWorksheet = ActiveSheet.Name
-    Dim ErrorFlag As String
-    Dim ErrorCount As Integer
-    Dim ProportionExperiment As String
-    Dim Number As Integer
-    ErrorCount = 0
-    '检查“0-教学过程登记表（填写+打印)”工作表
-    Worksheets("0-教学过程登记表（填写+打印)").Activate
-    Number = Number + 1
-    ErrorLog = ErrorLog & Number & "、“0-教学过程登记表（填写+打印)”工作表检查结果：" & Chr(13) & Chr(10)
-    ErrorCount = 0
-    Dim temp As Integer
-    
-    If (Application.WorksheetFunction.CountIf(Range("Z6:Z185"), "0") <> Application.WorksheetFunction.CountIf(Range("AD6:AD185"), "取消")) Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & ErrorCount & "）、" & "以下同学平时成绩为0，请核实是否取消考试资格，若取消，请在成绩类别列选择“取消”" & Chr(13) & Chr(10)
-      For i = 6 To 185
-      If (Range("B" & i).Value <> "") And (Range("Z" & i).Value = 0) Then
-        If (Range("AD" & i).Value = "") Then
-           ErrorLog = ErrorLog & Range("B" & i).Value & Chr(13) & Chr(10)
-        End If
-      End If
-      Next i
-    End If
-    '检查退课情况
-    Worksheets("成绩核对").Activate
-    If (Application.WorksheetFunction.CountIf(Range("H3:H182"), "退课") <> 0) Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & ErrorCount & "）、" & "以下学生在教学系统名单中不存在，请在“0-教学过程登记表（填写+打印)”工作表中的成绩类别列选择“退课”" & Chr(13) & Chr(10)
-      For i = 3 To 182
-      If (Range("H" & i).Value = "退课") Then
-        ErrorLog = ErrorLog & Range("B" & i).Value & Chr(13) & Chr(10)
-      End If
-      Next i
-    End If
-    If ErrorCount = 0 Then
-      ErrorLog = ErrorLog & "OK" & Chr(13) & Chr(10)
-    End If
-    ErrorLog = ErrorLog & Chr(13) & Chr(10)
-    
-    
-    
-    '检查“1-试卷成绩登记表（填写）”工作表
-    Worksheets("1-试卷成绩登记表（填写）").Activate
-    ErrorCount = 0
-    Number = Number + 1
-    ErrorLog = ErrorLog & Number & "、“1-试卷成绩登记表（填写）”工作表检查结果：" & Chr(13) & Chr(10)
-    If (Application.WorksheetFunction.Count(Range("E4:M185")) <> 0) Then
-      If Range("N3").Value <> 100 Then
-        ErrorCount = ErrorCount + 1
-        ErrorLog = ErrorLog & ErrorCount & "）、" & "请填写试卷各题满分，并确保总分为100！" & Chr(13) & Chr(10)
-      End If
-    End If
-    If ErrorCount = 0 Then
-      ErrorLog = ErrorLog & "OK" & Chr(13) & Chr(10)
-    End If
-    ErrorLog = ErrorLog & Chr(13) & Chr(10)
-    '检查“2-课程目标和综合分析（填写）”工作表
-    Worksheets("2-课程目标和综合分析（填写）").Activate
-    Number = Number + 1
-    ErrorLog = ErrorLog & Number & "、“2-课程目标和综合分析（填写）”工作表检查结果：" & Chr(13) & Chr(10)
-    ErrorCount = 0
-    If Range("P3").Value <> "" And Range("P3").Value <> 100 Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & ErrorCount & "）、" & "评价环节的比例合计不是100%，请修改！" & Chr(13) & Chr(10)
-    End If
-    If (Range("R3").Value = "") Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & ErrorCount & "）、" & "是否认证的状态未选择“非认证”或“工程认证”" & Chr(13) & Chr(10)
-    End If
-    If (Application.WorksheetFunction.CountA(Range("B11:B20")) <> Application.WorksheetFunction.CountIf(Range("R11:R20"), "100")) Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & ErrorCount & "）、" & "以下课程目标比例不正确：" & Chr(13) & Chr(10)
-      
-      For i = 11 To 20
-        If Range("B" & i) <> "" Then
-          If (Range("R" & i).Value = "") Or (Range("R" & i).Value <> 100) Then
-            ErrorLog = ErrorLog & "课程目标" & i - 10 & "支撑比例合计不是100%！" & Chr(13) & Chr(10)
-          End If
-        ElseIf (Range("R" & i).Value <> "") Then
-             ErrorLog = ErrorLog & "没有课程目标" & i - 10 & "，请删除对应的支撑比例"
-        End If
-      Next i
-    End If
-    
-    If (Range("B8").Value = "") Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & ErrorCount & "）、" & "未填写日期" & Chr(13) & Chr(10)
-    End If
-    
-    If (Range("B22").Value = "") Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & ErrorCount & "）、" & "（1）考核结果分析未填写" & Chr(13) & Chr(10)
-    End If
-    
-    If (Range("B23").Value = "") Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & ErrorCount & "）、" & "（2）有效的教学方法和措施" & Chr(13) & Chr(10)
-    End If
-    
-    If (Range("B25").Value = "") Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & "（3）课程目标达成度评价" & Chr(13) & Chr(10)
-    End If
-    
-    If (Range("B27").Value = "") Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & "（4）毕业要求达成度评价" & Chr(13) & Chr(10)
-    End If
-    
-    If (Range("B28").Value = "") Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & "（5）改进措施" & Chr(13) & Chr(10)
-    End If
-    If ErrorCount = 0 Then
-      ErrorLog = ErrorLog & "OK" & Chr(13) & Chr(10)
-    End If
-    ErrorLog = ErrorLog & Chr(13) & Chr(10)
-    
-    '检查“3-毕业要求数据表（填写）”工作表
-    Worksheets("3-毕业要求数据表（填写）").Activate
-    ErrorCount = 0
-    Number = Number + 1
-    ErrorLog = ErrorLog & Number & "、“3-毕业要求数据表（填写）”工作表检查结果：" & Chr(13) & Chr(10)
-    If (Application.CountIf(Range("O7:O18"), ">0")) <> (Application.CountIf(Range("O7:O18"), "=100")) Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & "以下毕业要求支撑比例不正确：" & Chr(13) & Chr(10)
-      For i = 7 To 18
-      If (Range("C" & i).Value = "√") Then
-        If (Range("O" & i).Value <> 100) Then
-          ErrorLog = ErrorLog & "毕业要求" & (i - 6) & Chr(13) & Chr(10)
-        End If
-      End If
-      Next i
-    End If
-    
-    If (Application.CountIf(Range("O7:O18"), ">0")) > (Application.CountIf(Range("C7:C18"), "√")) Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & "“指标点课程矩阵”中缺少以下毕业要求的支撑关系：" & Chr(13) & Chr(10)
-      For i = 7 To 18
-      If (Range("O" & i).Value <> "") Then
-        If (Range("C" & i).Value <> "√") Then
-          ErrorLog = ErrorLog & "毕业要求" & (i - 6) & Chr(13) & Chr(10)
-        End If
-      End If
-      Next i
-    End If
-    
-    If ErrorCount = 0 Then
-      ErrorLog = ErrorLog & "OK" & Chr(13) & Chr(10)
-    End If
-    ErrorLog = ErrorLog & Chr(13) & Chr(10)
-
-    '检查“成绩核对”工作表
-    Number = Number + 1
-    ErrorLog = ErrorLog & Number & "、“成绩核对”工作表检查结果：" & Chr(13) & Chr(10)
-    ErrorCount = 0
-    
-    Worksheets("成绩核对").Activate
-    If (Application.CountA(Range("P2:X2")) < 9) Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & ErrorCount & "）、" & "教务系统或学分制管理系统成绩的标题行缺少以下关键词，将无法提取学生成绩:"
-      Set Rng = ActiveSheet.UsedRange.Find(What:="学号")
-      If Rng Is Nothing Then
-        ErrorLog = ErrorLog & "教务系统或学分制管理系统成绩的标题行缺少以下关键词，将无法提取学生成绩进行核对，“学号”"
-      End If
-   
-      Set Rng = ActiveSheet.UsedRange.Find(What:="平时成绩")
-      If Rng Is Nothing Then
-        ErrorLog = ErrorLog & "、“平时成绩”"
-      End If
-
-      Set Rng = ActiveSheet.UsedRange.Find(What:="考核成绩")
-      If Rng Is Nothing Then
-        ErrorLog = ErrorLog & "、“考核成绩”"
-      End If
-
-      Set Rng = ActiveSheet.UsedRange.Find(What:="总评成绩")
-      If Rng Is Nothing Then
-        ErrorLog = ErrorLog & "、“总评成绩”"
-      End If
-    End If
- 
-    If (Application.WorksheetFunction.CountIf(Range("H3:H182"), "未复制") <> 0) Then
-      ErrorCount = ErrorCount + 1
-      ErrorLog = ErrorLog & ErrorCount & "）、" & "教务系统或学分制管理系统录入的成绩未复制到“成绩核对”工作表" & Chr(13) & Chr(10)
-    End If
-    If ErrorCount = 0 Then
-      ErrorLog = ErrorLog & "OK" & Chr(13) & Chr(10)
-    End If
-    ErrorLog = ErrorLog & Chr(13) & Chr(10)
-    
-    
-    Call CreateTXTfile(ErrorLog)
-    Worksheets(CurrentWorksheet).Activate
-    
-End Sub
-
 Sub CreateTXTfile(FileName As String, Content As String, AfterOpen As Boolean)
     Set fso = CreateObject("Scripting.FileSystemObject")
     Set MyFileobj = fso.CreateTextFile(FileName, True, True)
@@ -5114,7 +4960,7 @@ Sub CreateTXTfile(FileName As String, Content As String, AfterOpen As Boolean)
         For Each Process In GetObject("winmgmts:").ExecQuery("select * from Win32_Process where name='notepad.exe'")
             Process.Terminate (0)
         Next
-        Shell "notepad.exe " & MyFile
+        Shell "notepad.exe " & FileName
     End If
 End Sub
 Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As String, TargetColumn As String)
@@ -5531,4 +5377,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.01
+'[版本号]V5.06.02
