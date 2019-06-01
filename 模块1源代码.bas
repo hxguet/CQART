@@ -359,12 +359,7 @@ Function 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, Back
         '删除临时Readme.txt
         If Dir(ThisWorkbook.Path & "\" & ReleaseReadmeFile) <> "" Then
             Open ThisWorkbook.Path & "\" & ReleaseReadmeFile For Input As #1
-            isError = Err.Description
-            If isError = "文件已打开" Then
-                Close #1
-            Else
-                Close #1
-            End If
+            Close #1
             Kill ThisWorkbook.Path & "\" & ReleaseReadmeFile
         End If
         ModuleCount = ModuleLastRivise(CSummary, CModuleCount)
@@ -511,12 +506,7 @@ Sub 远程更新代码()
     LastReadme = "Readme.txt"
     If Dir((LastFilePath & "\" & LastReadme)) <> "" Then
         Open LastFilePath & "\" & LastReadme For Input As #1
-        isError = Err.Description
-        If isError = "文件已打开" Then
-            Close #1
-        Else
-            Close #1
-        End If
+        Close #1
         Kill LastFilePath & "\" & LastReadme
     End If
     Call MsgInfo(NoMsgBox, "正在连接远程服务器，检查代码最新版本！")
@@ -585,23 +575,13 @@ Sub 远程更新代码()
     End If
     If Dir(LastFilePath & "\" & LastReadme) <> "" Then
         Open LastFilePath & "\" & LastReadme For Input As #1
-        isError = Err.Description
-        If isError = "文件已打开" Then
-            Close #1
-        Else
-            Close #1
-        End If
+        Close #1
         Kill LastFilePath & "\" & LastReadme
     End If
     For i = 0 To 3
         If Dir(ThisWorkbook.Path & "\" & CodeFileName(i, CRelease)) <> "" Then
             Open ThisWorkbook.Path & "\" & CodeFileName(i, CRelease) For Input As #1
-            isError = Err.Description
-            If isError = "文件已打开" Then
-                Close #1
-            Else
-                Close #1
-            End If
+            Close #1
             Kill ThisWorkbook.Path & "\" & CodeFileName(i, CRelease)
         End If
     Next i
@@ -644,12 +624,6 @@ Function GetLastLine(FileName As String)
     Dim TempBuf As String
     Dim isError As String
     Open FileName For Input As #1
-    isError = Err.Description
-    If isError = "文件已打开" Then
-        Close #1
-    Else
-        Open FileName For Input As #1
-    End If
     If EOF(1) Then
         TempBuf = "文件为空"
         Close #1
@@ -735,6 +709,8 @@ Function DownFile(FilePath As String, FileName As String, isHide As Boolean)
     Dim TempFileName As String
     Dim Result As String
     Dim VersionFilePath As String
+    Dim isError As String
+    On Error Resume Next
     If Dir(ThisWorkbook.Path & "\wget.exe") = "" Then
         Call MsgInfo(NoMsgBox, "请检查" & ThisWorkbook.Path & "\wget.exe 文件是否存在！")
         DownFile = False
@@ -742,6 +718,10 @@ Function DownFile(FilePath As String, FileName As String, isHide As Boolean)
     End If
     RemoteFile = "https://raw.githubusercontent.com/hxguet/CQART/master/" & FileName
     TempFileName = ThisWorkbook.Path & "\wget.exe -O " & FilePath & "\" & FileName & " " & RemoteFile
+    If (Dir(FilePath & "\" & FileName) <> "") Then
+        Open FilePath & "\" & FileName For Input As #1
+        Close #1
+    End If
     If (FileName = "Readme.txt") Then
         Result = ShellAndWait(TempFileName, isHide)
     Else
@@ -768,11 +748,6 @@ Function GetVersionFromFile(LocalFileName As String)
     UpdateInfo = ""
     isEmpty = False
     Open LocalFileName For Input As #1
-    isError = Err.Description
-    If isError = "文件已打开" Then
-        Close #1
-        Open LocalFileName For Input As #1
-    End If
     n = 0
     Do While Not EOF(1)
         Line Input #1, StrTemp
@@ -784,20 +759,21 @@ Function GetVersionFromFile(LocalFileName As String)
     End If
     Close #1
     x = InStr(1, StrTemp, vbLf)
-        
+    '文本文件每行以换行符结束
     If x <> 0 Then
         StrTxt = Split(StrTemp, vbLf)
         n = UBound(StrTxt) - LBound(StrTxt)
+    '文本文件每行已回车换行结束
+    Else
+        Open LocalFileName For Input As #1
+        ReDim Preserve StrTxt(1 To n)
+        i = 1
+        Do While Not EOF(1)
+            Line Input #1, StrTxt(i)
+            i = i + 1
+        Loop
+        Close #1
     End If
-    Open LocalFileName For Input As #1
-    ReDim Preserve StrTxt(1 To n)
-    i = 1
-    Do While Not EOF(1)
-        Line Input #1, StrTxt(i)
-        i = i + 1
-    Loop
-    Close #1
-    
     Set fso = CreateObject("Scripting.FileSystemObject")
     Set MyTxtObj = fso.CreateTextFile(LocalFileName, True, False)
     For i = 0 To n - 1
@@ -1543,10 +1519,7 @@ Function 提交前检查()
     Major = Range("$B$7").Value
     If Dir(ThisWorkbook.Path & "\错误报告\" & ThisFileName & "-错误检查报告.txt") <> "" Then
         Open ThisWorkbook.Path & "\错误报告\" & ThisFileName & "-错误检查报告.txt" For Input As #1
-        isError = Err.Description
-        If isError = "文件已打开" Then
-            Close #1
-        End If
+        Close #1
         Kill ThisWorkbook.Path & "\错误报告\" & ThisFileName & "-错误检查报告.txt"
     End If
     If ErrorMsg <> "" Then
