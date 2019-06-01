@@ -234,6 +234,7 @@ Sub 生成版本号()
     Dim BatFile As String
     Dim TempStr As String
     Dim TestCode As String
+    Dim ReadMeisEmpty As Boolean
     Call 修订专业矩阵状态
     BatFile = "发布代码.bat"
     Worksheets("专业矩阵状态").Visible = True
@@ -309,22 +310,26 @@ Sub 生成版本号()
             Call WriteLastLine(CodeFileName(0, CBackup), "'[版本号]" & Range("H1").Value)
             Call WriteLastLine(ReleaseFilePath & "\" & CodeFileName(0, CRelease), "'[版本号]" & Range("H1").Value)
             
-            Call 生成Readme(ReleaseFilePath, "Readme.txt", BackupFilePath, "Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
+            ReadMeisEmpty = 生成Readme(ReleaseFilePath, "Readme.txt", BackupFilePath, "Readme.txt", "模块1", ReleaseFile, Version, RiviseDate)
             
             '生成Git发布批处理文件
-            Set fso = CreateObject("Scripting.FileSystemObject")
-            Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & BatFile, True, False)
-            MyTxtObj.WriteLine (Mid(ReleaseFilePath, 1, 2))
-            MyTxtObj.WriteLine ("cd " & Mid(ReleaseFilePath, 3, Len(ReleaseFilePath) - 2))
-            MyTxtObj.WriteLine ("git add .")
-            TempStr = "git commit -m """
-            TempStr = TempStr & Commit
-            TempStr = TempStr & """"
-            MyTxtObj.WriteLine (TempStr)
-            MyTxtObj.WriteLine ("git push -u origin master")
-            MyTxtObj.WriteLine ("exit")
-            MyTxtObj.Close
-            Shell (ReleaseFilePath & "\" & BatFile)
+            If Not ReadMeisEmpty Then
+                Set fso = CreateObject("Scripting.FileSystemObject")
+                Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & BatFile, True, False)
+                MyTxtObj.WriteLine (Mid(ReleaseFilePath, 1, 2))
+                MyTxtObj.WriteLine ("cd " & Mid(ReleaseFilePath, 3, Len(ReleaseFilePath) - 2))
+                MyTxtObj.WriteLine ("git add .")
+                TempStr = "git commit -m """
+                TempStr = TempStr & Commit
+                TempStr = TempStr & """"
+                MyTxtObj.WriteLine (TempStr)
+                MyTxtObj.WriteLine ("git push -u origin master")
+                MyTxtObj.WriteLine ("exit")
+                MyTxtObj.Close
+                Shell (ReleaseFilePath & "\" & BatFile)
+            Else
+                Call MsgInfo(NoMsgBox, "ReadMe文件为空，版本发布失败！")
+            End If
         End If
     End If
     Set MyTxtObj = Nothing
@@ -332,7 +337,7 @@ Sub 生成版本号()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
 End Sub
-Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFilePath As String, BackupReadmeFile As String, ModuleName As String, ReleaseFile As String, Version As String, RiviseDate As String)
+Function 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFilePath As String, BackupReadmeFile As String, ModuleName As String, ReleaseFile As String, Version As String, RiviseDate As String)
     On Error Resume Next
     Dim ModuleCount As Integer
     Dim i As Integer
@@ -340,34 +345,38 @@ Sub 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, BackupFil
     Dim LineCount As Integer
     Dim UpdateInfo As String
     Dim Status As String
+    Dim isEmpty As Boolean
     On Error Resume Next
     Status = DownFile(ReleaseFilePath, ReleaseReadmeFile, True)
     If Status = False Then
-        Exit Sub
+        Exit Function
     End If
-    Call GetVersionFromFile(ReleaseFilePath & "\" & ReleaseReadmeFile)
-    ModuleCount = ModuleLastRivise(CSummary, CModuleCount)
-    LineCount = ModuleLastRivise(CSummary, CSumLines)
-    k = 1
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & ReleaseReadmeFile, True, False)
-    ModuleLastRivise(1, CModuleName) = "模块1"
-    ModuleLastRivise(1, CFileName) = ReleaseFile
-    ModuleLastRivise(1, CVersion) = Version
-    ModuleLastRivise(1, CRiviseDate) = RiviseDate
-    For i = 1 To ModuleCount
-        MyTxtObj.WriteLine ("[模块名称]" & ModuleLastRivise(i, CModuleName))
-        MyTxtObj.WriteLine ("[文件名称]" & ModuleLastRivise(i, CFileName))
-        MyTxtObj.WriteLine ("[修订版本]" & ModuleLastRivise(i, CVersion))
-        MyTxtObj.WriteLine ("[修订日期]" & ModuleLastRivise(i, CRiviseDate))
-        UpdateInfo = InputBox("请输入" & ModuleLastRivise(i, CModuleName) & "此次更新说明" & vbCrLf & ModuleLastRivise(i, CUpdateInfo))
-        MyTxtObj.WriteLine ("[更新说明]" & vbCrLf & ModuleLastRivise(i, CUpdateInfo)) & UpdateInfo
-    Next i
-    fso.CopyFile ReleaseFilePath & "\" & ReleaseReadmeFile, BackupFilePath & "\" & BackupReadmeFile
-    MyTxtObj.Close
-    Set fso = Nothing
-    Set MyTxtObj = Nothing
-End Sub
+    isEmpty = GetVersionFromFile(ReleaseFilePath & "\" & ReleaseReadmeFile)
+    If Not isEmpty Then
+        ModuleCount = ModuleLastRivise(CSummary, CModuleCount)
+        LineCount = ModuleLastRivise(CSummary, CSumLines)
+        k = 1
+        Set fso = CreateObject("Scripting.FileSystemObject")
+        Set MyTxtObj = fso.CreateTextFile(ReleaseFilePath & "\" & ReleaseReadmeFile, True, False)
+        ModuleLastRivise(1, CModuleName) = "模块1"
+        ModuleLastRivise(1, CFileName) = ReleaseFile
+        ModuleLastRivise(1, CVersion) = Version
+        ModuleLastRivise(1, CRiviseDate) = RiviseDate
+        For i = 1 To ModuleCount
+            MyTxtObj.WriteLine ("[模块名称]" & ModuleLastRivise(i, CModuleName))
+            MyTxtObj.WriteLine ("[文件名称]" & ModuleLastRivise(i, CFileName))
+            MyTxtObj.WriteLine ("[修订版本]" & ModuleLastRivise(i, CVersion))
+            MyTxtObj.WriteLine ("[修订日期]" & ModuleLastRivise(i, CRiviseDate))
+            UpdateInfo = InputBox("请输入" & ModuleLastRivise(i, CModuleName) & "此次更新说明" & vbCrLf & ModuleLastRivise(i, CUpdateInfo))
+            MyTxtObj.WriteLine ("[更新说明]" & vbCrLf & ModuleLastRivise(i, CUpdateInfo)) & UpdateInfo
+        Next i
+        fso.CopyFile ReleaseFilePath & "\" & ReleaseReadmeFile, BackupFilePath & "\" & BackupReadmeFile
+        MyTxtObj.Close
+        Set fso = Nothing
+        Set MyTxtObj = Nothing
+    End If
+    生成Readme = isEmpty
+End Function
 Sub ImportCode(Workbook As String, CodeFileName As String, wbSheetName As String)
     Dim fso As Object
     Dim Txtfile As Object
@@ -724,7 +733,7 @@ Function DownFile(FilePath As String, FileName As String, isHide As Boolean)
     End If
 ErrorSub:
 End Function
-Sub GetVersionFromFile(LocalFileName As String)
+Function GetVersionFromFile(LocalFileName As String)
     Dim StrTxt() As String
     Dim n As Integer
     Dim StrTemp As String
@@ -733,9 +742,10 @@ Sub GetVersionFromFile(LocalFileName As String)
     Dim ModuleCount As Integer
     Dim UpdateInfo As String
     Dim isError As String
+    Dim isEmpty As Boolean
     ModuleCount = 0
     UpdateInfo = ""
-
+    isEmpty = False
     Open LocalFileName For Input As #1
     isError = Err.Description
     If isError = "文件已打开" Then
@@ -747,7 +757,12 @@ Sub GetVersionFromFile(LocalFileName As String)
         Line Input #1, StrTemp
         n = n + 1
     Loop
+    If EOF(1) And n = 0 Then
+        isEmpty = True
+        GoTo Error
+    End If
     x = InStr(1, StrTemp, vbLf)
+        
     If x <> 0 Then
         StrTxt = Split(StrTemp, vbLf)
         n = UBound(StrTxt) - LBound(StrTxt)
@@ -800,7 +815,8 @@ Sub GetVersionFromFile(LocalFileName As String)
             k = k + 1
         End If
     Next i
-End Sub
+Error: GetVersionFromFile = isEmpty
+End Function
 Sub MsgInfo(NoMsg As Boolean, Msg As String)
     If Not NoMsg Then
         MsgBox (Msg)
