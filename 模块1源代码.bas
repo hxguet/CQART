@@ -362,6 +362,8 @@ Function 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, Back
             isError = Err.Description
             If isError = "文件已打开" Then
                 Close #1
+            Else
+                Close #1
             End If
             Kill ThisWorkbook.Path & "\" & ReleaseReadmeFile
         End If
@@ -512,6 +514,8 @@ Sub 远程更新代码()
         isError = Err.Description
         If isError = "文件已打开" Then
             Close #1
+        Else
+            Close #1
         End If
         Kill LastFilePath & "\" & LastReadme
     End If
@@ -584,6 +588,8 @@ Sub 远程更新代码()
         isError = Err.Description
         If isError = "文件已打开" Then
             Close #1
+        Else
+            Close #1
         End If
         Kill LastFilePath & "\" & LastReadme
     End If
@@ -592,6 +598,8 @@ Sub 远程更新代码()
             Open ThisWorkbook.Path & "\" & CodeFileName(i, CRelease) For Input As #1
             isError = Err.Description
             If isError = "文件已打开" Then
+                Close #1
+            Else
                 Close #1
             End If
             Kill ThisWorkbook.Path & "\" & CodeFileName(i, CRelease)
@@ -639,6 +647,7 @@ Function GetLastLine(FileName As String)
     isError = Err.Description
     If isError = "文件已打开" Then
         Close #1
+    Else
         Open FileName For Input As #1
     End If
     If EOF(1) Then
@@ -773,21 +782,21 @@ Function GetVersionFromFile(LocalFileName As String)
         isEmpty = True
         GoTo Error
     End If
+    Close #1
     x = InStr(1, StrTemp, vbLf)
         
     If x <> 0 Then
         StrTxt = Split(StrTemp, vbLf)
         n = UBound(StrTxt) - LBound(StrTxt)
-    Else
-        Open LocalFileName For Input As #1
-        ReDim Preserve StrTxt(1 To n)
-        i = 1
-        Do While Not EOF(1)
-            Line Input #1, StrTxt(i)
-            i = i + 1
-        Loop
-        Close #1
     End If
+    Open LocalFileName For Input As #1
+    ReDim Preserve StrTxt(1 To n)
+    i = 1
+    Do While Not EOF(1)
+        Line Input #1, StrTxt(i)
+        i = i + 1
+    Loop
+    Close #1
     
     Set fso = CreateObject("Scripting.FileSystemObject")
     Set MyTxtObj = fso.CreateTextFile(LocalFileName, True, False)
