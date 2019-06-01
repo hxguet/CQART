@@ -23,13 +23,19 @@ Attribute VB_Name = "模块1"
     Public NoMsgBox As Boolean
     Public isUpdate As Boolean
     Public CodeFileName(0 To 3, 0 To 3) As String
+Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+    Worksheets("专业矩阵状态").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("H10").Value = "弹出消息框"
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+End Sub
+    
 ''专业及修订
 Sub 修订公式()
     On Error Resume Next
     Dim FormulaRivise As String
     Application.EnableEvents = False
     Application.ScreenUpdating = False
-    NoMsgBox = True
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -129,7 +135,6 @@ Sub 修订公式()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
     Call 允许事件触发
-    NoMsgBox = False
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Application.ScreenUpdating = True
     Application.EnableEvents = True
@@ -445,6 +450,11 @@ Sub 远程更新代码()
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    If (Range("H10").Value = "弹出消息框") Then
+        NoMsgBox = False
+    ElseIf (Range("H10").Select = "不弹出消息框") Then
+        NoMsgBox = True
+    End If
     LastFilePath = ThisWorkbook.Path
     LastReadme = "Readme.txt"
     If Dir((LastFilePath & "\" & LastReadme)) <> "" Then
@@ -1002,6 +1012,7 @@ Sub 修订专业矩阵状态()
     ActiveCell.FormulaR1C1 = "代码发布路径"
     Range("G7").Select
     ActiveCell.FormulaR1C1 = "代码备份路径"
+    
     Range("G1:G12").Select
     Selection.Font.Bold = True
     ActiveSheet.Shapes.SelectAll
@@ -1024,6 +1035,7 @@ Sub 修订专业矩阵状态()
     ActiveSheet.Protection.AllowEditRanges.Add Title:="学院", Range:=Range("B2:D2")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="修复版本号", Range:=Range("H5")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="代码发布版本", Range:=Range("H9")
+    ActiveSheet.Protection.AllowEditRanges.Add Title:="消息框状态", Range:=Range("H10")
     Range("G9").Select
     ActiveCell.FormulaR1C1 = "代码发布版本"
     Range("H9").Select
@@ -1031,6 +1043,23 @@ Sub 修订专业矩阵状态()
         .Delete
         .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
         xlBetween, Formula1:="测试版本,发布版本"
+        .IgnoreBlank = True
+        .InCellDropdown = True
+        .InputTitle = ""
+        .ErrorTitle = ""
+        .InputMessage = ""
+        .ErrorMessage = ""
+        .IMEMode = xlIMEModeNoControl
+        .ShowInput = True
+        .ShowError = True
+    End With
+    Range("G10").Select
+    ActiveCell.FormulaR1C1 = "消息框状态"
+    Range("H10").Select
+    With Selection.Validation
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+        xlBetween, Formula1:="弹出消息框,不弹出消息框"
         .IgnoreBlank = True
         .InCellDropdown = True
         .InputTitle = ""
@@ -1051,17 +1080,12 @@ Sub 修订专业矩阵状态()
         .TintAndShade = -0.14996795556505
         .PatternTintAndShade = 0
     End With
-    Range("A7:F7").Select
-    Selection.Copy
-    Range("A8:F12").Select
-    Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, _
-        SkipBlanks:=False, Transpose:=False
     Rows("1:12").Select
     Selection.RowHeight = 30
     Call 设置表格线("A2", "H12", 12)
     Columns("H:H").Select
     Selection.ColumnWidth = 20
-    Range("G1:G12").Select
+    Range("G1:H12").Select
     With Selection.Font
         .Name = "宋体"
         .Size = 12
@@ -1247,6 +1271,10 @@ Sub 允许事件触发()
         .ShowInput = True
         .ShowError = True
     End With
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("专业矩阵状态").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("H10").Value = "弹出消息框"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Function 提交前检查()
