@@ -608,7 +608,7 @@ Function GetLastLine(FileName As String)
             .Close
         End With
         Set fso = Nothing
-        LastRow = UBound(Split(Buf, vbLf)) - 1
+        LastRow = UBound(Split(Buf, vbLf))
         TempBuf = Split(Buf, vbLf)(LastRow)
         While (TempBuf = "")
             LastRow = LastRow - 1
