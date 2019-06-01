@@ -742,7 +742,7 @@ Sub GetVersionFromFile(LocalFileName As String)
         Close #1
         Open LocalFileName For Input As #1
     End If
-    
+    n = 0
     Do While Not EOF(1)
         Line Input #1, StrTemp
         n = n + 1
