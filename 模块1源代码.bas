@@ -230,6 +230,7 @@ Sub 生成版本号()
     Dim ModuleCount As Integer
     Dim ReleaseFilePath As String
     Dim BackupFilePath As String
+    
     Dim ReleaseFile As String
     Dim Commit As String
     Dim n As Integer
@@ -349,12 +350,21 @@ Function 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, Back
     Dim Status As String
     Dim isEmpty As Boolean
     On Error Resume Next
-    Status = DownFile(ReleaseFilePath, ReleaseReadmeFile, True)
+    Status = DownFile(ThisWorkbook.Path, ReleaseReadmeFile, True)
     If Status = False Then
         Exit Function
     End If
-    isEmpty = GetVersionFromFile(ReleaseFilePath & "\" & ReleaseReadmeFile)
+    isEmpty = GetVersionFromFile(ThisWorkbook.Path & "\" & ReleaseReadmeFile)
     If Not isEmpty Then
+        '删除临时Readme.txt
+        If Dir(ThisWorkbook.Path & "\" & ReleaseReadmeFile) <> "" Then
+            Open ThisWorkbook.Path & "\" & ReleaseReadmeFile For Input As #1
+            isError = Err.Description
+            If isError = "文件已打开" Then
+                Close #1
+            End If
+            Kill ThisWorkbook.Path & "\" & ReleaseReadmeFile
+        End If
         ModuleCount = ModuleLastRivise(CSummary, CModuleCount)
         LineCount = ModuleLastRivise(CSummary, CSumLines)
         k = 1
@@ -5465,4 +5475,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.04
+'[版本号]V5.06.05
