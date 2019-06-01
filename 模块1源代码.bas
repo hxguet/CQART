@@ -24,10 +24,15 @@ Attribute VB_Name = "模块1"
     Public isUpdate As Boolean
     Public CodeFileName(0 To 3, 0 To 3) As String
 Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+    Dim ThisSheet As String
+    ThisSheet = ActiveSheet.Name
+    Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("H10").Value = "弹出消息框"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("专业矩阵状态").Visible = False
+    Worksheets(ThisSheet).Activate
 End Sub
     
 ''专业及修订
@@ -3836,7 +3841,7 @@ Sub 导入教学任务()
     Application.ScreenUpdating = False
 End Sub '选择打开文件后并没有真实的把它打开
 Sub 导入毕业要求矩阵(Major As String)
-    Dim ThisWorkSheet As String
+    Dim ThisWorksheet As String
     Dim FileName As Variant
      '打开文件对话框返回的文件名，是一个全路径文件名，其值也可能是False，因此类型为Variant
     Dim ThisWorkBookName As String
@@ -3851,7 +3856,7 @@ Sub 导入毕业要求矩阵(Major As String)
     Dim strWbkPath As String    ' 工作簿所在的路径.
     strCurPath = CurDir$
     strWbkPath = ThisWorkbook.Path
-    ThisWorkSheet = ActiveSheet.Name
+    ThisWorksheet = ActiveSheet.Name
     On Error Resume Next
     ' /* 应用程序的当前路径不是工作簿所在的路径. */
     If StrComp(strCurPath, strWbkPath) <> 0 Then
@@ -3882,10 +3887,10 @@ Sub 导入毕业要求矩阵(Major As String)
     Worksheets(MatrixSheet).Visible = True
     Call CopySheet(FileName, SourceWorkBook, "指标点课程矩阵", "A:AS", ThisWorkBookName, MatrixSheet, "A:AS")
     Application.ScreenUpdating = False
-    Worksheets(ThisWorkSheet).Activate
+    Worksheets(ThisWorksheet).Activate
 End Sub '选择打开文件后并没有真实的把它打开
 Sub 提取毕业要求矩阵信息(Major As String)
-    Dim ThisWorkSheet As String
+    Dim ThisWorksheet As String
     Dim FileName As Variant
      '打开文件对话框返回的文件名，是一个全路径文件名，其值也可能是False，因此类型为Variant
     Dim ThisWorkBookName As String
@@ -3901,7 +3906,7 @@ Sub 提取毕业要求矩阵信息(Major As String)
     
     strCurPath = CurDir$
     strWbkPath = ThisWorkbook.Path
-    ThisWorkSheet = ActiveSheet.Name
+    ThisWorksheet = ActiveSheet.Name
     On Error Resume Next
     ' /* 应用程序的当前路径不是工作簿所在的路径. */
     If StrComp(strCurPath, strWbkPath) <> 0 Then
