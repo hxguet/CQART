@@ -33,6 +33,7 @@ Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
     Worksheets(ThisSheet).Activate
+    Call 允许事件触发
 End Sub
     
 ''专业及修订
