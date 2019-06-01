@@ -721,6 +721,7 @@ Function DownFile(FilePath As String, FileName As String, isHide As Boolean)
     If (Dir(FilePath & "\" & FileName) <> "") Then
         Open FilePath & "\" & FileName For Input As #1
         Close #1
+        Kill FilePath & "\" & FileName
     End If
     If (FileName = "Readme.txt") Then
         Result = ShellAndWait(TempFileName, isHide)
