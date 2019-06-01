@@ -95,6 +95,8 @@ Sub 修订公式()
     Worksheets("2-课程目标和综合分析（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Application.EnableEvents = False
+    ActiveSheet.Shapes.Range(Array("Button 5")).Select
+    Selection.OnAction = "打印"
     Range("B22:R22,B23:R23,B27:R27,B28:R28").Select
     Selection.Locked = False
     Selection.FormulaHidden = False
@@ -1551,6 +1553,17 @@ Sub 打印()
     Dim NoError As Boolean
     CurrentWorksheet = ActiveSheet.Name
     Application.ScreenUpdating = False
+    Worksheets("2-课程目标和综合分析（填写）").Activate
+    Term = Range("$B$2").Value
+    Term = Mid(Term, 3, 2) & "-" & Mid(Term, 8, 2) & "-" & Mid(Term, 14, 1)
+    CourseNum = Range("$B$3").Value
+    CourseName = Range("$B$4").Value
+    Teacher = Range("$B$5").Value
+    Major = Range("$B$7").Value
+    Worksheets("专业矩阵状态").Visible = True
+    Worksheets("专业矩阵状态").Activate
+    SchoolName = Range("B2").Value
+    Worksheets("专业矩阵状态").Visible = False
     PDFFileName = Term & "-" & CourseNum & "-" & Major & "-" & Teacher & "-" & CourseName
     NoError = 提交前检查
     If NoError Then
@@ -1667,7 +1680,7 @@ Sub 打印()
                     ActiveSheet.PageSetup.CenterFooter = ""
                     Call Excel2PDF("3-综合分析（打印）", ThisWorkbook.Path, PDFFileName & "--课程综合分析.pdf")
                     Sheets("3-综合分析（打印）").Visible = False
-                End Select
+            End Select
         Else
             Call MsgInfo(NoMsgBox, "2-课程目标和综合分析（填写）工作表中的“是否认证”未选择！")
         End If
@@ -5453,4 +5466,3 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 '[版本号]V5.06.03
-
