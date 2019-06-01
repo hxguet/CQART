@@ -108,6 +108,15 @@ Sub 修订公式()
     Range("R7").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OR(COUNTBLANK(RC[-14]:RC[-6])=14,SUM(R6C4:R6C12)=0),"""",SUM('2-课程目标和综合分析（填写）'!R7C4:R7C12)*100/SUM(R6C4:R6C12))"
+    If SchoolName = "计算机信息与安全学院" Then
+        If Range("A26").Value = "（4）毕业要求达成度评价" Then
+            Rows("26:27").Select
+            Selection.EntireRow.Hidden = True
+            Range("A28").Select
+            ActiveCell.FormulaR1C1 = "（4）改进措施"
+        End If
+    End If
+    
     Dim Evaluation1 As String
     Dim Evaluation2 As String
     Evaluation1 = Range("D2").Value
@@ -128,6 +137,20 @@ Sub 修订公式()
         ""
     Selection.AutoFill Destination:=Range("D6:U185"), Type:=xlFillDefault
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("3-综合分析（打印）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    If SchoolName = "计算机信息与安全学院" Then
+        If Range("A9").Value = "（4）毕业要求达成度评价" Then
+            Rows("9:10").Select
+            Selection.Delete Shift:=xlUp
+            Range("A11").Select
+            ActiveCell.FormulaR1C1 = "（4）改进措施"
+        End If
+    End If
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("3-综合分析（打印）").Visible = False
+    
+    
     'Call 设置表格主题
     'Call 打开文档
     'Call 重新设置公式按钮
@@ -1386,9 +1409,11 @@ Function 提交前检查()
         ErrNum = ErrNum + 1
         ErrorMsg = ErrorMsg & ErrNum & "、缺少（3）课程目标达成度评价" & vbCrLf
     End If
-    If Range("$B$27").Value = "" Then
-        ErrNum = ErrNum + 1
-        ErrorMsg = ErrorMsg & ErrNum & "、缺少（4）毕业要求达成度评价" & vbCrLf
+    If ShoolName = "电子工程与自动化学院" Then
+        If Range("$B$27").Value = "" Then
+            ErrNum = ErrNum + 1
+            ErrorMsg = ErrorMsg & ErrNum & "、缺少（4）毕业要求达成度评价" & vbCrLf
+        End If
     End If
     If Range("$B$28").Value = "" Then
         ErrNum = ErrNum + 1
@@ -5412,3 +5437,5 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 '[版本号]V5.06.02
+
+'[版本号]V5.06.03
