@@ -169,7 +169,6 @@ Sub 修订公式()
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Application.ScreenUpdating = True
     Application.EnableEvents = True
-    ActiveWorkbook.Save
 End Sub
 Sub 其他操作()
     Worksheets("专业矩阵状态").Activate
@@ -349,6 +348,7 @@ Function 生成Readme(ReleaseFilePath As String, ReleaseReadmeFile As String, Back
     Dim UpdateInfo As String
     Dim Status As String
     Dim isEmpty As Boolean
+    Dim isError As String
     On Error Resume Next
     Status = DownFile(ThisWorkbook.Path, ReleaseReadmeFile, True)
     If Status = False Then
@@ -1352,6 +1352,8 @@ Function 提交前检查()
     Dim NoError As Boolean
     Dim ThisFileName As String
     Dim IdentifyStatus As String
+    Dim isError As String
+    On Error Resume Next
     NoError = True
     Application.ScreenUpdating = False
     Worksheets("专业矩阵状态").Visible = True
@@ -1530,6 +1532,14 @@ Function 提交前检查()
     CourseName = Range("$B$4").Value
     Teacher = Range("$B$5").Value
     Major = Range("$B$7").Value
+    If Dir(ThisWorkbook.Path & "\错误报告\" & ThisFileName & "-错误检查报告.txt") <> "" Then
+        Open ThisWorkbook.Path & "\错误报告\" & ThisFileName & "-错误检查报告.txt" For Input As #1
+        isError = Err.Description
+        If isError = "文件已打开" Then
+            Close #1
+        End If
+        Kill ThisWorkbook.Path & "\错误报告\" & ThisFileName & "-错误检查报告.txt"
+    End If
     If ErrorMsg <> "" Then
         If Dir(ThisWorkbook.Path & "\错误报告\") = "" Then
             MkDir ThisWorkbook.Path & "\错误报告\"
@@ -5475,4 +5485,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.05
+'[版本号]V5.06.06
