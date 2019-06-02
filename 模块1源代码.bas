@@ -1554,7 +1554,6 @@ Sub 打印()
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("H11").Value = "打开PDF"
-    isOpenAfterPublish = True
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
     Call 生成PDF
@@ -1583,6 +1582,17 @@ Sub 生成PDF()
     Dim PDFFilePath As String
     CurrentWorksheet = ActiveSheet.Name
     Application.ScreenUpdating = False
+    Worksheets("专业矩阵状态").Visible = True
+    Worksheets("专业矩阵状态").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    If (Range("H11").Value = "打开PDF") Then
+        isOpenAfterPublish = True
+    ElseIf (Range("H11").Value = "不打开PDF") Then
+        isOpenAfterPublish = False
+    End If
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("专业矩阵状态").Visible = False
+    
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Term = Range("$B$2").Value
     Term = Mid(Term, 3, 2) & "-" & Mid(Term, 8, 2) & "-" & Mid(Term, 14, 1)
