@@ -23,6 +23,7 @@ Attribute VB_Name = "模块1"
     Public NoMsgBox As Boolean
     Public isUpdate As Boolean
     Public CodeFileName(0 To 3, 0 To 3) As String
+    Public isOpenAfterPublish As Boolean
 Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
     Dim ThisSheet As String
     ThisSheet = ActiveSheet.Name
@@ -1113,7 +1114,23 @@ Sub 修订专业矩阵状态()
         .ShowInput = True
         .ShowError = True
     End With
-    
+    Range("G11").Select
+    ActiveCell.FormulaR1C1 = "生成PDF后打开文档"
+    Range("H11").Select
+    With Selection.Validation
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+        xlBetween, Formula1:="打开PDF,不打开PDF"
+        .IgnoreBlank = True
+        .InCellDropdown = True
+        .InputTitle = ""
+        .ErrorTitle = ""
+        .InputMessage = ""
+        .ErrorMessage = ""
+        .IMEMode = xlIMEModeNoControl
+        .ShowInput = True
+        .ShowError = True
+    End With
     Range("B4:C12,B2:F2").Select
     Range("B2").Activate
     With Selection.Interior
@@ -1532,8 +1549,17 @@ Function 提交前检查()
     End If
     提交前检查 = NoError
 End Function
-
 Sub 打印()
+    Worksheets("专业矩阵状态").Visible = True
+    Worksheets("专业矩阵状态").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("H11").Value = "打开PDF"
+    isOpenAfterPublish = True
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("专业矩阵状态").Visible = False
+    Call 生成PDF
+End Sub
+Sub 生成PDF()
     On Error Resume Next
     '设置格式 宏
     Dim CurrentWorksheet As String
@@ -1580,19 +1606,19 @@ Sub 打印()
         If Range("$Q$3").Value = "非认证" Then
             Worksheets("0-教学过程登记表（填写+打印)").Activate
             ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-            Call Excel2PDF("0-教学过程登记表（填写+打印)", PDFFilePath, PDFFileName & "--教学过程登记表.pdf")
+            Call Excel2PDF("0-教学过程登记表（填写+打印)", PDFFilePath, PDFFileName & "--教学过程登记表.pdf", isOpenAfterPublish)
             ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
             
             Worksheets("4-质量分析报告（填写+打印）").Activate
             Call 取消质量分析报告填写区域颜色
             
-            Call Excel2PDF("4-质量分析报告（填写+打印）", PDFFilePath, PDFFileName & "--质量分析报告.pdf")
+            Call Excel2PDF("4-质量分析报告（填写+打印）", PDFFilePath, PDFFileName & "--质量分析报告.pdf", isOpenAfterPublish)
             Call 设置质量分析报告填写区域颜色
         ElseIf Range("$Q$3").Value = "认证未提交成绩" Then
             '打印教学过程登记表
             Worksheets("0-教学过程登记表（填写+打印)").Activate
             ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-            Call Excel2PDF("0-教学过程登记表（填写+打印)", PDFFilePath, PDFFileName & "--教学过程登记表.pdf")
+            Call Excel2PDF("0-教学过程登记表（填写+打印)", PDFFilePath, PDFFileName & "--教学过程登记表.pdf", isOpenAfterPublish)
             ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
             
             Sheets("2-毕业要求达成度评价（打印）").Visible = True
@@ -1610,7 +1636,7 @@ Sub 打印()
             Selection.EntireRow.Hidden = True
             ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
             
-            Call Excel2PDF("1-课程目标达成度评价（打印）", PDFFilePath, PDFFileName & "--课程目标达成情况评价.pdf")
+            Call Excel2PDF("1-课程目标达成度评价（打印）", PDFFilePath, PDFFileName & "--课程目标达成情况评价.pdf", isOpenAfterPublish)
             Sheets("1-课程目标达成度评价（打印）").Visible = False
     
             Select Case SchoolName
@@ -1621,13 +1647,13 @@ Sub 打印()
                     ActiveSheet.PageSetup.CenterFooter = ""
                     
                     
-                    Call Excel2PDF("3-综合分析（打印）", PDFFilePath, PDFFileName & "--课程综合分析.pdf")
+                    Call Excel2PDF("3-综合分析（打印）", PDFFilePath, PDFFileName & "--课程综合分析.pdf", isOpenAfterPublish)
                     Sheets("3-综合分析（打印）").Visible = False
                     
                     Worksheets("4-质量分析报告（填写+打印）").Activate
                     Call 取消质量分析报告填写区域颜色
                     
-                    Call Excel2PDF("4-质量分析报告（填写+打印）", PDFFilePath, PDFFileName & "--质量分析报告.pdf")
+                    Call Excel2PDF("4-质量分析报告（填写+打印）", PDFFilePath, PDFFileName & "--质量分析报告.pdf", isOpenAfterPublish)
                     
                     Call 设置质量分析报告填写区域颜色
                 Case "电子工程与自动化学院"
@@ -1635,20 +1661,20 @@ Sub 打印()
                     Worksheets("2-毕业要求达成度评价（打印）").Activate
                     ActiveSheet.PageSetup.CenterFooter = ""
                     
-                    Call Excel2PDF("2-毕业要求达成度评价（打印）", PDFFilePath, PDFFileName & "--毕业要求达成情况评价.pdf")
+                    Call Excel2PDF("2-毕业要求达成度评价（打印）", PDFFilePath, PDFFileName & "--毕业要求达成情况评价.pdf", isOpenAfterPublish)
                     Sheets("2-毕业要求达成度评价（打印）").Visible = False
                     Sheets("3-综合分析（打印）").Visible = True
                     Worksheets("3-综合分析（打印）").Activate
                     ActiveSheet.PageSetup.CenterFooter = ""
                     
                     
-                    Call Excel2PDF("3-综合分析（打印）", PDFFilePath, PDFFileName & "--课程综合分析.pdf")
+                    Call Excel2PDF("3-综合分析（打印）", PDFFilePath, PDFFileName & "--课程综合分析.pdf", isOpenAfterPublish)
                     Sheets("3-综合分析（打印）").Visible = False
                     
                     Worksheets("4-质量分析报告（填写+打印）").Activate
                     Call 取消质量分析报告填写区域颜色
                     
-                    Call Excel2PDF("4-质量分析报告（填写+打印）", PDFFilePath, PDFFileName & "--质量分析报告.pdf")
+                    Call Excel2PDF("4-质量分析报告（填写+打印）", PDFFilePath, PDFFileName & "--质量分析报告.pdf", isOpenAfterPublish)
                     
                     Call 设置质量分析报告填写区域颜色
                 End Select
@@ -1668,25 +1694,25 @@ Sub 打印()
             Selection.EntireRow.Hidden = True
             ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
             
-            Call Excel2PDF("1-课程目标达成度评价（打印）", PDFFilePath, PDFFileName & "--课程目标达成情况评价.pdf")
+            Call Excel2PDF("1-课程目标达成度评价（打印）", PDFFilePath, PDFFileName & "--课程目标达成情况评价.pdf", isOpenAfterPublish)
             Sheets("1-课程目标达成度评价（打印）").Visible = False
             Select Case SchoolName
                 Case "计算机信息与安全学院"
                     Sheets("2-毕业要求达成度评价（打印）").Visible = False
                     Worksheets("3-综合分析（打印）").Activate
                     ActiveSheet.PageSetup.CenterFooter = ""
-                    Call Excel2PDF("3-综合分析（打印）", PDFFilePath, PDFFileName & "--课程综合分析.pdf")
+                    Call Excel2PDF("3-综合分析（打印）", PDFFilePath, PDFFileName & "--课程综合分析.pdf", isOpenAfterPublish)
                     Sheets("3-综合分析（打印）").Visible = False
                 Case "电子工程与自动化学院"
                     Sheets("2-毕业要求达成度评价（打印）").Visible = True
                     Worksheets("2-毕业要求达成度评价（打印）").Activate
                     ActiveSheet.PageSetup.CenterFooter = ""
-                    Call Excel2PDF("2-毕业要求达成度评价（打印）", PDFFilePath, PDFFileName & "--毕业要求达成情况评价.pdf")
+                    Call Excel2PDF("2-毕业要求达成度评价（打印）", PDFFilePath, PDFFileName & "--毕业要求达成情况评价.pdf", isOpenAfterPublish)
                     Sheets("2-毕业要求达成度评价（打印）").Visible = False
                     Sheets("3-综合分析（打印）").Visible = True
                     Worksheets("3-综合分析（打印）").Activate
                     ActiveSheet.PageSetup.CenterFooter = ""
-                    Call Excel2PDF("3-综合分析（打印）", PDFFilePath, PDFFileName & "--课程综合分析.pdf")
+                    Call Excel2PDF("3-综合分析（打印）", PDFFilePath, PDFFileName & "--课程综合分析.pdf", isOpenAfterPublish)
                     Sheets("3-综合分析（打印）").Visible = False
             End Select
         Else
@@ -1942,7 +1968,7 @@ Sub MergePDF(PDFFile1Name As String, PDFFile2Name As String, MergePDFFileName As
     Set tempPDDoc = Nothing
     Set PDFApp = Nothing
 End Sub
-Public Sub Excel2PDF(WorkSheetName As String, PathName As String, FileName As String)
+Public Sub Excel2PDF(WorkSheetName As String, PathName As String, FileName As String, isOpenAfterPublish As Boolean)
     On Error Resume Next
     Dim PDFFileName As String
     Dim WorkSheetVisble As Boolean
@@ -1955,7 +1981,7 @@ Public Sub Excel2PDF(WorkSheetName As String, PathName As String, FileName As St
     If Not ActiveWorkbook.Saved Then
         ThisWorkbook.Saved = True
     End If
-    ActiveSheet.ExportAsFixedFormat Type:=xlTypePDF, FileName:=PDFFileName, Quality:=xlQualityStandard, IncludeDocProperties:=True, IgnorePrintAreas:=False, OpenAfterPublish:=True
+    ActiveSheet.ExportAsFixedFormat Type:=xlTypePDF, FileName:=PDFFileName, Quality:=xlQualityStandard, IncludeDocProperties:=True, IgnorePrintAreas:=False, OpenAfterPublish:=isOpenAfterPublish
     If (WorkSheetVisble = False) Then
         Worksheets(WorkSheetName).Visible = False
     End If
