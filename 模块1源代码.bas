@@ -1,5 +1,6 @@
 Attribute VB_Name = "模块1"
     Public Const MaxRecord As String = "185"
+    Public Const MaxLineCout As String = "403"
     Public Const OldPassword As String = "dpt8"
     Public Const Password As String = "dpt8hx"
     Public Const MajorLastRow As String = "12"
@@ -69,7 +70,7 @@ Sub 修订公式()
         "C18:R1C19,0),0))))" & _
         ""
     Range("B4:C4").Select
-    Selection.AutoFill Destination:=Range("B4:C403"), Type:=xlFillDefault
+    Selection.AutoFill Destination:=Range("B4:C" & MaxLineCout), Type:=xlFillDefault
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     
     '【修订】4-质量分析报告（填写+打印）
@@ -1111,6 +1112,7 @@ Sub 修订专业矩阵状态()
     ActiveSheet.Protection.AllowEditRanges.Add Title:="修复版本号", Range:=Range("H5")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="代码发布版本", Range:=Range("H9")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="消息框状态", Range:=Range("H10")
+    ActiveSheet.Protection.AllowEditRanges.Add Title:="生成PDF后打开文档", Range:=Range("H11")
     Range("G9").Select
     ActiveCell.FormulaR1C1 = "代码发布版本"
     Range("H9").Select
@@ -2041,7 +2043,7 @@ Sub 保存文件()
     CurrentWorksheet = ActiveSheet.Name
     
     Application.ScreenUpdating = False
-    Call 设置区域颜色("1-试卷成绩登记表（填写）", "E2:M403", xlThemeColorDark1)
+    Call 设置区域颜色("1-试卷成绩登记表（填写）", "E2:M" & MaxLineCout, xlThemeColorDark1)
     Call 设置区域颜色("3-毕业要求数据表（填写）", "E7:N18", xlThemeColorDark1)
 
     Worksheets("2-课程目标和综合分析（填写）").Activate
@@ -3277,12 +3279,12 @@ On Error Resume Next
         "=IF(OR(AND(RC[-3]<>"""",R2C26=""""),AND(RC[-3]<>"""",R2C26=""剔除不及格学生"",RC[-5]>=60)),IF(ISNUMBER(RC[-2]),IF(AND(RC[-2]='2-课程目标和综合分析（填写）'!R9C4,RC[-3]='2-课程目标和综合分析（填写）'!R7C2),""认证"",""""),IF(AND(VALUE(RC[-2])='2-课程目标和综合分析（填写）'!R9C4,RC[-3]='2-课程目标和综合分析（填写）'!R7C2),""认证"","""")),"""")"
     
     Range("A4:C4").Select
-    Selection.AutoFill Destination:=Range("A4:C403"), Type:=xlFillDefault
-    Range("A4:C403").Select
+    Selection.AutoFill Destination:=Range("A4:C" & MaxLineCout), Type:=xlFillDefault
+    Range("A4:C" & MaxLineCout).Select
     Range("N4:Y4").Select
     Range("W4").Activate
-    Selection.AutoFill Destination:=Range("N4:Y403"), Type:=xlFillDefault
-    Range("N4:Y403").Select
+    Selection.AutoFill Destination:=Range("N4:Y" & MaxLineCout), Type:=xlFillDefault
+    Range("N4:Y" & MaxLineCout).Select
     Worksheets("1-试卷成绩登记表（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
@@ -3320,8 +3322,8 @@ On Error Resume Next
         "=IF(RC1="""","""",IF('0-教学过程登记表（填写+打印)'!R[2]C[24]="""",""正考"",INDEX('0-教学过程登记表（填写+打印)'!C33,MATCH(RC1,'0-教学过程登记表（填写+打印)'!C2,0))))"
     Range("A4:I4").Select
     Range("I4").Activate
-    Selection.AutoFill Destination:=Range("A4:I183"), Type:=xlFillDefault
-    Range("A4:I183").Select
+    Selection.AutoFill Destination:=Range("A4:I" & MaxLineCout), Type:=xlFillDefault
+    Range("A4:I" & MaxLineCout).Select
     Columns("J:T").Select
     Selection.ClearContents
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
@@ -5159,7 +5161,7 @@ Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As Strin
                 ElseIf Range("Q3").Value = "认证已提交成绩" Then
                     TempMsgBox = NoMsgBox
                     NoMsgBox = True
-                    ImportStatus = 导入教学过程登记表
+                    'ImportStatus = 导入教学过程登记表
                     NoMsgBox = TempMsgBox
                 End If
                 Worksheets("2-课程目标和综合分析（填写）").Activate
@@ -5242,7 +5244,7 @@ Sub 非认证()
         Sheets("1-试卷成绩登记表（填写）").Columns("O:Y").Select
         Selection.EntireColumn.Hidden = True
         
-        Sheets("1-试卷成绩登记表（填写）").Range("N4:N183").Select
+        Sheets("1-试卷成绩登记表（填写）").Range("N4:N" & MaxLineCout).Select
         Selection.Locked = True
         Selection.FormulaHidden = False
         With Selection.Font
@@ -5276,17 +5278,17 @@ Sub 非认证()
 
         On Error Resume Next
         ActiveSheet.Protection.AllowEditRanges.Add Title:="大题名称", Range:=Range("E2:M2")
-        ActiveSheet.Protection.AllowEditRanges.Add Title:="考试大题分数", Range:=Range("E3:M183")
-        ActiveSheet.Protection.AllowEditRanges.Add Title:="考核成绩", Range:=Range("N4:N183")
-        ActiveSheet.Protection.AllowEditRanges.Add Title:="其他成绩", Range:=Range("O4:R183")
+        ActiveSheet.Protection.AllowEditRanges.Add Title:="考试大题分数", Range:=Range("E3:M" & MaxLineCout)
+        ActiveSheet.Protection.AllowEditRanges.Add Title:="考核成绩", Range:=Range("N4:N" & MaxLineCout)
+        ActiveSheet.Protection.AllowEditRanges.Add Title:="其他成绩", Range:=Range("O4:R" & MaxLineCout)
         ActiveSheet.Protection.AllowEditRanges.Add Title:="认证方式", Range:=Range("Z2")
         Worksheets("1-试卷成绩登记表（填写）").Activate
         Sheets("1-试卷成绩登记表（填写）").Range("N4").Select
         ActiveCell.FormulaR1C1 = _
           "=IF(OR(SUM(RC[-9]:RC[-1])=0,RC2=""""),"""",SUM(RC[-9]:RC[-1]))"
         Sheets("1-试卷成绩登记表（填写）").Range("N4").Select
-        Selection.AutoFill Destination:=Sheets("1-试卷成绩登记表（填写）").Range("N4:N183"), Type:=xlFillDefault
-        Sheets("1-试卷成绩登记表（填写）").Range("N4:N183").Select
+        Selection.AutoFill Destination:=Sheets("1-试卷成绩登记表（填写）").Range("N4:N" & MaxLineCout), Type:=xlFillDefault
+        Sheets("1-试卷成绩登记表（填写）").Range("N4:N" & MaxLineCout).Select
         Call 试卷成绩登记表核心公式
         
         Worksheets("1-试卷成绩登记表（填写）").Activate
@@ -5354,7 +5356,7 @@ Sub 认证未提交成绩()
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
 
         '1-试卷成绩登记表（填写）工作表的考核成绩列不允许编辑
-        Sheets("1-试卷成绩登记表（填写）").Range("N4:N183").Select
+        Sheets("1-试卷成绩登记表（填写）").Range("N4:N" & MaxLineCout).Select
         Selection.Locked = True
         Selection.FormulaHidden = True
         '统计允许编辑区域个数，并全部删除
@@ -5367,7 +5369,7 @@ Sub 认证未提交成绩()
 
         On Error Resume Next
         ActiveSheet.Protection.AllowEditRanges.Add Title:="大题名称", Range:=Range("E2:M2")
-        ActiveSheet.Protection.AllowEditRanges.Add Title:="考试大题分数", Range:=Range("E3:M183")
+        ActiveSheet.Protection.AllowEditRanges.Add Title:="考试大题分数", Range:=Range("E3:M" & MaxLineCout)
         ActiveSheet.Protection.AllowEditRanges.Add Title:="认证方式", Range:=Range("Z2")
         With Selection.Font
           .Name = "Calibri"
@@ -5457,7 +5459,7 @@ Sub 认证已提交成绩()
         Selection.EntireColumn.Hidden = False
         
         '1-试卷成绩登记表（填写）工作表的考核成绩列不允许编辑
-        Sheets("1-试卷成绩登记表（填写）").Range("N4:N183").Select
+        Sheets("1-试卷成绩登记表（填写）").Range("N4:N" & MaxLineCout).Select
         Selection.Locked = True
         Selection.FormulaHidden = True
         '统计允许编辑区域个数，并全部删除
@@ -5470,7 +5472,7 @@ Sub 认证已提交成绩()
 
         On Error Resume Next
         ActiveSheet.Protection.AllowEditRanges.Add Title:="大题名称", Range:=Range("E2:M2")
-        ActiveSheet.Protection.AllowEditRanges.Add Title:="考试大题分数", Range:=Range("E3:M183")
+        ActiveSheet.Protection.AllowEditRanges.Add Title:="考试大题分数", Range:=Range("E3:M" & MaxLineCout)
         ActiveSheet.Protection.AllowEditRanges.Add Title:="认证方式", Range:=Range("Z2")
         With Selection.Font
           .Name = "Calibri"
@@ -5544,4 +5546,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.07
+'[版本号]V5.06.08
