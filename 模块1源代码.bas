@@ -200,7 +200,7 @@ Sub 修订公式()
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("C7").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(OR(R3C2="""",ISERROR(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0))),IF(RC[1]<>"""",""√"",""""),IF(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0)>0,""√"",""""))"
+        "=IF(OR(R3C2="""",ISERROR(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0))),IF(RC[1]<>"""",""√"",""""),IF(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0)>0,""√"",IF(RC[1]<>"""",""√"","""")))"
     Range("C7").Select
     Selection.AutoFill Destination:=Range("C7:C18"), Type:=xlFillDefault
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
@@ -1839,7 +1839,7 @@ Sub 毕业要求数据表公式()
             ActiveCell.FormulaR1C1 = "=IF(RC[-1]="""","""",""毕业要求""&RC1)"
             Range("C7").Select
             ActiveCell.FormulaR1C1 = _
-                "=IF(OR(R3C2="""",ISERROR(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0))),IF(RC[1]<>"""",""√"",""""),IF(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0)>0,""√"",""""))"
+                "=IF(OR(R3C2="""",ISERROR(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0))),IF(RC[1]<>"""",""√"",""""),IF(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0)>0,""√"",IF(RC[1]<>"""",""√"","""")))"
             '统计允许编辑区域个数，并全部删除
             AllowEditCount = ActiveSheet.Protection.AllowEditRanges.Count
             If (AllowEditCount <> 0) Then
