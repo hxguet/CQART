@@ -186,6 +186,25 @@ Sub 修订公式()
     Selection.AutoFill Destination:=Range("R2:R185"), Type:=xlFillDefault
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("成绩表").Visible = False
+    '【修订】毕业要求-指标点数据表
+    Worksheets("毕业要求-指标点数据表）").Visible = True
+    Worksheets("毕业要求-指标点数据表）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("B3:C3").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R2C2="""","""",IF(OR(MID(R[-1]C,LEN(R[-1]C),1)=""A"",MID(R[-1]C,LEN(R[-1]C),1)=""B"",MID(R[-1]C,LEN(R[-1]C),1)=""C""),MID(R[-1]C,1,LEN(R[-1]C)-1),IF(ISNUMBER(FIND(""（"",R[-1]C,1)),MID(R[-1]C,1,FIND(""（"",R[-1]C,1)-1),IF(ISNUMBER(FIND(""("",R[-1]C,1)),MID(R[-1]C,1,FIND(""("",R[-1]C,1)-1),R[-1]C))))"
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("毕业要求-指标点数据表）").Visible = False
+    '【修订】毕业要求数据表
+    Worksheets("3-毕业要求数据表（填写）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("C7").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(R3C2="""",ISERROR(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0))),IF(RC[1]<>"""",""√"",""""),IF(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0)>0,""√"",""""))"
+    Range("C7").Select
+    Selection.AutoFill Destination:=Range("C7:C18"), Type:=xlFillDefault
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    
     'Call 设置表格主题
     'Call 打开文档
     'Call 重新设置公式按钮
@@ -1820,7 +1839,7 @@ Sub 毕业要求数据表公式()
             ActiveCell.FormulaR1C1 = "=IF(RC[-1]="""","""",""毕业要求""&RC1)"
             Range("C7").Select
             ActiveCell.FormulaR1C1 = _
-                "=IF(OR(R3C2="""",ISERROR(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0))),"""",IF(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0)>0,""√"",""""))"
+                "=IF(OR(R3C2="""",ISERROR(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0))),IF(RC[1]<>"""",""√"",""""),IF(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0)>0,""√"",""""))"
             '统计允许编辑区域个数，并全部删除
             AllowEditCount = ActiveSheet.Protection.AllowEditRanges.Count
             If (AllowEditCount <> 0) Then
@@ -1955,7 +1974,7 @@ Sub 指标点数据表公式()
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[2]C"
     Range("B3:C3").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(R2C2="""","""",IF(OR(MID(R[-1]C,LEN(R[-1]C),1)=""A"",MID(R[-1]C,LEN(R[-1]C),1)=""B"",MID(R[-1]C,LEN(R[-1]C),1)=""C""),MID(R[-1]C,1,LEN(R[-1]C)-1),R[-1]C))"
+        "=IF(R2C2="""","""",IF(OR(MID(R[-1]C,LEN(R[-1]C),1)=""A"",MID(R[-1]C,LEN(R[-1]C),1)=""B"",MID(R[-1]C,LEN(R[-1]C),1)=""C""),MID(R[-1]C,1,LEN(R[-1]C)-1),IF(ISNUMBER(FIND(""（"",R[-1]C,1)),MID(R[-1]C,1,FIND(""（"",R[-1]C,1)-1),IF(ISNUMBER(FIND(""("",R[-1]C,1)),MID(R[-1]C,1,FIND(""("",R[-1]C,1)-1),R[-1]C))))"
     Range("A6").Select
     ActiveCell.FormulaR1C1 = "=IF(RC5=1,IF(R[-1]C=""序号"",1,R[-1]C+1),R[-1]C)"
     Range("D6").Select
@@ -5546,4 +5565,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.08
+'[版本号]V5.06.09
