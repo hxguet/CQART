@@ -569,6 +569,7 @@ Sub 远程更新代码()
     Dim RemoteVersion As String
     Dim DownComplete As String
     Dim isError As String
+    Dim Update As String
     isUpdate = False
     Application.ScreenUpdating = False
     Call 修订专业矩阵状态
@@ -589,82 +590,85 @@ Sub 远程更新代码()
         Close #1
         Kill LastFilePath & "\" & LastReadme
     End If
-    Call MsgInfo(NoMsgBox, "正在连接远程服务器，检查代码最新版本！")
-    Status = DownFile(LastFilePath, LastReadme, True)
-    If Status = False Or Dir(LastFilePath & "\" & LastReadme) = "" Or GetLastLine(LastFilePath & "\" & LastReadme) = "文件为空" Then
-        GoTo ErrorSub
-    End If
-    Call GetVersionFromFile(LastFilePath & "\" & LastReadme)
-    CurrentVersion = Range("H1").Value
-    CurrentRiviseDate = Range("H2").Value
-    CtrResult = StrComp(CurrentVersion, ModuleLastRivise(1, CVersion), vbTextCompare)
-     '远程代码版本号比当前代码版本号新
-    If CtrResult = "-1" Then
-        ModuleFile = ModuleLastRivise(1, CFileName)
-        Status = DownFile(ThisWorkbook.Path, ModuleFile, False)
-        If GetLastLine(ThisWorkbook.Path & "\" & ModuleFile) = "文件为空" Then
-            DownComplete = "1"
-        Else
-            RemoteVersion = Replace(GetLastLine(ThisWorkbook.Path & "\" & ModuleFile), "'[版本号]", "")
-            If Status = False Or Dir(ThisWorkbook.Path & "\" & ModuleFile) = "" Then
-                GoTo ErrorSub
-            End If
-            DownComplete = StrComp(ModuleLastRivise(1, CVersion), RemoteVersion, vbTextCompare)
+    Update = MsgBox("正在连接远程服务器，检查代码最新版本！" & vbCrLf & "开始更新代码吗？", vbYesNo, "远程自动更新代码")
+    If Update = vbYes Then
+        'Call MsgInfo(NoMsgBox, "正在连接远程服务器，检查代码最新版本！")
+        Status = DownFile(LastFilePath, LastReadme, True)
+        If Status = False Or Dir(LastFilePath & "\" & LastReadme) = "" Or GetLastLine(LastFilePath & "\" & LastReadme) = "文件为空" Then
+            GoTo ErrorSub
         End If
-        If DownComplete <> "0" Then
-            Call MsgInfo(NoMsgBox, "版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
-        Else
-            Call 更新工作表代码(ThisWorkbook.Path)
-            ModuleName = ModuleLastRivise(1, CModuleName)
+        Call GetVersionFromFile(LastFilePath & "\" & LastReadme)
+        CurrentVersion = Range("H1").Value
+        CurrentRiviseDate = Range("H2").Value
+        CtrResult = StrComp(CurrentVersion, ModuleLastRivise(1, CVersion), vbTextCompare)
+         '远程代码版本号比当前代码版本号新
+        If CtrResult = "-1" Then
             ModuleFile = ModuleLastRivise(1, CFileName)
-            LastVersion = ModuleLastRivise(1, CVersion)
-            LastRiviseDate = ModuleLastRivise(1, CRiviseDate)
-            UpdateInfo = ModuleLastRivise(1, CUpdateInfo)
-            For Each Vbc In ThisWorkbook.VBProject.VBComponents
-                If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
-                    ThisWorkbook.VBProject.VBComponents.Remove Vbc
+            Status = DownFile(ThisWorkbook.Path, ModuleFile, False)
+            If GetLastLine(ThisWorkbook.Path & "\" & ModuleFile) = "文件为空" Then
+                DownComplete = "1"
+            Else
+                RemoteVersion = Replace(GetLastLine(ThisWorkbook.Path & "\" & ModuleFile), "'[版本号]", "")
+                If Status = False Or Dir(ThisWorkbook.Path & "\" & ModuleFile) = "" Then
+                    GoTo ErrorSub
                 End If
-            Next Vbc
-            If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
-                ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
-                ModuleCount = 0
+                DownComplete = StrComp(ModuleLastRivise(1, CVersion), RemoteVersion, vbTextCompare)
+            End If
+            If DownComplete <> "0" Then
+                Call MsgInfo(NoMsgBox, "版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
+            Else
+                Call 更新工作表代码(ThisWorkbook.Path)
+                ModuleName = ModuleLastRivise(1, CModuleName)
+                ModuleFile = ModuleLastRivise(1, CFileName)
+                LastVersion = ModuleLastRivise(1, CVersion)
+                LastRiviseDate = ModuleLastRivise(1, CRiviseDate)
+                UpdateInfo = ModuleLastRivise(1, CUpdateInfo)
                 For Each Vbc In ThisWorkbook.VBProject.VBComponents
                     If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
-                        ModuleCount = ModuleCount + 1
-                    End If
-                    If ModuleCount = 1 Then
-                        Vbc.Name = "模块1"
-                    Else
-                        Exit For
+                        ThisWorkbook.VBProject.VBComponents.Remove Vbc
                     End If
                 Next Vbc
-                
-                Range("H1").Select
-                ActiveCell.FormulaR1C1 = _
-                    "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
-                Range("H2").Value = LastRiviseDate
-                Range("H3").Value = Val(Mid(LastVersion, 2, 3))
-                Range("H4").Value = Val(Mid(LastVersion, 4, 2))
-                Range("H5").Value = Val(Mid(LastVersion, 7, 2))
+                If Dir(ThisWorkbook.Path & "\" & ModuleFile) <> "" Then
+                    ActiveWorkbook.VBProject.VBComponents.Import ThisWorkbook.Path & "\" & ModuleFile
+                    ModuleCount = 0
+                    For Each Vbc In ThisWorkbook.VBProject.VBComponents
+                        If Vbc.Type = 1 And Mid(Vbc.Name, 1, 2) = "模块" Then
+                            ModuleCount = ModuleCount + 1
+                        End If
+                        If ModuleCount = 1 Then
+                            Vbc.Name = "模块1"
+                        Else
+                            Exit For
+                        End If
+                    Next Vbc
+                    
+                    Range("H1").Select
+                    ActiveCell.FormulaR1C1 = _
+                        "=""V""&R[2]C&"".""&TEXT(R[3]C,""00"")&"".""&TEXT(R[4]C,""00"")"
+                    Range("H2").Value = LastRiviseDate
+                    Range("H3").Value = Val(Mid(LastVersion, 2, 3))
+                    Range("H4").Value = Val(Mid(LastVersion, 4, 2))
+                    Range("H5").Value = Val(Mid(LastVersion, 7, 2))
+                End If
+                Call MsgInfo(NoMsgBox, "已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
+                isUpdate = True
             End If
-            Call MsgInfo(NoMsgBox, "已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
-            isUpdate = True
+        Else
+            Call MsgInfo(NoMsgBox, "该模版代码版本已经为最新版本!")
         End If
-    Else
-        Call MsgInfo(NoMsgBox, "该模版代码版本已经为最新版本!")
-    End If
-    If Dir(LastFilePath & "\" & LastReadme) <> "" Then
-        Open LastFilePath & "\" & LastReadme For Input As #1
-        Close #1
-        Kill LastFilePath & "\" & LastReadme
-    End If
-    For i = 0 To 3
-        If Dir(ThisWorkbook.Path & "\" & CodeFileName(i, CRelease)) <> "" Then
-            Open ThisWorkbook.Path & "\" & CodeFileName(i, CRelease) For Input As #1
+        If Dir(LastFilePath & "\" & LastReadme) <> "" Then
+            Open LastFilePath & "\" & LastReadme For Input As #1
             Close #1
-            Kill ThisWorkbook.Path & "\" & CodeFileName(i, CRelease)
+            Kill LastFilePath & "\" & LastReadme
         End If
-    Next i
+        For i = 0 To 3
+            If Dir(ThisWorkbook.Path & "\" & CodeFileName(i, CRelease)) <> "" Then
+                Open ThisWorkbook.Path & "\" & CodeFileName(i, CRelease) For Input As #1
+                Close #1
+                Kill ThisWorkbook.Path & "\" & CodeFileName(i, CRelease)
+            End If
+        Next i
+    End If
 ErrorSub:
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
@@ -1416,6 +1420,7 @@ Sub 允许事件触发()
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("H10").Value = "弹出消息框"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("2-课程目标和综合分析（填写）").Activate
 End Sub
 Function 提交前检查()
     Dim CourseName As String
@@ -5593,4 +5598,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.13
+'[版本号]V5.06.14
