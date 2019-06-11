@@ -22,8 +22,7 @@ Attribute VB_Name = "模块1"
     Public MajorList(4) As String
     Public ModuleLastRivise() As String
     Public NoMsgBox As Boolean
-    Public isUpdate As Boolean
-    Public CodeFileName(0 To 3, 0 To 3) As String
+    Public CodeFileName(0 To 4, 0 To 3) As String
     Public isOpenAfterPublish As Boolean
 Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
     Dim ThisSheet As String
@@ -47,7 +46,7 @@ Sub 修订公式()
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    Range("G8").Value = "公式修订状态"
+    Range("G8").Value = "修订公式"
     FormulaRivise = Range("H8").Value
     Worksheets("专业矩阵状态").Activate
     Range("H8").Value = Range("H1").Value
@@ -293,6 +292,11 @@ Dim RiviseDate As String
     CodeFileName(3, CMName) = "Sheet3"
     CodeFileName(3, CBackup) = BackupFilePath & "\Sheet3-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
     CodeFileName(3, CRelease) = "Sheet3.cls"
+    
+    CodeFileName(4, CStatus) = "更新"
+    CodeFileName(4, CMName) = "ThisWorkbook"
+    CodeFileName(4, CBackup) = BackupFilePath & "\ThisWorkbook-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
+    CodeFileName(4, CRelease) = "ThisWorkbook.cls"
 End Sub
 Sub 生成版本号()
     On Error Resume Next
@@ -368,7 +372,8 @@ Sub 生成版本号()
         Range("H4").Value = SubVer
         Range("H5").Value = RiviseVer
         Call 设置备份文件信息
-        For i = 0 To 3
+        '4为备份代码文件个数
+        For i = 0 To 4
             If Dir(BackupFilePath & "\") = "" Then
                 MkDir BackupFilePath
             End If
@@ -570,7 +575,6 @@ Sub 远程更新代码()
     Dim DownComplete As String
     Dim isError As String
     Dim Update As String
-    isUpdate = False
     Application.ScreenUpdating = False
     Call 修订专业矩阵状态
     Call 设置备份文件信息
@@ -651,7 +655,8 @@ Sub 远程更新代码()
                     Range("H5").Value = Val(Mid(LastVersion, 7, 2))
                 End If
                 Call MsgInfo(NoMsgBox, "已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
-                isUpdate = True
+                Worksheets("专业矩阵状态").Activate
+                Range("H8").Value = "更新公式"
             End If
         Else
             Call MsgInfo(NoMsgBox, "该模版代码版本已经为最新版本!")
@@ -5600,4 +5605,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.14
+'[版本号]V5.06.15
