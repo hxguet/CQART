@@ -206,8 +206,8 @@ Sub 修订公式()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("成绩表").Visible = False
     '【修订】毕业要求-指标点数据表
-    Worksheets("毕业要求-指标点数据表）").Visible = True
-    Worksheets("毕业要求-指标点数据表）").Activate
+    Worksheets("毕业要求-指标点数据表").Visible = True
+    Worksheets("毕业要求-指标点数据表").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("B3:C3").Select
     ActiveCell.FormulaR1C1 = _
@@ -5208,7 +5208,7 @@ Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As Strin
                 ElseIf Range("Q3").Value = "认证已提交成绩" Then
                     TempMsgBox = NoMsgBox
                     NoMsgBox = True
-                    'ImportStatus = 导入教学过程登记表
+                    ImportStatus = 导入教学过程登记表
                     NoMsgBox = TempMsgBox
                 End If
                 Worksheets("2-课程目标和综合分析（填写）").Activate
@@ -5593,4 +5593,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.12
+'[版本号]V5.06.13
