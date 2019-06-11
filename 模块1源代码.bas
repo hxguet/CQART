@@ -73,7 +73,7 @@ Sub 修订公式()
     Selection.AutoFill Destination:=Range("B4:C" & MaxLineCout), Type:=xlFillDefault
     Range("S4").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(OR(RC[-17]="""",ISNA(VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0))),"""",VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0)),IF(OR(RC2=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C&""得分"",'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)/INDEX(评价环节比例设置!R3,MATCH(R2C19,评价环节比例设置!R2,0))))"
+        "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(OR(RC[-17]="""",ISNA(VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0))),"""",VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0)),IF(OR(RC2="""",R3C19=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C&""得分"",'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)/INDEX(评价环节比例设置!R3,MATCH(R2C19,评价环节比例设置!R2,0))))"
     Range("S4").Select
     Selection.AutoFill Destination:=Range("S4:S" & MaxLineCout), Type:=xlFillDefault
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
@@ -3310,7 +3310,7 @@ On Error Resume Next
         "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(OR(RC[-16]="""",ISNA(VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0))),"""",VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0)),IF(OR(RC2=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C&""平均分"",'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)))"
     Range("S4").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(OR(RC[-17]="""",ISNA(VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0))),"""",VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0)),IF(OR(RC2=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C&""得分"",'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)/INDEX(评价环节比例设置!R3,MATCH(R2C19,评价环节比例设置!R2,0))))"
+        "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(OR(RC[-17]="""",ISNA(VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0))),"""",VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0)),IF(OR(RC2="""",R3C19=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C&""得分"",'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)/INDEX(评价环节比例设置!R3,MATCH(R2C19,评价环节比例设置!R2,0))))"
     Range("T4").Select
     ActiveCell.FormulaR1C1 = _
         "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(ISNA(VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0)),"""",VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0)),IF(OR(RC2=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C,'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)))"
@@ -3873,6 +3873,8 @@ Sub 重新设置公式(EndCell As Integer)
     Range("A2:AG2").Select
     ActiveCell.FormulaR1C1 = _
         "=专业矩阵状态!RC[1]&"" ""&'2-课程目标和综合分析（填写）'!R[2]C[1]&"" 课程(考试/考查/选修)教学过程登记表"""
+    Range("AP4:AP5").Select
+    ActiveCell.FormulaR1C1 = "=RC[-17]&""得分"""
     Range("B4:B5").Select
     ActiveCell.FormulaR1C1 = "学号"
     Range("C4:C5").Select
