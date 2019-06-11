@@ -61,8 +61,8 @@ Sub 修订公式()
     Selection.AutoFill Destination:=Range("N4:N403"), Type:=xlFillDefault
     Range("B4").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF('2-课程目标和综合分析（填写）'!R3C2="""","""",IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(VLOOKUP(RC1,成绩表!C16:C19,MATCH(""文本""&R2C2,成绩表!R1C16:R1C19,0),0)="""",IF(ISNA(VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)),"""",VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)),VLOOKUP(RC1,成绩表!C16:C19,MATCH(""文本""&R2" & _
-        "C2,成绩表!R1C16:R1C19,0),0)),IF(ISNA(VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)),"""",VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0))))" & _
+        "=IF('2-课程目标和综合分析（填写）'!R3C2="""","""",IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(VLOOKUP(RC1,成绩表!C16:C19,MATCH(""文本""&R2C2,成绩表!R1C16:R1C19,0),0)="""",IF(ISNA(VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)),"""",IF(VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)=""请导入名单"","""",VLOOKUP(RC1,'0-教学过程登记表" & _
+        "（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0))),VLOOKUP(RC1,成绩表!C16:C19,MATCH(""文本""&R2C2,成绩表!R1C16:R1C19,0),0)),IF(ISNA(VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)),"""",VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0))))" & _
         ""
     Range("C4").Select
     ActiveCell.FormulaR1C1 = _
@@ -3278,10 +3278,9 @@ On Error Resume Next
     Worksheets("1-试卷成绩登记表（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("B4").Select
-    Range("B4").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF('2-课程目标和综合分析（填写）'!R3C2="""","""",IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(VLOOKUP(RC1,成绩表!C16:C19,MATCH(""文本""&R2C2,成绩表!R1C16:R1C19,0),0)="""",IF(ISNA(VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)),"""",VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)),VLOOKUP(RC1,成绩表!C16:C19,MATCH(""文本""&R2" & _
-        "C2,成绩表!R1C16:R1C19,0),0)),IF(ISNA(VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)),"""",VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0))))" & _
+        "=IF('2-课程目标和综合分析（填写）'!R3C2="""","""",IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(VLOOKUP(RC1,成绩表!C16:C19,MATCH(""文本""&R2C2,成绩表!R1C16:R1C19,0),0)="""",IF(ISNA(VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)),"""",IF(VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)=""请导入名单"","""",VLOOKUP(RC1,'0-教学过程登记表" & _
+        "（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0))),VLOOKUP(RC1,成绩表!C16:C19,MATCH(""文本""&R2C2,成绩表!R1C16:R1C19,0),0)),IF(ISNA(VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0)),"""",VLOOKUP(RC1,'0-教学过程登记表（填写+打印)'!C1:C3,MATCH(R2C2,'0-教学过程登记表（填写+打印)'!R4C1:R4C3,0),0))))" & _
         ""
     Range("C4").Select
     ActiveCell.FormulaR1C1 = _
@@ -5594,4 +5593,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.11
+'[版本号]V5.06.12
