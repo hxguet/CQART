@@ -25,6 +25,7 @@ Attribute VB_Name = "模块1"
     Public NoMsgBox As Boolean
     Public CodeFileName(0 To CCodeFileCount, 0 To 3) As String
     Public isOpenAfterPublish As Boolean
+    Public Update As String
 Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
     Dim ThisSheet As String
     ThisSheet = ActiveSheet.Name
@@ -175,6 +176,10 @@ Sub 修订公式()
         "-教学过程登记表（填写+打印)'!R6C48:R23C48,0))))" & _
         ""
     Selection.AutoFill Destination:=Range("D6:U185"), Type:=xlFillDefault
+    Range("AC6").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名到"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名迟到"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名请假"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))"
+    Selection.AutoFill Destination:=Range("AC6:AC185"), Type:=xlFillDefault
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("平时成绩表").Visible = False
     
@@ -249,16 +254,19 @@ Sub 修订公式()
     Application.EnableEvents = True
 End Sub
 Sub 其他操作()
-    Worksheets("专业矩阵状态").Visible = True
-    Worksheets("专业矩阵状态").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    If Range("H8").Value = "更新公式" Then
-        Call 重新设置公式按钮
+    If Update = vbYes Then
+        Worksheets("专业矩阵状态").Visible = True
+        Worksheets("专业矩阵状态").Activate
+        ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    
+        If Range("H8").Value = "更新公式" Then
+            Call 重新设置公式按钮
+        End If
+        Worksheets("专业矩阵状态").Activate
+        Range("H8").Value = Range("H1").Value
+        ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+        Worksheets("专业矩阵状态").Visible = False
     End If
-    Worksheets("专业矩阵状态").Activate
-    Range("H8").Value = Range("H1").Value
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-    Worksheets("专业矩阵状态").Visible = False
     Worksheets("2-课程目标和综合分析（填写）").Activate
 End Sub
 Sub 工作表加密()
@@ -414,6 +422,7 @@ Sub 生成版本号()
                 TempStr = TempStr & Commit
                 TempStr = TempStr & """"
                 MyTxtObj.WriteLine (TempStr)
+                MyTxtObj.WriteLine ("git pull origin master")
                 MyTxtObj.WriteLine ("git push -u origin master")
                 MyTxtObj.WriteLine ("exit")
                 MyTxtObj.Close
@@ -578,7 +587,6 @@ Sub 远程更新代码()
     Dim RemoteVersion As String
     Dim DownComplete As String
     Dim isError As String
-    Dim Update As String
     Application.ScreenUpdating = False
     Call 修订专业矩阵状态
     Call 设置备份文件信息
@@ -3146,7 +3154,7 @@ Sub 平时成绩表公式()
     Selection.NumberFormatLocal = "G/通用格式"
     Range("AC6").Select
     ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('0-教学过程登记表（填写+打印)'!RC4:RC21,INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""点名到"",'0-教学过程登记表（填写+打印)'!C46,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!RC4:RC21,INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""点名迟到"",'0-教学过程登记表（填写+打印)'!C46,0)))"
+        "=COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名到"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名迟到"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名请假"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))"
     Range("AD6").Select
     ActiveCell.FormulaR1C1 = "=COUNTIF(RC4:RC21,"">0"")"
     Range("AE6").Select
@@ -5609,4 +5617,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.16
+'[版本号]V5.06.17
