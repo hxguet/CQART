@@ -17,12 +17,13 @@ Attribute VB_Name = "模块1"
     Public Const CMName As Integer = 1
     Public Const CBackup As Integer = 2
     Public Const CRelease As Integer = 3
+    Public Const CCodeFileCount As Integer = 3
     Public School As String
     Public MajorCount As Integer
     Public MajorList(4) As String
     Public ModuleLastRivise() As String
     Public NoMsgBox As Boolean
-    Public CodeFileName(0 To 4, 0 To 3) As String
+    Public CodeFileName(0 To CCodeFileCount, 0 To 3) As String
     Public isOpenAfterPublish As Boolean
 Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
     Dim ThisSheet As String
@@ -48,8 +49,6 @@ Sub 修订公式()
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("G8").Value = "修订公式"
     FormulaRivise = Range("H8").Value
-    Worksheets("专业矩阵状态").Activate
-    Range("H8").Value = Range("H1").Value
     
     '【修订】1-试卷成绩登记表（填写）
     Worksheets("1-试卷成绩登记表（填写）").Activate
@@ -250,8 +249,17 @@ Sub 修订公式()
     Application.EnableEvents = True
 End Sub
 Sub 其他操作()
+    Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    If Range("H8").Value = "更新公式" Then
+        Call 重新设置公式按钮
+    End If
+    Worksheets("专业矩阵状态").Activate
+    Range("H8").Value = Range("H1").Value
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Visible = False
+    Worksheets("2-课程目标和综合分析（填写）").Activate
 End Sub
 Sub 工作表加密()
     On Error Resume Next
@@ -293,10 +301,6 @@ Dim RiviseDate As String
     CodeFileName(3, CBackup) = BackupFilePath & "\Sheet3-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
     CodeFileName(3, CRelease) = "Sheet3.cls"
     
-    CodeFileName(4, CStatus) = "更新"
-    CodeFileName(4, CMName) = "ThisWorkbook"
-    CodeFileName(4, CBackup) = BackupFilePath & "\ThisWorkbook-" & Range("H1").Value & "-" & Format(RiviseDate, "YYYYMMDD") & ".cls"
-    CodeFileName(4, CRelease) = "ThisWorkbook.cls"
 End Sub
 Sub 生成版本号()
     On Error Resume Next
@@ -372,8 +376,7 @@ Sub 生成版本号()
         Range("H4").Value = SubVer
         Range("H5").Value = RiviseVer
         Call 设置备份文件信息
-        '4为备份代码文件个数
-        For i = 0 To 4
+        For i = 0 To CCodeFileCount
             If Dir(BackupFilePath & "\") = "" Then
                 MkDir BackupFilePath
             End If
@@ -5605,4 +5608,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.15
+'[版本号]V5.06.16
