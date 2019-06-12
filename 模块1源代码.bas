@@ -178,7 +178,7 @@ Sub 修订公式()
     Selection.AutoFill Destination:=Range("D6:U185"), Type:=xlFillDefault
     Range("AC6").Select
     ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名到"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名迟到"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名请假"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))"
+        "=COUNTIF('0-教学过程登记表（填写+打印)'!RC4:RC21,INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""点名到"",'0-教学过程登记表（填写+打印)'!C46,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!RC4:RC21,INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""点名迟到"",'0-教学过程登记表（填写+打印)'!C46,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!RC4:RC21,INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""点名请假"",'0-教学过程登记表（填写+打印)'!C46,0)))"
     Selection.AutoFill Destination:=Range("AC6:AC185"), Type:=xlFillDefault
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("平时成绩表").Visible = False
@@ -3154,7 +3154,7 @@ Sub 平时成绩表公式()
     Selection.NumberFormatLocal = "G/通用格式"
     Range("AC6").Select
     ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名到"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名迟到"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!$D6:$U6,INDEX('0-教学过程登记表（填写+打印)'!$AV:$AV,MATCH(""点名请假"",'0-教学过程登记表（填写+打印)'!$AT:$AT,0)))"
+        "=COUNTIF('0-教学过程登记表（填写+打印)'!RC4:RC21,INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""点名到"",'0-教学过程登记表（填写+打印)'!C46,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!RC4:RC21,INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""点名迟到"",'0-教学过程登记表（填写+打印)'!C46,0)))+COUNTIF('0-教学过程登记表（填写+打印)'!RC4:RC21,INDEX('0-教学过程登记表（填写+打印)'!C48,MATCH(""点名请假"",'0-教学过程登记表（填写+打印)'!C46,0)))"
     Range("AD6").Select
     ActiveCell.FormulaR1C1 = "=COUNTIF(RC4:RC21,"">0"")"
     Range("AE6").Select
