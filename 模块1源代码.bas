@@ -396,6 +396,7 @@ Sub 生成版本号()
                 End If
             End If
         Next i
+        Application.VBE.ActiveVBProject.VBComponents(CodeFileName(i, CMName)).Export (ReleaseFilePath & "\" & CodeFileName(i, CRelease))
         If TestCode = "发布版本" Then
             Call WriteLastLine(CodeFileName(0, CBackup), "'[版本号]" & Range("H1").Value)
             Call WriteLastLine(ReleaseFilePath & "\" & CodeFileName(0, CRelease), "'[版本号]" & Range("H1").Value)
