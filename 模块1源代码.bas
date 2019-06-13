@@ -1494,19 +1494,19 @@ Function 提交前检查()
 
     For i = 1 To 5
         Mark = Application.Index(Range("M7:Q7"), Application.Match(Cells(2, 2 * i + 2).Value, Range("M5:Q5"), 0))
-        If Cells(3, 2 * i + 2).Value <> "" And Cells(3, 2 * i + 2).Value <> "0" Then
-            If Mark = "" Then
+                If Cells(3, 2 * i + 2).Value <> "" Then
+            If Mark = "" Or Mark = 0 Then
                 ErrNum = ErrNum + 1
                 ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表评价环节" & Cells(2, 2 * i + 2).Value & "平均得分为空,请检查：（1）如果没有该评价环节，删除比例；（2）试卷成绩登记表中缺少该项成绩" & vbCrLf
             End If
         ElseIf Cells(3, 2 * i + 2).Value = "" Then
-            If Mark <> "" Then
+            If Mark <> "" Or Mark = 0 Then
                 ErrNum = ErrNum + 1
                 ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表评价环节" & Cells(2, 2 * i + 2).Value & "比例为空，但平均得分不为空,请检查：（1）是否缺少该评价环节；（2）试卷成绩登记表导入成绩时是否多导入了该项成绩" & vbCrLf
             End If
         End If
     Next i
-    LinkCount = Application.CountA(Range("D7:Q7")) - Application.CountBlank(Range("D7:Q7"))
+    LinkCount = Application.CountA(Range("D5:Q5"))
     For i = 4 To LinkCount + 4
         If Cells(7, i).Value <> "" Then
             If Application.CountBlank(Cells(11, i).Resize(10, 1)) = 10 Then
@@ -5617,4 +5617,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.17
+'[版本号]V5.06.18
+
+
