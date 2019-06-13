@@ -220,6 +220,9 @@ Sub 修订公式()
     '【修订】毕业要求数据表
     Worksheets("3-毕业要求数据表（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("A7").Select
+    ActiveCell.FormulaR1C1 = "=ROW(RC1)-ROW(R7C1)+1"
+    Selection.AutoFill Destination:=Range("A7:A18"), Type:=xlFillDefault
     Range("C7").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OR(R3C2="""",ISERROR(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0))),IF(RC[1]<>"""",""√"",""""),IF(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0)>0,""√"",IF(RC[1]<>"""",""√"","""")))"
@@ -1439,7 +1442,7 @@ Sub 允许事件触发()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("2-课程目标和综合分析（填写）").Activate
 End Sub
-Function 提交前检查()
+Sub 提交前检查()
     Dim CourseName As String
     Dim Term As String
     Dim Major As String
@@ -1494,7 +1497,7 @@ Function 提交前检查()
 
     For i = 1 To 5
         Mark = Application.Index(Range("M7:Q7"), Application.Match(Cells(2, 2 * i + 2).Value, Range("M5:Q5"), 0))
-                If Cells(3, 2 * i + 2).Value <> "" Then
+        If Cells(3, 2 * i + 2).Value <> "" And Cells(3, 2 * i + 2).Value <> "0" Then
             If Mark = "" Or Mark = 0 Then
                 ErrNum = ErrNum + 1
                 ErrorMsg = ErrorMsg & ErrNum & "、2-课程目标和综合分析（填写）工作表评价环节" & Cells(2, 2 * i + 2).Value & "平均得分为空,请检查：（1）如果没有该评价环节，删除比例；（2）试卷成绩登记表中缺少该项成绩" & vbCrLf
@@ -1649,8 +1652,7 @@ Function 提交前检查()
         Call CreateTXTfile(ThisWorkbook.Path & "\错误报告\" & ThisFileName & "-错误检查报告.txt", ErrorMsg, True)
         NoError = False
     End If
-    提交前检查 = NoError
-End Function
+End Sub
 Sub 打印()
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
@@ -1711,8 +1713,8 @@ Sub 生成PDF()
         MkDir PDFFilePath
     End If
     PDFFileName = Term & "-" & CourseNum & "-" & Major & "-" & Teacher & "-" & CourseName
-    NoError = 提交前检查
-    If NoError Then
+    '错误检查报告不存在，没有错误
+    If (Dir(ThisWorkbook.Path & "\错误报告\" & PDFFileName & "-错误检查报告.txt") = "") Then
         Call 调整表格格式
         Worksheets("2-课程目标和综合分析（填写）").Activate
         If Range("$Q$3").Value = "非认证" Then
@@ -1883,8 +1885,7 @@ Sub 毕业要求数据表公式()
         Case "电子工程与自动化学院"
             '八院专用
             Range("A7").Select
-            ActiveCell.FormulaR1C1 = _
-                "=ROW(RC1)-ROW(R7C1)+1"
+            ActiveCell.FormulaR1C1 = "=ROW(RC1)-ROW(R7C1)+1"
             Range("B7").Select
             ActiveCell.FormulaR1C1 = "=IF(RC[-1]="""","""",""毕业要求""&RC1)"
             Range("C7").Select
@@ -5617,6 +5618,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.18
+'[版本号]V5.06.19
 
 
