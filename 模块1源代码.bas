@@ -3988,6 +3988,14 @@ Sub 重新设置公式(EndCell As Integer)
     '作业成绩平均分
     Range("AR6").Select
     ActiveCell.FormulaR1C1 = _
+        "=IF(OR(RC2="""",RC2=""请导入名单""),"""",IF(OR(RC32=""退课"",RC32=""取消""),0,IF(VLOOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0)=0,""取消"",IF('2-课程目标和综合分析（填写）'!R5C[-42]<>""唐士杰"",VLOOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0),IF(AND(RC[-23]<>"""",VLOOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0)<>""取消""),IF(VL" & _
+        "OOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0)+RC[-23]/0.2>100,100,VLOOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0)+RC[-23]/0.2),VLOOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0))))))" & _
+        ""
+    Range("AH6").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(RC2="""",RC2=""请导入名单""),"""",IF(RC32<>"""",RC32,IF(RC[-1]=""缓考"","""",IF(OR(RC29=""旷考"",RC29=""取消"",RC29=""缺"",RC26=""取消""),""取消"",""""))))"
+    Range("AR6").Select
+    ActiveCell.FormulaR1C1 = _
         "=IF(RC2="""","""",IF(OR(RC32=""退课"",RC32=""取消""),0,IF(VLOOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0)=0,""取消"",IF('2-课程目标和综合分析（填写）'!R5C[-42]<>""唐士杰"",VLOOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0),IF(AND(RC[-23]<>"""",VLOOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0)<>""取消""),IF(VLOOKUP(RC[-42],平时成绩" & _
         "表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0)+RC[-23]/0.2>100,100,VLOOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0)+RC[-23]/0.2),VLOOKUP(RC[-42],平时成绩表!C[-42]:C[-18],MATCH(R4C44,平时成绩表!R4C2:R4C26,0),0))))))" & _
         ""
@@ -5618,6 +5626,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.19
+'[版本号]V5.06.20
 
 
