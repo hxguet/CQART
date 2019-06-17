@@ -3980,7 +3980,7 @@ Sub 重新设置公式(EndCell As Integer)
     '课程报告
     Range("AP6").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(RC2="""","""",IF(RC[-17]="""",0,IF(ISNUMBER(RC[-17]),RC[-17]*INDEX(评价环节比例设置!R3,MATCH(R4C42,评价环节比例设置!R2,0)),INDEX(C[7],MATCH(RC[-17],C48,0))*INDEX(评价环节比例设置!R3,MATCH(MID(R4C42,1,4),评价环节比例设置!R2,0)))))"
+        "=IF(RC2="""","""",IF(RC[-17]="""",0,IF(ISNUMBER(RC[-17]),RC[-17]*INDEX(评价环节比例设置!R3,MATCH(MID(R4C42,1,4),评价环节比例设置!R2,0)),INDEX(C[7],MATCH(RC[-17],C48,0))*INDEX(评价环节比例设置!R3,MATCH(MID(R4C42,1,4),评价环节比例设置!R2,0)))))"
     '作业成绩
     Range("AQ6").Select
     ActiveCell.FormulaR1C1 = _
@@ -5626,6 +5626,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.20
+'[版本号]V5.06.21
 
 
