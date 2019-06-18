@@ -26,6 +26,8 @@ Attribute VB_Name = "模块1"
     Public CodeFileName(0 To CCodeFileCount, 0 To 3) As String
     Public isOpenAfterPublish As Boolean
     Public Update As String
+    
+
 Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
     Dim ThisSheet As String
     ThisSheet = ActiveSheet.Name
@@ -43,6 +45,14 @@ End Sub
 Sub 修订公式()
 End Sub
 Sub 其他操作()
+    '删除专业下拉多余按钮
+    Worksheets("2-课程目标和综合分析（填写）").Activate
+    Dim sh As Shape
+    For Each sh In ActiveSheet.Shapes
+        If sh.Name = "Drop Down 5606" Then
+            sh.Delete
+        End If
+    Next
     If Update = vbYes Then
         Worksheets("专业矩阵状态").Visible = True
         Worksheets("专业矩阵状态").Activate
@@ -5412,6 +5422,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.23
+'[版本号]V5.06.24
 
 
