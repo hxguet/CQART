@@ -47,12 +47,14 @@ End Sub
 Sub 其他操作()
     '删除专业下拉多余按钮
     Worksheets("2-课程目标和综合分析（填写）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Dim sh As Shape
     For Each sh In ActiveSheet.Shapes
         If sh.Name = "Drop Down 5606" Then
             sh.Delete
         End If
     Next
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     If Update = vbYes Then
         Worksheets("专业矩阵状态").Visible = True
         Worksheets("专业矩阵状态").Activate
