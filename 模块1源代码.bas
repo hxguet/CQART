@@ -414,6 +414,7 @@ Sub 远程更新代码()
     Dim RemoteVersion As String
     Dim DownComplete As String
     Dim isError As String
+    Dim AutoUpdate As String
     Application.ScreenUpdating = False
     Call 修订专业矩阵状态
     Call 设置备份文件信息
@@ -421,6 +422,7 @@ Sub 远程更新代码()
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    AutoUpdate = Range("H12").Value
     If (Range("H10").Value = "弹出消息框") Then
         NoMsgBox = False
     ElseIf (Range("H10").Select = "不弹出消息框") Then
@@ -433,7 +435,11 @@ Sub 远程更新代码()
         Close #1
         Kill LastFilePath & "\" & LastReadme
     End If
-    Update = MsgBox("正在连接远程服务器，检查代码最新版本！" & vbCrLf & "开始更新代码吗？", vbYesNo, "远程自动更新代码")
+    If AutoUpdate = "自动更新" Then
+        Update = vbYes
+    Else
+        Update = MsgBox("正在连接远程服务器，检查代码最新版本！" & vbCrLf & "开始更新代码吗？", vbYesNo, "远程自动更新代码")
+    End If
     If Update = vbYes Then
         'Call MsgInfo(NoMsgBox, "正在连接远程服务器，检查代码最新版本！")
         Status = DownFile(LastFilePath, LastReadme, True)
@@ -1008,6 +1014,7 @@ Sub 修订专业矩阵状态()
     ActiveSheet.Protection.AllowEditRanges.Add Title:="代码发布版本", Range:=Range("H9")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="消息框状态", Range:=Range("H10")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="生成PDF后打开文档", Range:=Range("H11")
+    ActiveSheet.Protection.AllowEditRanges.Add Title:="自动更新代码", Range:=Range("H12")
     Range("G9").Select
     ActiveCell.FormulaR1C1 = "代码发布版本"
     Range("H9").Select
@@ -1049,6 +1056,23 @@ Sub 修订专业矩阵状态()
         .Delete
         .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
         xlBetween, Formula1:="打开PDF,不打开PDF"
+        .IgnoreBlank = True
+        .InCellDropdown = True
+        .InputTitle = ""
+        .ErrorTitle = ""
+        .InputMessage = ""
+        .ErrorMessage = ""
+        .IMEMode = xlIMEModeNoControl
+        .ShowInput = True
+        .ShowError = True
+    End With
+    Range("G12").Select
+    ActiveCell.FormulaR1C1 = "自动更新代码"
+    Range("H12").Select
+    With Selection.Validation
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+        xlBetween, Formula1:="自动更新,不更新"
         .IgnoreBlank = True
         .InCellDropdown = True
         .InputTitle = ""
