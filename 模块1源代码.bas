@@ -70,24 +70,20 @@ Sub 修订公式()
     Selection.EntireColumn.Hidden = True
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Call 修订专业矩阵状态
-    Worksheets("2-课程目标和综合分析（填写）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    Call 课程目标允许编辑区域
-    Call 课程目标和综合分析公式
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 其他操作()
     '删除专业下拉多余按钮
     Worksheets("2-课程目标和综合分析（填写）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    Dim sh As Shape
-    For Each sh In ActiveSheet.Shapes
-        If sh.Name = "Drop Down 5606" Then
-            sh.Delete
-        End If
-    Next
+    'ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    'Dim sh As Shape
+    'For Each sh In ActiveSheet.Shapes
+    '    If sh.Name = "Drop Down 5606" Then
+    '        sh.Delete
+    '    End If
+    'Next
+    'ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Call 允许事件触发
     Call 修订公式
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     If Update = vbYes Then
         Worksheets("专业矩阵状态").Visible = True
         Worksheets("专业矩阵状态").Activate
@@ -1290,6 +1286,7 @@ Sub 允许事件触发()
         .ShowInput = True
         .ShowError = True
     End With
+    Call 课程目标允许编辑区域
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -4167,12 +4164,12 @@ Sub 导入成绩表()
     '确定成绩表的栏数
 
     For j = 1 To 10
-        If Not (isError(Application.Match("学号", Range("A" & j & ":" & "O" & j), 0))) Then
+        If Not (isError(Application.Match("*学*号*", Range("A" & j & ":" & "O" & j), 0))) Then
             NumRow = j
-            CountNum = Application.WorksheetFunction.CountIf(Range("A" & j & ":" & "O" & j), "学号")
-            Num2Col = Application.Match("总评*", Range("A" & j & ":" & "O" & j), 0) + 2
+            CountNum = Application.WorksheetFunction.CountIf(Range("A" & j & ":" & "O" & j), "*学*号*")
+            Num2Col = Application.Match("*总*评*", Range("A" & j & ":" & "O" & j), 0) + 2
         End If
-        If Not (isError(Application.Match("序号", Range("A" & j & ":" & "O" & j), 0))) Then
+        If Not (isError(Application.Match("*序*号*", Range("A" & j & ":" & "O" & j), 0))) Then
             NumExitFlag = True
         End If
     Next j
