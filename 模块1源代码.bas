@@ -70,6 +70,11 @@ Sub 修订公式()
     Selection.EntireColumn.Hidden = True
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Call 修订专业矩阵状态
+    Worksheets("2-课程目标和综合分析（填写）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Call 课程目标允许编辑区域
+    Call 课程目标和综合分析公式
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 其他操作()
     '删除专业下拉多余按钮
@@ -2746,7 +2751,6 @@ Sub 课程目标和综合分析公式()
     Range("T25").Select
     Selection.AutoFill Destination:=Range("T25:AE25"), Type:=xlFillDefault
     Application.EnableEvents = True
-    Call 课程目标和综合分析公式
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 质量分析报告公式()
@@ -5477,6 +5481,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.25
+'[版本号]V5.06.26
 
 
