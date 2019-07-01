@@ -43,6 +43,31 @@ End Sub
     
 ''专业及修订
 Sub 修订公式()
+    Worksheets("1-试卷成绩登记表（填写）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("AC2:AI403").Select
+    Selection.NumberFormatLocal = "G/通用格式"
+    Range("T4").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",RC[15],IF(OR(RC2=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C,'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)))"
+    Range("AC2").Select
+    ActiveCell.FormulaR1C1 = "=RC[-15]"
+    Range("AC3").Select
+    ActiveCell.FormulaR1C1 = _
+        "=INDEX('2-课程目标和综合分析（填写）'!R3,MATCH('1-试卷成绩登记表（填写）'!R2C,'2-课程目标和综合分析（填写）'!R2,0))"
+    Range("AC4").Select
+    ActiveCell.FormulaR1C1 = "=IF(ISNUMBER(RC[-15]),RC[-15]*R3C/100,0)"
+    Range("AC2:AC4").Select
+    Selection.AutoFill Destination:=Range("AC2:AH4"), Type:=xlFillDefault
+    Range("AI4").Select
+    ActiveCell.FormulaR1C1 = "=ROUND(SUM(RC[-6]:RC[-1]),0)"
+    Range("AC4:AI4").Select
+    Selection.AutoFill Destination:=Range("AC4:AI403"), Type:=xlFillDefault
+    Range("AC4:AI403").Select
+    Columns("AB:AI").Select
+    Selection.ColumnWidth = 4
+    Selection.EntireColumn.Hidden = True
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 其他操作()
     '删除专业下拉多余按钮
@@ -54,6 +79,7 @@ Sub 其他操作()
             sh.Delete
         End If
     Next
+    Call 修订公式
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     If Update = vbYes Then
         Worksheets("专业矩阵状态").Visible = True
@@ -2694,6 +2720,7 @@ Sub 课程目标和综合分析公式()
     Range("T25").Select
     Selection.AutoFill Destination:=Range("T25:AE25"), Type:=xlFillDefault
     Application.EnableEvents = True
+    Call 课程目标和综合分析公式
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 质量分析报告公式()
@@ -5424,6 +5451,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.24
+'[版本号]V5.06.25
 
 
