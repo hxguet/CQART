@@ -50,6 +50,7 @@ Sub 修订公式()
     Range("T4").Select
     ActiveCell.FormulaR1C1 = _
         "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",RC[15],IF(OR(RC2=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C,'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)))"
+    Selection.AutoFill Destination:=Range("T4:T403"), Type:=xlFillDefault
     Range("AC2").Select
     ActiveCell.FormulaR1C1 = "=RC[-15]"
     Range("AC3").Select
@@ -68,6 +69,7 @@ Sub 修订公式()
     Selection.ColumnWidth = 4
     Selection.EntireColumn.Hidden = True
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Call 修订专业矩阵状态
 End Sub
 Sub 其他操作()
     '删除专业下拉多余按钮
