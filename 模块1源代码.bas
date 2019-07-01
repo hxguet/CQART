@@ -1075,7 +1075,7 @@ Sub 修订专业矩阵状态()
     With Selection.Validation
         .Delete
         .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
-        xlBetween, Formula1:="自动更新,不更新"
+        xlBetween, Formula1:="自动更新,手动更新"
         .IgnoreBlank = True
         .InCellDropdown = True
         .InputTitle = ""
