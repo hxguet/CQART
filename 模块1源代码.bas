@@ -43,6 +43,7 @@ End Sub
     
 ''专业及修订
 Sub 修订公式()
+Dim TempWorkSheetVisible As Boolean
     Worksheets("1-试卷成绩登记表（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("AC2:AI403").Select
@@ -69,6 +70,20 @@ Sub 修订公式()
     Selection.ColumnWidth = 4
     Selection.EntireColumn.Hidden = True
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    TempWorkSheetVisible = Worksheets("4-质量分析报告（填写+打印）").Visible
+    Worksheets("4-质量分析报告（填写+打印）").Visible = True
+    Worksheets("4-质量分析报告（填写+打印）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("F6:G6").Select
+    ActiveCell.FormulaR1C1 = _
+        "=RC[-4]-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""缓考"")"
+    Selection.NumberFormatLocal = "G/通用格式"
+    Range("P12").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60""))"
+    Selection.NumberFormatLocal = "G/通用格式"
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("4-质量分析报告（填写+打印）").Visible = TempWorkSheetVisible
     Call 修订专业矩阵状态
 End Sub
 Sub 其他操作()
@@ -5172,10 +5187,12 @@ Sub 非认证()
         Workbooks(WorkBookName).Activate
         Worksheets("1-试卷成绩登记表（填写）").Activate
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-
-        Sheets("1-试卷成绩登记表（填写）").Columns("O:Y").Select
+        Sheets("1-试卷成绩登记表（填写）").Range("R1:X1").Select
+        Selection.UnMerge
+        Sheets("1-试卷成绩登记表（填写）").Columns("V:Y").Select
         Selection.EntireColumn.Hidden = True
-        
+        Sheets("1-试卷成绩登记表（填写）").Range("R1:X1").Select
+        Selection.Merge
         Sheets("1-试卷成绩登记表（填写）").Range("N4:N" & MaxLineCout).Select
         Selection.Locked = True
         Selection.FormulaHidden = False
@@ -5478,6 +5495,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.26
+'[版本号]V5.06.27
 
 
