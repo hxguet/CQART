@@ -93,7 +93,14 @@ Dim TempWorkSheetVisible As Boolean
     ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
     Range("P16").Select
     ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
-    
+    Range("H4:K5").Select
+    Selection.NumberFormatLocal = "[$-x-sysdate]dddd, mmmm dd, yyyy"
+    Range("D8:E8,J8:K8,P8,D9:E9,J9:K9,P9").Select
+    Selection.NumberFormatLocal = "0%"
+    Range("A6:P16").Select
+    Selection.NumberFormatLocal = "G/通用格式"
+    Range("P10,F13:P13,F16:P16").Select
+    Selection.NumberFormatLocal = "0.00_ "
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("4-质量分析报告（填写+打印）").Visible = TempWorkSheetVisible
     Call 修订专业矩阵状态
@@ -2781,9 +2788,13 @@ Sub 质量分析报告公式()
     On Error Resume Next
     Worksheets("4-质量分析报告（填写+打印）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    Range("A3:P16").Select
+    Range("H4:K5").Select
+    Selection.NumberFormatLocal = "[$-x-sysdate]dddd, mmmm dd, yyyy"
+    Range("D8:E8,J8:K8,P8,D9:E9,J9:K9,P9").Select
+    Selection.NumberFormatLocal = "0%"
+    Range("A6:P16").Select
     Selection.NumberFormatLocal = "G/通用格式"
-    Range("F13:P13", "F16:P16").Select
+    Range("P10,F13:P13,F16:P16").Select
     Selection.NumberFormatLocal = "0.00_ "
     Range("A2:P2").Select
     ActiveCell.FormulaR1C1 = _
