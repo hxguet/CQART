@@ -74,6 +74,7 @@ Dim TempWorkSheetVisible As Boolean
     Worksheets("4-质量分析报告（填写+打印）").Visible = True
     Worksheets("4-质量分析报告（填写+打印）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    
     Range("F6:G6").Select
     ActiveCell.FormulaR1C1 = _
         "=RC[-4]-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""缓考"")"
@@ -82,6 +83,17 @@ Dim TempWorkSheetVisible As Boolean
     ActiveCell.FormulaR1C1 = _
         "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60""))"
     Selection.NumberFormatLocal = "G/通用格式"
+    Range("F16:H16").Select
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    Range("I16:J16").Select
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    Range("K16:L16").Select
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    Range("M16:O16").Select
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    Range("P16").Select
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("4-质量分析报告（填写+打印）").Visible = TempWorkSheetVisible
     Call 修订专业矩阵状态
@@ -2769,7 +2781,8 @@ Sub 质量分析报告公式()
     On Error Resume Next
     Worksheets("4-质量分析报告（填写+打印）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    ActiveCell.FormulaR1C1 = _
+    Range("A3:P16").Select
+    Selection.NumberFormatLocal = "G/通用格式"
     Range("A2:P2").Select
     ActiveCell.FormulaR1C1 = _
         "=""填表日期： ""&TEXT('2-课程目标和综合分析（填写）'!R[6]C[1],""YYYY年MM月DD日"")&""    """
@@ -2779,13 +2792,12 @@ Sub 质量分析报告公式()
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[1]C[-9]"
     Range("C4:E5").Select
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[-1]C[-1]"
-
     Range("B6").Select
     ActiveCell.FormulaR1C1 = _
         "=COUNTA('1-试卷成绩登记表（填写）'!R4C2:R183C2)-COUNTBLANK('1-试卷成绩登记表（填写）'!R4C2:R183C2)"
     Range("F6:G6").Select
     ActiveCell.FormulaR1C1 = _
-        "=RC[-4]-COUNTIF('1-试卷成绩登记表（填写）'!C[15],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[15],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[15],""缓考"")"
+        "=RC[-4]-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""缓考"")"
     Range("H6:P6").Select
     ActiveCell.FormulaR1C1 = _
         "=""人；缓考：""&COUNTIF('1-试卷成绩登记表（填写）'!C[12],""缓考"")&""人;旷考：""&COUNTIF('1-试卷成绩登记表（填写）'!C[13],""旷考"")&""人；取消考试资格：""&COUNTIF('1-试卷成绩登记表（填写）'!C[13],""取消"")&""人"""
@@ -2807,8 +2819,6 @@ Sub 质量分析报告公式()
     Range("P9").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OFFSET(评价环节比例设置!R3C1,,MATCH(R9C12,评价环节比例设置!R2,0)-1,1,1)=0,"""",OFFSET(评价环节比例设置!R3C1,,MATCH(R9C12,评价环节比例设置!R2,0)-1,1,1))"
-    
-    
     Range("F10:I10").Select
     ActiveCell.FormulaR1C1 = "=""最高""&MAX('1-试卷成绩登记表（填写）'!R4C14:R400C14)&""分"""
     Range("J10:L10").Select
@@ -2826,7 +2836,7 @@ Sub 质量分析报告公式()
         "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=70"")"
     Range("P12").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""))"
+        "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60""))"
     Range("F15:H15").Select
     ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=90"")"
     Range("I15:J15").Select
@@ -2862,15 +2872,15 @@ Sub 质量分析报告公式()
     Range("P13").Select
     ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
     Range("F16:H16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
     Range("I16:J16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
     Range("K16:L16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
     Range("M16:O16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
     Range("P16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
     Range("D17:P17").Select
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[5]C[-2]"
     Range("F15:P15,F12:P12").Select
@@ -5495,6 +5505,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.27
+'[版本号]V5.06.28
 
 
