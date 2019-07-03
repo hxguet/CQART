@@ -2783,6 +2783,8 @@ Sub 质量分析报告公式()
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("A3:P16").Select
     Selection.NumberFormatLocal = "G/通用格式"
+    Range("F13:P13", "F16:P16").Select
+    Selection.NumberFormatLocal = "0.00_ "
     Range("A2:P2").Select
     ActiveCell.FormulaR1C1 = _
         "=""填表日期： ""&TEXT('2-课程目标和综合分析（填写）'!R[6]C[1],""YYYY年MM月DD日"")&""    """
@@ -5505,6 +5507,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.28
+'[版本号]V5.06.29
 
 
