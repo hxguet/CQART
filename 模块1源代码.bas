@@ -44,6 +44,7 @@ End Sub
 ''专业及修订
 Sub 修订公式()
 Dim TempWorkSheetVisible As Boolean
+Dim SumRow As Integer
     Worksheets("1-试卷成绩登记表（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("AC2:AI403").Select
@@ -104,6 +105,14 @@ Dim TempWorkSheetVisible As Boolean
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("4-质量分析报告（填写+打印）").Visible = TempWorkSheetVisible
     Call 修订专业矩阵状态
+    Worksheets("1-课程目标达成度评价（打印）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Rows("11:21").Select
+    Selection.EntireRow.Hidden = False
+    SumRow = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
+    Rows(SumRow + 11 & ":20").Select
+    Selection.EntireRow.Hidden = True
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 其他操作()
     '删除专业下拉多余按钮
@@ -1629,7 +1638,7 @@ Sub 生成PDF()
             Worksheets("1-课程目标达成度评价（打印）").Activate
             ActiveSheet.PageSetup.CenterFooter = ""
             ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-            Rows("11:20").Select
+            Rows("11:21").Select
             Selection.EntireRow.Hidden = False
             SumRow = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
             Rows(SumRow + 11 & ":20").Select
@@ -5518,6 +5527,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.29
+'[版本号]V5.06.30
 
 
