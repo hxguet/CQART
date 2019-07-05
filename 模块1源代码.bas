@@ -1288,9 +1288,9 @@ Dim MatrixSheet As String
     Sheets(MatrixSheet).Visible = False
     Worksheets("专业矩阵状态").Activate
     If (Range("D" & Application.Match(Major, Range("B1:B" & MajorLastRow), 0)).Value = "存在") Then
-        If (Range("E" & Application.Match(Major, Range("B1:B" & MajorLastRow), 0)).Value <> CourseCount) Or (Range("F" & Application.Match(Major, Range("B1:B" & MajorLastRow), 0)).Value <> PointCount) Then
+        'If (Range("E" & Application.Match(Major, Range("B1:B" & MajorLastRow), 0)).Value <> CourseCount) Or (Range("F" & Application.Match(Major, Range("B1:B" & MajorLastRow), 0)).Value <> PointCount) Then
             Call 导入毕业要求矩阵(Major)
-        End If
+        'End If
     End If
     Sheets("专业矩阵状态").Visible = False
 End Sub
@@ -5527,6 +5527,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.30
+'[版本号]V5.06.31
 
 
