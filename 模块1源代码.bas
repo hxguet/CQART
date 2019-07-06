@@ -85,23 +85,35 @@ Dim SumRow As Integer
         "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60""))"
     Selection.NumberFormatLocal = "G/通用格式"
     Range("F16:H16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
     Range("I16:J16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
     Range("K16:L16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
     Range("M16:O16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
+    Range("P15").Select
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""<60"")+COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""旷考"")+COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""取消"")"
+
     Range("P16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
     Range("H4:K5").Select
-    Selection.NumberFormatLocal = "[$-x-sysdate]dddd, mmmm dd, yyyy"
-    Range("D8:E8,J8:K8,P8,D9:E9,J9:K9,P9").Select
-    Selection.NumberFormatLocal = "0%"
+    Selection.NumberFormatLocal = "yyyy""年""m""月""d""日"";@"
     Range("A6:P16").Select
     Selection.NumberFormatLocal = "G/通用格式"
     Range("P10,F13:P13,F16:P16").Select
     Selection.NumberFormatLocal = "0.00_ "
+    Range("D8:E9,J8:K9,P8:P10").Select
+    Range("P8").Activate
+    Selection.NumberFormatLocal = "0%"
+    Range("P10").Select
+    Selection.NumberFormatLocal = "0.00%"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("4-质量分析报告（填写+打印）").Visible = TempWorkSheetVisible
     Call 修订专业矩阵状态
@@ -2798,13 +2810,16 @@ Sub 质量分析报告公式()
     Worksheets("4-质量分析报告（填写+打印）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("H4:K5").Select
-    Selection.NumberFormatLocal = "[$-x-sysdate]dddd, mmmm dd, yyyy"
-    Range("D8:E8,J8:K8,P8,D9:E9,J9:K9,P9").Select
-    Selection.NumberFormatLocal = "0%"
+    Selection.NumberFormatLocal = "yyyy""年""m""月""d""日"";@"
     Range("A6:P16").Select
     Selection.NumberFormatLocal = "G/通用格式"
     Range("P10,F13:P13,F16:P16").Select
     Selection.NumberFormatLocal = "0.00_ "
+    Range("D8:E9,J8:K9,P8:P10").Select
+    Range("P8").Activate
+    Selection.NumberFormatLocal = "0%"
+    Range("P10").Select
+    Selection.NumberFormatLocal = "0.00%"
     Range("A2:P2").Select
     ActiveCell.FormulaR1C1 = _
         "=""填表日期： ""&TEXT('2-课程目标和综合分析（填写）'!R[6]C[1],""YYYY年MM月DD日"")&""    """
@@ -2871,8 +2886,9 @@ Sub 质量分析报告公式()
     ActiveCell.FormulaR1C1 = _
         "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=70"")"
     Range("P15").Select
-    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""<60"")"
-    
+    ActiveCell.FormulaR1C1 = _
+        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""<60"")+COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""旷考"")+COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""取消"")"
+  
     
     Range("A9:C9").Select
     ActiveCell.FormulaR1C1 = "='0-教学过程登记表（填写+打印)'!R[-5]C[26]"
@@ -2881,7 +2897,6 @@ Sub 质量分析报告公式()
     
     Range("P10").Select
     ActiveCell.FormulaR1C1 = "=IF(R[3]C="""","""",(100-R[3]C)/100)"
-    
     
     Range("F13:H13").Select
     ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
@@ -2894,22 +2909,22 @@ Sub 质量分析报告公式()
     Range("P13").Select
     ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
     Range("F16:H16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
     Range("I16:J16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
     Range("K16:L16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
     Range("M16:O16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
     Range("P16").Select
-    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C2)"
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
     Range("D17:P17").Select
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[5]C[-2]"
-    Range("F15:P15,F12:P12").Select
-    Range("P12").Activate
-    Range("F15:P15,F12:P12,F6:G6,B6").Select
-    Range("B6").Activate
-    Selection.NumberFormatLocal = "G/通用格式"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 成绩核对表公式()
@@ -5527,6 +5542,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.31
+'[版本号]V5.06.33
 
 
