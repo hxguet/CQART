@@ -127,6 +127,7 @@ Dim SumRow As Integer
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 其他操作()
+    On Error Resume Next
     '删除专业下拉多余按钮
     Worksheets("2-课程目标和综合分析（填写）").Activate
     'ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
