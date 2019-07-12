@@ -153,6 +153,20 @@ Sub 其他操作()
         Worksheets("专业矩阵状态").Visible = False
     End If
     Worksheets("2-课程目标和综合分析（填写）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    ActiveWorkbook.BreakLink Name:="E:\01-学期\质量分析报告模版光信息演示\质量分析报告模版V5.xls", Type _
+        :=xlExcelLinks
+    ActiveSheet.Shapes.Range(Array("Button 4209")).Select
+    Selection.OnAction = "保存文件"
+    ActiveSheet.Shapes.Range(Array("Button 5")).Select
+    Selection.OnAction = "打印"
+    ActiveSheet.Shapes.Range(Array("Button 4210")).Select
+    Selection.OnAction = "CreateRecordWorkBook"
+    ActiveSheet.Shapes.Range(Array("Button 4211")).Select
+    Selection.OnAction = "重新设置公式按钮"
+    ActiveSheet.Shapes.Range(Array("Button 4212")).Select
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Selection.OnAction = "允许事件触发"
 End Sub
 Sub 工作表加密()
     On Error Resume Next
@@ -5542,6 +5556,6 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.33
+'[版本号]V5.06.34
 
 
