@@ -140,7 +140,8 @@ Sub 其他操作()
     'ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Call 允许事件触发
     Call 修订公式
-    If Update = vbYes Then
+    Worksheets("专业矩阵状态").Activate
+    If Range("H13").Value = "已更新" Then
         Worksheets("专业矩阵状态").Visible = True
         Worksheets("专业矩阵状态").Activate
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -151,6 +152,7 @@ Sub 其他操作()
         Worksheets("专业矩阵状态").Activate
         Range("H8").Value = Range("H1").Value
         ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+        Range("H13").Value = ""
         Worksheets("专业矩阵状态").Visible = False
     End If
     Worksheets("2-课程目标和综合分析（填写）").Activate
@@ -166,8 +168,8 @@ Sub 其他操作()
     ActiveSheet.Shapes.Range(Array("Button 4211")).Select
     Selection.OnAction = "重新设置公式按钮"
     ActiveSheet.Shapes.Range(Array("Button 4212")).Select
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Selection.OnAction = "允许事件触发"
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 工作表加密()
     On Error Resume Next
@@ -514,6 +516,8 @@ Sub 远程更新代码()
         Update = MsgBox("正在连接远程服务器，检查代码最新版本！" & vbCrLf & "开始更新代码吗？", vbYesNo, "远程自动更新代码")
     End If
     If Update = vbYes Then
+        Worksheets("专业矩阵状态").Activate
+        Range("H13").Value = "已更新"
         'Call MsgInfo(NoMsgBox, "正在连接远程服务器，检查代码最新版本！")
         Status = DownFile(LastFilePath, LastReadme, True)
         If Status = False Or Dir(LastFilePath & "\" & LastReadme) = "" Or GetLastLine(LastFilePath & "\" & LastReadme) = "文件为空" Then
@@ -1062,7 +1066,8 @@ Sub 修订专业矩阵状态()
     ActiveCell.FormulaR1C1 = "代码发布路径"
     Range("G7").Select
     ActiveCell.FormulaR1C1 = "代码备份路径"
-    
+    Range("G13").Select
+    ActiveCell.FormulaR1C1 = "代码更新状态"
     Range("G1:G12").Select
     Selection.Font.Bold = True
     ActiveSheet.Shapes.SelectAll
@@ -1084,6 +1089,7 @@ Sub 修订专业矩阵状态()
     ActiveSheet.Protection.AllowEditRanges.Add Title:="专业", Range:=Range("B4:C12")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="学院", Range:=Range("B2:D2")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="修复版本号", Range:=Range("H5")
+    ActiveSheet.Protection.AllowEditRanges.Add Title:="代码更新状态", Range:=Range("H13")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="代码发布版本", Range:=Range("H9")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="消息框状态", Range:=Range("H10")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="生成PDF后打开文档", Range:=Range("H11")
