@@ -43,105 +43,19 @@ End Sub
     
 ''专业及修订
 Sub 修订公式()
-Dim TempWorkSheetVisible As Boolean
-Dim SumRow As Integer
-    Worksheets("1-试卷成绩登记表（填写）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    Range("AC2:AI403").Select
-    Selection.NumberFormatLocal = "G/通用格式"
-    Range("T4").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",RC[15],IF(OR(RC2=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C,'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)))"
-    Selection.AutoFill Destination:=Range("T4:T403"), Type:=xlFillDefault
-    Range("AC2").Select
-    ActiveCell.FormulaR1C1 = "=RC[-15]"
-    Range("AC3").Select
-    ActiveCell.FormulaR1C1 = _
-        "=INDEX('2-课程目标和综合分析（填写）'!R3,MATCH('1-试卷成绩登记表（填写）'!R2C,'2-课程目标和综合分析（填写）'!R2,0))"
-    Range("AC4").Select
-    ActiveCell.FormulaR1C1 = "=IF(ISNUMBER(RC[-15]),RC[-15]*R3C/100,0)"
-    Range("AC2:AC4").Select
-    Selection.AutoFill Destination:=Range("AC2:AH4"), Type:=xlFillDefault
-    Range("AI4").Select
-    ActiveCell.FormulaR1C1 = "=ROUND(SUM(RC[-6]:RC[-1]),0)"
-    Range("AC4:AI4").Select
-    Selection.AutoFill Destination:=Range("AC4:AI403"), Type:=xlFillDefault
-    Range("AC4:AI403").Select
-    Columns("AB:AI").Select
-    Selection.ColumnWidth = 4
-    Selection.EntireColumn.Hidden = True
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-    TempWorkSheetVisible = Worksheets("4-质量分析报告（填写+打印）").Visible
-    Worksheets("4-质量分析报告（填写+打印）").Visible = True
-    Worksheets("4-质量分析报告（填写+打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    
-    Range("F6:G6").Select
-    ActiveCell.FormulaR1C1 = _
-        "=RC[-4]-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""缓考"")"
-    Selection.NumberFormatLocal = "G/通用格式"
-    Range("P12").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60""))"
-    Selection.NumberFormatLocal = "G/通用格式"
-    Range("F16:H16").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
-    Range("I16:J16").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
-    Range("K16:L16").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
-    Range("M16:O16").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
-    Range("P15").Select
-    ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""<60"")+COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""旷考"")+COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""取消"")"
-
-    Range("P16").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
-    Range("H4:K5").Select
-    Selection.NumberFormatLocal = "yyyy""年""m""月""d""日"";@"
-    Range("A6:P16").Select
-    Selection.NumberFormatLocal = "G/通用格式"
-    Range("P10,F13:P13,F16:P16").Select
-    Selection.NumberFormatLocal = "0.00_ "
-    Range("D8:E9,J8:K9,P8:P10").Select
-    Range("P8").Activate
-    Selection.NumberFormatLocal = "0%"
-    Range("P10").Select
-    Selection.NumberFormatLocal = "0.00%"
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-    Worksheets("4-质量分析报告（填写+打印）").Visible = TempWorkSheetVisible
-    Call 修订专业矩阵状态
-    Worksheets("1-课程目标达成度评价（打印）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    Rows("11:21").Select
-    Selection.EntireRow.Hidden = False
-    SumRow = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
-    Rows(SumRow + 11 & ":20").Select
-    Selection.EntireRow.Hidden = True
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 其他操作()
-    On Error Resume Next
     '删除专业下拉多余按钮
     Worksheets("2-课程目标和综合分析（填写）").Activate
-    'ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    'Dim sh As Shape
-    'For Each sh In ActiveSheet.Shapes
-    '    If sh.Name = "Drop Down 5606" Then
-    '        sh.Delete
-    '    End If
-    'Next
-    'ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-    Call 允许事件触发
-    Call 修订公式
-    Worksheets("专业矩阵状态").Activate
-    If Range("H13").Value = "已更新" Then
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Dim sh As Shape
+    For Each sh In ActiveSheet.Shapes
+        If sh.Name = "Drop Down 5606" Then
+            sh.Delete
+        End If
+    Next
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    If Update = vbYes Then
         Worksheets("专业矩阵状态").Visible = True
         Worksheets("专业矩阵状态").Activate
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -152,24 +66,9 @@ Sub 其他操作()
         Worksheets("专业矩阵状态").Activate
         Range("H8").Value = Range("H1").Value
         ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
-        Range("H13").Value = ""
         Worksheets("专业矩阵状态").Visible = False
     End If
     Worksheets("2-课程目标和综合分析（填写）").Activate
-    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    ActiveWorkbook.BreakLink Name:="E:\01-学期\质量分析报告模版光信息演示\质量分析报告模版V5.xls", Type _
-        :=xlExcelLinks
-    ActiveSheet.Shapes.Range(Array("Button 4209")).Select
-    Selection.OnAction = "保存文件"
-    ActiveSheet.Shapes.Range(Array("Button 5")).Select
-    Selection.OnAction = "打印"
-    ActiveSheet.Shapes.Range(Array("Button 4210")).Select
-    Selection.OnAction = "CreateRecordWorkBook"
-    ActiveSheet.Shapes.Range(Array("Button 4211")).Select
-    Selection.OnAction = "重新设置公式按钮"
-    ActiveSheet.Shapes.Range(Array("Button 4212")).Select
-    Selection.OnAction = "允许事件触发"
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 工作表加密()
     On Error Resume Next
@@ -489,7 +388,6 @@ Sub 远程更新代码()
     Dim RemoteVersion As String
     Dim DownComplete As String
     Dim isError As String
-    Dim AutoUpdate As String
     Application.ScreenUpdating = False
     Call 修订专业矩阵状态
     Call 设置备份文件信息
@@ -497,7 +395,6 @@ Sub 远程更新代码()
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    AutoUpdate = Range("H12").Value
     If (Range("H10").Value = "弹出消息框") Then
         NoMsgBox = False
     ElseIf (Range("H10").Select = "不弹出消息框") Then
@@ -510,14 +407,8 @@ Sub 远程更新代码()
         Close #1
         Kill LastFilePath & "\" & LastReadme
     End If
-    If AutoUpdate = "自动更新" Then
-        Update = vbYes
-    Else
-        Update = MsgBox("正在连接远程服务器，检查代码最新版本！" & vbCrLf & "开始更新代码吗？", vbYesNo, "远程自动更新代码")
-    End If
+    Update = MsgBox("正在连接远程服务器，检查代码最新版本！" & vbCrLf & "开始更新代码吗？", vbYesNo, "远程自动更新代码")
     If Update = vbYes Then
-        Worksheets("专业矩阵状态").Activate
-        Range("H13").Value = "已更新"
         'Call MsgInfo(NoMsgBox, "正在连接远程服务器，检查代码最新版本！")
         Status = DownFile(LastFilePath, LastReadme, True)
         If Status = False Or Dir(LastFilePath & "\" & LastReadme) = "" Or GetLastLine(LastFilePath & "\" & LastReadme) = "文件为空" Then
@@ -1066,8 +957,7 @@ Sub 修订专业矩阵状态()
     ActiveCell.FormulaR1C1 = "代码发布路径"
     Range("G7").Select
     ActiveCell.FormulaR1C1 = "代码备份路径"
-    Range("G13").Select
-    ActiveCell.FormulaR1C1 = "代码更新状态"
+    
     Range("G1:G12").Select
     Selection.Font.Bold = True
     ActiveSheet.Shapes.SelectAll
@@ -1089,11 +979,9 @@ Sub 修订专业矩阵状态()
     ActiveSheet.Protection.AllowEditRanges.Add Title:="专业", Range:=Range("B4:C12")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="学院", Range:=Range("B2:D2")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="修复版本号", Range:=Range("H5")
-    ActiveSheet.Protection.AllowEditRanges.Add Title:="代码更新状态", Range:=Range("H13")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="代码发布版本", Range:=Range("H9")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="消息框状态", Range:=Range("H10")
     ActiveSheet.Protection.AllowEditRanges.Add Title:="生成PDF后打开文档", Range:=Range("H11")
-    ActiveSheet.Protection.AllowEditRanges.Add Title:="自动更新代码", Range:=Range("H12")
     Range("G9").Select
     ActiveCell.FormulaR1C1 = "代码发布版本"
     Range("H9").Select
@@ -1135,23 +1023,6 @@ Sub 修订专业矩阵状态()
         .Delete
         .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
         xlBetween, Formula1:="打开PDF,不打开PDF"
-        .IgnoreBlank = True
-        .InCellDropdown = True
-        .InputTitle = ""
-        .ErrorTitle = ""
-        .InputMessage = ""
-        .ErrorMessage = ""
-        .IMEMode = xlIMEModeNoControl
-        .ShowInput = True
-        .ShowError = True
-    End With
-    Range("G12").Select
-    ActiveCell.FormulaR1C1 = "自动更新代码"
-    Range("H12").Select
-    With Selection.Validation
-        .Delete
-        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
-        xlBetween, Formula1:="自动更新,手动更新"
         .IgnoreBlank = True
         .InCellDropdown = True
         .InputTitle = ""
@@ -1321,9 +1192,9 @@ Dim MatrixSheet As String
     Sheets(MatrixSheet).Visible = False
     Worksheets("专业矩阵状态").Activate
     If (Range("D" & Application.Match(Major, Range("B1:B" & MajorLastRow), 0)).Value = "存在") Then
-        'If (Range("E" & Application.Match(Major, Range("B1:B" & MajorLastRow), 0)).Value <> CourseCount) Or (Range("F" & Application.Match(Major, Range("B1:B" & MajorLastRow), 0)).Value <> PointCount) Then
+        If (Range("E" & Application.Match(Major, Range("B1:B" & MajorLastRow), 0)).Value <> CourseCount) Or (Range("F" & Application.Match(Major, Range("B1:B" & MajorLastRow), 0)).Value <> PointCount) Then
             Call 导入毕业要求矩阵(Major)
-        'End If
+        End If
     End If
     Sheets("专业矩阵状态").Visible = False
 End Sub
@@ -1362,7 +1233,6 @@ Sub 允许事件触发()
         .ShowInput = True
         .ShowError = True
     End With
-    Call 课程目标允许编辑区域
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -1671,7 +1541,7 @@ Sub 生成PDF()
             Worksheets("1-课程目标达成度评价（打印）").Activate
             ActiveSheet.PageSetup.CenterFooter = ""
             ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-            Rows("11:21").Select
+            Rows("11:20").Select
             Selection.EntireRow.Hidden = False
             SumRow = Application.WorksheetFunction.CountA(Range("B11:B20")) - Application.WorksheetFunction.CountBlank(Range("B11:B20"))
             Rows(SumRow + 11 & ":20").Select
@@ -2830,17 +2700,7 @@ Sub 质量分析报告公式()
     On Error Resume Next
     Worksheets("4-质量分析报告（填写+打印）").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    Range("H4:K5").Select
-    Selection.NumberFormatLocal = "yyyy""年""m""月""d""日"";@"
-    Range("A6:P16").Select
-    Selection.NumberFormatLocal = "G/通用格式"
-    Range("P10,F13:P13,F16:P16").Select
-    Selection.NumberFormatLocal = "0.00_ "
-    Range("D8:E9,J8:K9,P8:P10").Select
-    Range("P8").Activate
-    Selection.NumberFormatLocal = "0%"
-    Range("P10").Select
-    Selection.NumberFormatLocal = "0.00%"
+    ActiveCell.FormulaR1C1 = _
     Range("A2:P2").Select
     ActiveCell.FormulaR1C1 = _
         "=""填表日期： ""&TEXT('2-课程目标和综合分析（填写）'!R[6]C[1],""YYYY年MM月DD日"")&""    """
@@ -2850,12 +2710,13 @@ Sub 质量分析报告公式()
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[1]C[-9]"
     Range("C4:E5").Select
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[-1]C[-1]"
+
     Range("B6").Select
     ActiveCell.FormulaR1C1 = _
         "=COUNTA('1-试卷成绩登记表（填写）'!R4C2:R183C2)-COUNTBLANK('1-试卷成绩登记表（填写）'!R4C2:R183C2)"
     Range("F6:G6").Select
     ActiveCell.FormulaR1C1 = _
-        "=RC[-4]-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[14],""缓考"")"
+        "=RC[-4]-COUNTIF('1-试卷成绩登记表（填写）'!C[15],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[15],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[15],""缓考"")"
     Range("H6:P6").Select
     ActiveCell.FormulaR1C1 = _
         "=""人；缓考：""&COUNTIF('1-试卷成绩登记表（填写）'!C[12],""缓考"")&""人;旷考：""&COUNTIF('1-试卷成绩登记表（填写）'!C[13],""旷考"")&""人；取消考试资格：""&COUNTIF('1-试卷成绩登记表（填写）'!C[13],""取消"")&""人"""
@@ -2877,6 +2738,8 @@ Sub 质量分析报告公式()
     Range("P9").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OFFSET(评价环节比例设置!R3C1,,MATCH(R9C12,评价环节比例设置!R2,0)-1,1,1)=0,"""",OFFSET(评价环节比例设置!R3C1,,MATCH(R9C12,评价环节比例设置!R2,0)-1,1,1))"
+    
+    
     Range("F10:I10").Select
     ActiveCell.FormulaR1C1 = "=""最高""&MAX('1-试卷成绩登记表（填写）'!R4C14:R400C14)&""分"""
     Range("J10:L10").Select
@@ -2894,7 +2757,7 @@ Sub 质量分析报告公式()
         "=COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,"">=70"")"
     Range("P12").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60""))"
+        "=IF(COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")=R6C2,COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""),COUNTIF('1-试卷成绩登记表（填写）'!R4C14:R400C14,""<60"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""旷考"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""取消"")-COUNTIF('1-试卷成绩登记表（填写）'!C[4],""缓考""))"
     Range("F15:H15").Select
     ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=90"")"
     Range("I15:J15").Select
@@ -2907,9 +2770,8 @@ Sub 质量分析报告公式()
     ActiveCell.FormulaR1C1 = _
         "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=60"")-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,"">=70"")"
     Range("P15").Select
-    ActiveCell.FormulaR1C1 = _
-        "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""<60"")+COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""旷考"")+COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""取消"")"
-  
+    ActiveCell.FormulaR1C1 = "=COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""<60"")"
+    
     
     Range("A9:C9").Select
     ActiveCell.FormulaR1C1 = "='0-教学过程登记表（填写+打印)'!R[-5]C[26]"
@@ -2918,6 +2780,7 @@ Sub 质量分析报告公式()
     
     Range("P10").Select
     ActiveCell.FormulaR1C1 = "=IF(R[3]C="""","""",(100-R[3]C)/100)"
+    
     
     Range("F13:H13").Select
     ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
@@ -2930,22 +2793,22 @@ Sub 质量分析报告公式()
     Range("P13").Select
     ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
     Range("F16:H16").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
     Range("I16:J16").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
     Range("K16:L16").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
     Range("M16:O16").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
     Range("P16").Select
-    ActiveCell.FormulaR1C1 = _
-        "=IF(R6C6=0,"""",R[-1]C*100/(R6C2-COUNTIF('1-试卷成绩登记表（填写）'!R4C20:R400C20,""缓考"")))"
+    ActiveCell.FormulaR1C1 = "=IF(R6C6=0,"""",R[-1]C*100/R6C6)"
     Range("D17:P17").Select
     ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R[5]C[-2]"
+    Range("F15:P15,F12:P12").Select
+    Range("P12").Activate
+    Range("F15:P15,F12:P12,F6:G6,B6").Select
+    Range("B6").Activate
+    Selection.NumberFormatLocal = "G/通用格式"
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 成绩核对表公式()
@@ -4247,12 +4110,12 @@ Sub 导入成绩表()
     '确定成绩表的栏数
 
     For j = 1 To 10
-        If Not (isError(Application.Match("*学*号*", Range("A" & j & ":" & "O" & j), 0))) Then
+        If Not (isError(Application.Match("学号", Range("A" & j & ":" & "O" & j), 0))) Then
             NumRow = j
-            CountNum = Application.WorksheetFunction.CountIf(Range("A" & j & ":" & "O" & j), "*学*号*")
-            Num2Col = Application.Match("*总*评*", Range("A" & j & ":" & "O" & j), 0) + 2
+            CountNum = Application.WorksheetFunction.CountIf(Range("A" & j & ":" & "O" & j), "学号")
+            Num2Col = Application.Match("总评*", Range("A" & j & ":" & "O" & j), 0) + 2
         End If
-        If Not (isError(Application.Match("*序*号*", Range("A" & j & ":" & "O" & j), 0))) Then
+        If Not (isError(Application.Match("序号", Range("A" & j & ":" & "O" & j), 0))) Then
             NumExitFlag = True
         End If
     Next j
@@ -5150,6 +5013,20 @@ End Sub
 Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As String, TargetColumn As String)
     Dim ImportStatus As Boolean
     Dim TempMsgBox As Boolean
+    On Error Resume Next
+    ActiveWorkbook.BreakLink Name:="E:\01-学期\质量分析报告模版光信息演示\质量分析报告模版V5.xls", Type _
+        :=xlExcelLinks
+    ActiveSheet.Shapes.Range(Array("Button 4209")).Select
+    Selection.OnAction = "保存文件"
+    ActiveSheet.Shapes.Range(Array("Button 5")).Select
+    Selection.OnAction = "打印"
+    ActiveSheet.Shapes.Range(Array("Button 4210")).Select
+    Selection.OnAction = "CreateRecordWorkBook"
+    ActiveSheet.Shapes.Range(Array("Button 4211")).Select
+    Selection.OnAction = "重新设置公式按钮"
+    ActiveSheet.Shapes.Range(Array("Button 4212")).Select
+    Selection.OnAction = "允许事件触发"
+
     Select Case Mode
         Case "认证状态"
             If TargetValue = "非认证" Then
@@ -5255,12 +5132,10 @@ Sub 非认证()
         Workbooks(WorkBookName).Activate
         Worksheets("1-试卷成绩登记表（填写）").Activate
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-        Sheets("1-试卷成绩登记表（填写）").Range("R1:X1").Select
-        Selection.UnMerge
-        Sheets("1-试卷成绩登记表（填写）").Columns("V:Y").Select
+
+        Sheets("1-试卷成绩登记表（填写）").Columns("O:Y").Select
         Selection.EntireColumn.Hidden = True
-        Sheets("1-试卷成绩登记表（填写）").Range("R1:X1").Select
-        Selection.Merge
+        
         Sheets("1-试卷成绩登记表（填写）").Range("N4:N" & MaxLineCout).Select
         Selection.Locked = True
         Selection.FormulaHidden = False
