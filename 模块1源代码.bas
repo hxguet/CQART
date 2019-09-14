@@ -49,6 +49,12 @@ Dim SumRow As Integer
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     Range("AC2:AI403").Select
     Selection.NumberFormatLocal = "G/通用格式"
+    Range("Y4").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(AND(RC[-3]<>"""",R2C26=""""),AND(RC[-3]<>"""",R2C26=""剔除不及格学生"",RC[-5]>=60)),IF(ISNUMBER(RC[-2]),IF(OR(AND(RC[-2]='2-课程目标和综合分析（填写）'!R9C4,'2-课程目标和综合分析（填写）'!R7C2=""""),AND(RC[-2]='2-课程目标和综合分析（填写）'!R9C4,RC[-3]='2-课程目标和综合分析（填写）'!R7C2)),""认证"",""""),IF(OR(AND(VALUE(RC[-2])='2-课程目标和综合分析（填写）'!R9C4,'2-课程目标和综合分析（填写）'!R7C2=""""),AND(VALUE(RC[-2])='2-课程目标和综合分析（填写）'!R9C4" & _
+        ",RC[-3]='2-课程目标和综合分析（填写）'!R7C2)),""认证"","""")),"""")" & _
+        ""
+    Selection.AutoFill Destination:=Range("Y4:Y403"), Type:=xlFillDefault
     Range("T4").Select
     ActiveCell.FormulaR1C1 = _
         "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",RC[15],IF(OR(RC2=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C,'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)))"
@@ -63,7 +69,7 @@ Dim SumRow As Integer
     Range("AC2:AC4").Select
     Selection.AutoFill Destination:=Range("AC2:AH4"), Type:=xlFillDefault
     Range("AI4").Select
-    ActiveCell.FormulaR1C1 = "=ROUND(SUM(RC[-6]:RC[-1]),0)"
+    ActiveCell.FormulaR1C1 = "=IF(RC[-33]="""","""",ROUND(SUM(RC[-6]:RC[-1]),0))"
     Range("AC4:AI4").Select
     Selection.AutoFill Destination:=Range("AC4:AI403"), Type:=xlFillDefault
     Range("AC4:AI403").Select
@@ -132,19 +138,18 @@ Dim SumRow As Integer
         "=IF(OR(R3C2="""",ISERROR(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0))),"""",IF(VLOOKUP(RC[-1],'毕业要求-指标点数据表'!R6C2:R46C6,5,0)>0,""√"",""""))"
     Selection.AutoFill Destination:=Range("C7:C18"), Type:=xlFillDefault
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Worksheets("2-课程目标和综合分析（填写）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("B6").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R[1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C25,""认证""),COUNTIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证""))"
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 其他操作()
+    Dim sh As Shape
     On Error Resume Next
     '删除专业下拉多余按钮
     Worksheets("2-课程目标和综合分析（填写）").Activate
-    'ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    'Dim sh As Shape
-    'For Each sh In ActiveSheet.Shapes
-    '    If sh.Name = "Drop Down 5606" Then
-    '        sh.Delete
-    '    End If
-    'Next
-    'ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Call 允许事件触发
     Call 修订公式
     Worksheets("专业矩阵状态").Activate
@@ -166,17 +171,23 @@ Sub 其他操作()
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     ActiveWorkbook.BreakLink Name:="E:\01-学期\质量分析报告模版光信息演示\质量分析报告模版V5.xls", Type _
         :=xlExcelLinks
-    ActiveSheet.Shapes.Range(Array("Button 4209")).Select
-    Selection.OnAction = "保存文件"
-    ActiveSheet.Shapes.Range(Array("Button 5")).Select
-    Selection.OnAction = "打印"
-    ActiveSheet.Shapes.Range(Array("Button 4210")).Select
-    Selection.OnAction = "CreateRecordWorkBook"
-    ActiveSheet.Shapes.Range(Array("Button 4211")).Select
-    Selection.OnAction = "重新设置公式按钮"
-    ActiveSheet.Shapes.Range(Array("Button 4212")).Select
-    Selection.OnAction = "允许事件触发"
-    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+        
+    For Each sh In ActiveSheet.Shapes
+        If Mid(sh.Name, 1, 6) = "Button" Then
+            Select Case sh.AlternativeText
+                Case "保存文件"
+                    sh.OnAction = "保存文件"
+                Case "打印"
+                    sh.OnAction = "打印"
+                Case "生成成绩导入表"
+                    sh.OnAction = "CreateRecordWorkBook"
+                Case "恢复默认公式"
+                    sh.OnAction = "重新设置公式按钮"
+                Case "重置下拉菜单"
+                    sh.OnAction = "允许事件触发"
+            End Select
+        End If
+    Next
     SchoolName = Worksheets("专业矩阵状态").Range("B2").Value
     If SchoolName = "计算机信息与安全学院" Then
         Worksheets("3 - 综合分析(打印)").Visible = True
@@ -194,6 +205,7 @@ Sub 其他操作()
         Range("A" & SelectRow).Value = "（4）毕业要求达成情况评价"
         ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     End If
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
 Sub 工作表加密()
     On Error Resume Next
@@ -354,7 +366,7 @@ Sub 生成版本号()
                 MyTxtObj.Close
                 Shell (ReleaseFilePath & "\" & BatFile)
             Else
-                Call MsgInfo(NoMsgBox, "ReadMe文件为空，版本发布失败！")
+                Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "ReadMe文件为空，版本发布失败！")
             End If
         End If
     End If
@@ -522,11 +534,6 @@ Sub 远程更新代码()
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     AutoUpdate = Range("H12").Value
-    If (Range("H10").Value = "弹出消息框") Then
-        NoMsgBox = False
-    ElseIf (Range("H10").Select = "不弹出消息框") Then
-        NoMsgBox = True
-    End If
     LastFilePath = ThisWorkbook.Path
     LastReadme = "Readme.txt"
     If Dir((LastFilePath & "\" & LastReadme)) <> "" Then
@@ -565,7 +572,7 @@ Sub 远程更新代码()
                 DownComplete = StrComp(ModuleLastRivise(1, CVersion), RemoteVersion, vbTextCompare)
             End If
             If DownComplete <> "0" Then
-                Call MsgInfo(NoMsgBox, "版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
+                Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "版本为" & LastVersion & "的代码未下载成功，请重新打开文件自动下载最新代码!")
             Else
                 Call 更新工作表代码(ThisWorkbook.Path)
                 ModuleName = ModuleLastRivise(1, CModuleName)
@@ -600,12 +607,12 @@ Sub 远程更新代码()
                     Range("H4").Value = Val(Mid(LastVersion, 4, 2))
                     Range("H5").Value = Val(Mid(LastVersion, 7, 2))
                 End If
-                Call MsgInfo(NoMsgBox, "已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
+                Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "已更新代码版本为：" & LastVersion & "修订日期：" & LastRiviseDate)
                 Worksheets("专业矩阵状态").Activate
                 Range("H8").Value = "更新公式"
             End If
         Else
-            Call MsgInfo(NoMsgBox, "该模版代码版本已经为最新版本!")
+            Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "该模版代码版本已经为最新版本!")
         End If
         If Dir(LastFilePath & "\" & LastReadme) <> "" Then
             Open LastFilePath & "\" & LastReadme For Input As #1
@@ -747,7 +754,7 @@ Function DownFile(FilePath As String, FileName As String, isHide As Boolean)
     Dim isError As String
     On Error Resume Next
     If Dir(ThisWorkbook.Path & "\wget.exe") = "" Then
-        Call MsgInfo(NoMsgBox, "请检查" & ThisWorkbook.Path & "\wget.exe 文件是否存在！")
+        Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "请检查" & ThisWorkbook.Path & "\wget.exe 文件是否存在！")
         DownFile = False
         GoTo ErrorSub
     End If
@@ -850,8 +857,8 @@ Function GetVersionFromFile(LocalFileName As String)
     Next i
 Error: GetVersionFromFile = isEmpty
 End Function
-Sub MsgInfo(NoMsg As Boolean, Msg As String)
-    If Not NoMsg Then
+Sub MsgInfo(NoMsg As String, Msg As String)
+    If NoMsg = "弹出消息框" Then
         MsgBox (Msg)
     End If
 End Sub
@@ -873,7 +880,7 @@ Sub 修订课程目标和综合分析公式()
     '2019.5.3修订，解决实验课程实验1，实验2，实验3等满分为100分，合计考核分超过100分的情况
     Range("B6").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(R[1]C="""","""",COUNTIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证""))"
+         "=IF(R[1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C25,""认证""),COUNTIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证""))"
     Range("R7").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OR(COUNTBLANK(RC[-14]:RC[-1])=14,SUM(R6C4:R6C17)=0),"""",SUM('2-课程目标和综合分析（填写）'!R7C4:R7C17)*100/SUM(R6C4:R6C17))"
@@ -1286,7 +1293,7 @@ Dim PointCount As Integer
 Dim MatrixSheet As String
 On Error Resume Next
     Application.EnableEvents = True
-    Call MsgInfo(NoMsgBox, "重新导入教学任务，学生名单，专业矩阵等信息，请稍等。。。")
+    Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "重新导入教学任务，学生名单，专业矩阵等信息，请稍等。。。")
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Grade = Range("D9").Value
     Major = Range("B7").Value
@@ -1782,7 +1789,7 @@ Sub 生成PDF()
                     Sheets("3-综合分析（打印）").Visible = False
             End Select
         Else
-            Call MsgInfo(NoMsgBox, "2-课程目标和综合分析（填写）工作表中的“是否认证”未选择！")
+            Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "2-课程目标和综合分析（填写）工作表中的“是否认证”未选择！")
         End If
     End If
     ActiveWorkbook.Save
@@ -2108,7 +2115,7 @@ Sub 保存文件()
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
    
     Application.ScreenUpdating = False
-    Call MsgInfo(NoMsgBox, "正在进行工作表格式调整，并保存文件，请耐心等待！")
+    Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "正在进行工作表格式调整，并保存文件，请耐心等待！")
     Worksheets("2-课程目标和综合分析（填写）").Activate
     Call 设置教学过程登记表
     Call 设置质量分析报告格式
@@ -2686,7 +2693,7 @@ Sub 课程目标和综合分析公式()
         "=IF(R3C2="""","""",IF(R4C2=""请在数据源-教学任务中添加该课号的课程信息"","""",VLOOKUP(R3C2,教学任务!R1C1:R65536C13,6,0)))"
     Range("B6").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(R[1]C="""","""",COUNTIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证""))"
+        "=IF(R[1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C25,""认证""),COUNTIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证""))"
     Range("B9").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(R[-6]C="""","""",IF(R4C2=""请在数据源-教学任务中添加该课号的课程信息"","""",VLOOKUP(R3C2,教学任务!R1C1:R65536C13,4,0)))"
@@ -3305,8 +3312,9 @@ On Error Resume Next
         "=IF(OR(RC[-22]="""",RC[1]=""""),"""",RC[-1]&""-""&RC[-2]&""-""&RC[1])"
     Range("Y4").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(OR(AND(RC[-3]<>"""",R2C26=""""),AND(RC[-3]<>"""",R2C26=""剔除不及格学生"",RC[-5]>=60)),IF(ISNUMBER(RC[-2]),IF(AND(RC[-2]='2-课程目标和综合分析（填写）'!R9C4,RC[-3]='2-课程目标和综合分析（填写）'!R7C2),""认证"",""""),IF(AND(VALUE(RC[-2])='2-课程目标和综合分析（填写）'!R9C4,RC[-3]='2-课程目标和综合分析（填写）'!R7C2),""认证"","""")),"""")"
-    
+        "=IF(OR(AND(RC[-3]<>"""",R2C26=""""),AND(RC[-3]<>"""",R2C26=""剔除不及格学生"",RC[-5]>=60)),IF(ISNUMBER(RC[-2]),IF(OR(AND(RC[-2]='2-课程目标和综合分析（填写）'!R9C4,'2-课程目标和综合分析（填写）'!R7C2=""""),AND(RC[-2]='2-课程目标和综合分析（填写）'!R9C4,RC[-3]='2-课程目标和综合分析（填写）'!R7C2)),""认证"",""""),IF(OR(AND(VALUE(RC[-2])='2-课程目标和综合分析（填写）'!R9C4,'2-课程目标和综合分析（填写）'!R7C2=""""),AND(VALUE(RC[-2])='2-课程目标和综合分析（填写）'!R9C4" & _
+        ",RC[-3]='2-课程目标和综合分析（填写）'!R7C2)),""认证"","""")),"""")" & _
+        ""
     Range("A4:C4").Select
     Selection.AutoFill Destination:=Range("A4:C" & MaxLineCout), Type:=xlFillDefault
     Range("A4:C" & MaxLineCout).Select
@@ -3314,6 +3322,14 @@ On Error Resume Next
     Range("W4").Activate
     Selection.AutoFill Destination:=Range("N4:Y" & MaxLineCout), Type:=xlFillDefault
     Range("N4:Y" & MaxLineCout).Select
+    Range("AC4").Select
+    ActiveCell.FormulaR1C1 = "=IF(ISNUMBER(RC[-15]),RC[-15]*R3C/100,0)"
+    Range("AC2:AC4").Select
+    Selection.AutoFill Destination:=Range("AC2:AH4"), Type:=xlFillDefault
+    Range("AI4").Select
+    ActiveCell.FormulaR1C1 = "=IF(RC[-33]="""","""",ROUND(SUM(RC[-6]:RC[-1]),0))"
+    Range("AC4:AI4").Select
+    Selection.AutoFill Destination:=Range("AC4:AI" & MaxLineCout), Type:=xlFillDefault
     Worksheets("1-试卷成绩登记表（填写）").Activate
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
@@ -3998,7 +4014,7 @@ Sub 导入教学任务()
     SourceWorkBook = "数据源-教学任务.xls"
     FileName = FileName & "\" & SourceWorkBook
     If MyFile.FileExists(FileName) = False Then
-      Call MsgInfo(NoMsgBox, "数据源-教学任务.xls不存在，请将数据源-教学任务.xls复制到当前文件夹")
+      Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "数据源-教学任务.xls不存在，请将数据源-教学任务.xls复制到当前文件夹")
       FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
     '调用Windows打开文件对话框
     If (FileName = False) Then Exit Sub
@@ -4044,7 +4060,7 @@ Sub 导入毕业要求矩阵(Major As String)
     SourceWorkBook = "数据源-" & Major & "-指标点数据矩阵.xls"
     FileName = FileName & "\" & SourceWorkBook
     If MyFile.FileExists(FileName) = False Then
-      Call MsgInfo(NoMsgBox, "数据源-" & Major & "-指标点数据矩阵.xls不存在，请将数据源-" & Major & "-指标点数据矩阵.xls复制到当前文件夹")
+      Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "数据源-" & Major & "-指标点数据矩阵.xls不存在，请将数据源-" & Major & "-指标点数据矩阵.xls复制到当前文件夹")
       FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
     '调用Windows打开文件对话框
     If (FileName = False) Then Exit Sub
@@ -4146,7 +4162,7 @@ Sub 导入学生名单()
     SourceWorkBook = "数据源-学生名单.xls"
     FileName = FileName & "\" & SourceWorkBook
     If MyFile.FileExists(FileName) = False Then
-      Call MsgInfo(NoMsgBox, "数据源-学生名单.xls不存在，请手动指定")
+      Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "数据源-学生名单.xls不存在，请手动指定")
       FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
     '调用Windows打开文件对话框
     If (FileName = False) Then Exit Sub
@@ -4191,6 +4207,7 @@ Sub 导入成绩表()
     Dim ScoreType(6) As String
     Dim CountItem As Integer
     Dim Table(8) As String
+    Dim NoFile As Boolean
     Application.ScreenUpdating = False
     strCurPath = CurDir$
     strWbkPath = ThisWorkbook.Path
@@ -4201,8 +4218,19 @@ Sub 导入成绩表()
     Worksheets("2-课程目标和综合分析（填写）").Activate
     CourseNumber = Range("$B$3").Value
     FileName = ThisWorkbook.Path
-    SourceWorkBook = "成绩表-" & CourseNumber & ".xls"
+    SourceWorkBook = "成绩表-" & CourseNumber
     FileName = FileName & "\" & SourceWorkBook
+    If MyFile.FileExists(FileName & ".xls") = True Then
+        SourceWorkBook = SourceWorkBook & ".xls"
+        FileName = FileName & ".xls"
+        NoFile = False
+    ElseIf MyFile.FileExists(FileName & ".xlsx") = True Then
+        SourceWorkBook = SourceWorkBook & ".xlsx"
+        FileName = FileName & ".xlsx"
+        NoFile = False
+    Else
+        NoFile = True
+    End If
     '成绩表-1720835
     strCurPath = CurDir$
     strWbkPath = ThisWorkbook.Path
@@ -4214,7 +4242,7 @@ Sub 导入成绩表()
     End If
     Worksheets("2-课程目标和综合分析（填写）").Activate
     If (Range("Q3").Value = "认证未提交成绩") Then
-        Call MsgInfo(NoMsgBox, "【课程目标和综合分析工作表认证状态为未提交成绩，不需要导入成绩表】")
+        Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "【课程目标和综合分析工作表认证状态为未提交成绩，不需要导入成绩表】")
         Worksheets(ThisSheetName).Activate
         Exit Sub
     End If
@@ -4232,16 +4260,17 @@ Sub 导入成绩表()
         Call 试卷成绩登记表公式
         Call 成绩核对表公式
     End If
-    If MyFile.FileExists(FileName) = False Then
-        Call MsgInfo(NoMsgBox, "成绩表-" & CourseNumber & ".xls" & "不存在，请手动指定")
+    If NoFile Then
+        Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "成绩表-" & CourseNumber & ".xls" & "不存在，请手动指定")
         Msg = "已经在教务系统提交成绩，成绩表导入要求：" & vbCr
         Msg = Msg & "成绩表标题栏需要包含【学号、姓名、实验成绩、平时成绩、考核成绩、总评成绩、成绩类别、作业成绩、课堂测验、课程报告】等关键词；" & vbCr
-        Call MsgInfo(NoMsgBox, Msg)
+        Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, Msg)
         FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
         '调用Windows打开文件对话框
         If (FileName = False) Then Exit Sub
         SourceWorkBook = Mid(FileName, InStrRev(FileName, "\") + 1)
     End If
+    Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "成绩表默认文件名：成绩表-课程序号.xls(xlsx)，将导入学号，姓名和除试卷各大题之外的其他成绩，成绩表中的标题栏关键词需要与试卷成绩登记表里的标题栏关键词相同")
     Call CopySheet(FileName, SourceWorkBook, "Sheet1", "A:N", ThisWorkBookName, "成绩表", "B:O")
 
     Application.ScreenUpdating = False
@@ -4366,9 +4395,9 @@ Sub 导入教务系统成绩表()
         Call 成绩核对表公式
     End If
     If MyFile.FileExists(FileName) = False Then
-        Call MsgInfo(NoMsgBox, CourseNumber & "期末成绩.xls" & "不存在，请手动指定")
+        Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, CourseNumber & "期末成绩.xls" & "不存在，请手动指定")
         Msg = "在学分制管理系统提交成绩前，请下载成绩表，在成绩核对工作表可直接导入，成绩表标题栏需要包含【学号、姓名、实验成绩、平时成绩、考核成绩、总评成绩、成绩类别】等关键词；" & vbCr
-        Call MsgInfo(NoMsgBox, Msg)
+        Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, Msg)
         FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
         '调用Windows打开文件对话框
         If (FileName = False) Then Exit Sub
@@ -4481,7 +4510,7 @@ Sub 导入实验成绩表()
     End If
     
     If MyFile.FileExists(FileName) = False Then
-        Call MsgInfo(NoMsgBox, "实验成绩表-" & CourseNumber & ".xls" & "不存在，请手动指定")
+        Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "实验成绩表-" & CourseNumber & ".xls" & "不存在，请手动指定")
         FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
         '调用Windows打开文件对话框
         If (FileName = False) Then Exit Sub
@@ -4550,7 +4579,7 @@ Function 导入教学过程登记表() As Boolean
         SourceWorkBook = "数据源-" & Xueqi & "学期教学过程登记表.xls"
         FileName = ThisWorkbook.Path & "\" & SourceWorkBook
         If MyFile.FileExists(FileName) = False Then
-            Call MsgInfo(NoMsgBox, FileName & "不存在，请手动指定" & Xueqi & "学期的教学过程登记表，支持导入学分管理系统下载成绩表名单，也可以从教务系统复制教学过程登记表名单到新EXCEL文档")
+            Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, FileName & "不存在，请手动指定" & Xueqi & "学期的教学过程登记表，支持导入学分管理系统下载成绩表名单，也可以从教务系统复制教学过程登记表名单到新EXCEL文档")
             FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
             If FileName = False Then
                 Sheets("教学过程登记表").Visible = False
@@ -4583,7 +4612,7 @@ Function 导入教学过程登记表() As Boolean
         
         Worksheets("2-课程目标和综合分析（填写）").Activate
         If (Range("$T$1").Value = "无名单") Then
-            Call MsgInfo(NoMsgBox, "导入的教学过程登记表中没有该课号的名单，请手动指定教学过程登记表文件，支持导入学分管理系统下载成绩表名单，也可以从教务系统复制教学过程登记表名单到新EXCEL文档")
+            Call MsgInfo(Worksheets("专业矩阵状态").Range("H10").Value, "导入的教学过程登记表中没有该课号的名单，请手动指定教学过程登记表文件，支持导入学分管理系统下载成绩表名单，也可以从教务系统复制教学过程登记表名单到新EXCEL文档")
             FileName = Application.GetOpenFilename("Microsoft Excel Files (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm", , "Get list")
             '调用Windows打开文件对话框
             If (FileName = False) Then
@@ -5173,7 +5202,7 @@ Sub CreateTXTfile(FileName As String, Content As String, AfterOpen As Boolean)
 End Sub
 Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As String, TargetColumn As String)
     Dim ImportStatus As Boolean
-    Dim TempMsgBox As Boolean
+    Dim TempMsgBox As String
     Select Case Mode
         Case "认证状态"
             If TargetValue = "非认证" Then
@@ -5198,10 +5227,10 @@ Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As Strin
                         Call 设置教学过程登记表
                     End If
                 ElseIf Range("Q3").Value = "认证已提交成绩" Then
-                    TempMsgBox = NoMsgBox
-                    NoMsgBox = True
+                    TempMsgBox = Worksheets("专业矩阵状态").Range("H10").Value
+                    Worksheets("专业矩阵状态").Range("H10").Value = "弹出消息框"
                     ImportStatus = 导入教学过程登记表
-                    NoMsgBox = TempMsgBox
+                    Worksheets("专业矩阵状态").Range("H10").Value = TempMsgBox
                 End If
                 Worksheets("2-课程目标和综合分析（填写）").Activate
             End If
@@ -5587,6 +5616,8 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.37
+'[版本号]V5.06.38
+
+
 
 
