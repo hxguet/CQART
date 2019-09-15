@@ -157,7 +157,6 @@ Sub 其他操作()
         Worksheets("专业矩阵状态").Visible = True
         Worksheets("专业矩阵状态").Activate
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-    
         If Range("H8").Value = "更新公式" Then
             Call 重新设置公式按钮
         End If
@@ -171,7 +170,6 @@ Sub 其他操作()
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
     ActiveWorkbook.BreakLink Name:="E:\01-学期\质量分析报告模版光信息演示\质量分析报告模版V5.xls", Type _
         :=xlExcelLinks
-        
     For Each sh In ActiveSheet.Shapes
         If Mid(sh.Name, 1, 6) = "Button" Then
             Select Case sh.AlternativeText
@@ -3279,7 +3277,6 @@ On Error Resume Next
     Range("N4").Select
     ActiveCell.FormulaR1C1 = _
                 "=IF(OR(RC2="""",COUNT(RC[-9]:RC[-1])=0),"""",SUM(RC[-9]:RC[-1]))"
-
     Range("O4").Select
     ActiveCell.FormulaR1C1 = _
         "=IF('2-课程目标和综合分析（填写）'!R3C17=""认证已提交成绩"",IF(OR(RC[-13]="""",ISNA(VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0))),"""",VLOOKUP(RC2,成绩表!C18:C27,MATCH(R2C,成绩表!R1C18:R1C27,0),0)),IF(OR(RC2=""""),"""",VLOOKUP(RC2,'0-教学过程登记表（填写+打印)'!C2:C44,MATCH(R2C,'0-教学过程登记表（填写+打印)'!R4C2:R4C44,0),0)))"
@@ -3306,7 +3303,7 @@ On Error Resume Next
         "=IF(OR(RC[-20]=""""),"""",IF(ISNA(MATCH(RC2&""-""&'2-课程目标和综合分析（填写）'!R7C2,学生名单!C7,0)),IF(ISNUMBER(MATCH(VALUE(RC2),学生名单!C2,0)),VLOOKUP(VALUE(RC2),学生名单!C2:C6,5,0),IF(ISNUMBER(MATCH(RC2,学生名单!C2,0)),VLOOKUP(RC2,学生名单!C2:C6,5,0),"""")),INDEX(学生名单!C6,MATCH(RC2&""-""&'2-课程目标和综合分析（填写）'!R7C2,学生名单!C7,0))))"
     Range("W4").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(OR(RC[-21]=""""),"""",IF(ISNA(VLOOKUP(VALUE(RC[-21]),学生名单!C2:C6,4,0)),IF(ISNA(VLOOKUP(RC[-21],学生名单!C2:C6,4,0)),"""",VLOOKUP(RC[-21],学生名单!C2:C6,4,0)),VLOOKUP(VALUE(RC[-21]),学生名单!C2:C6,4,0)))"
+        "=IF(OR(RC[-21]="""",RC[-21]=""请导入名单""),"""",IF(ISNA(VLOOKUP(VALUE(RC[-21]),学生名单!C2:C6,4,0)),IF(ISNA(VLOOKUP(RC[-21],学生名单!C2:C6,4,0)),"""",VLOOKUP(RC[-21],学生名单!C2:C6,4,0)),VLOOKUP(VALUE(RC[-21]),学生名单!C2:C6,4,0)))"
     Range("X4").Select
     ActiveCell.FormulaR1C1 = _
         "=IF(OR(RC[-22]="""",RC[1]=""""),"""",RC[-1]&""-""&RC[-2]&""-""&RC[1])"
