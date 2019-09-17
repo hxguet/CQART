@@ -5209,6 +5209,12 @@ Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As Strin
             ElseIf TargetValue = "认证未提交成绩" Then
                 Call 认证未提交成绩
             ElseIf TargetValue = "认证已提交成绩" Then
+                Worksheets("成绩表").Visible = True
+                Worksheets("成绩表").Activate
+                ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+                Range("A1:M500").Select
+                Selection.ClearContents
+                ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
                 Call 认证已提交成绩
             End If
         Case "课程序号"
