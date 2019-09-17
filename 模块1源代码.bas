@@ -1365,7 +1365,7 @@ Sub 允许事件触发()
     With Selection.Validation
         .Delete
         .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
-        xlBetween, Formula1:="=OFFSET(专业矩阵状态!$B$4,,,COUNTA(专业矩阵状态!$B$4:$B$12))"
+        xlBetween, Formula1:="=OFFSET(专业矩阵状态!$B$4,,,COUNTA(专业矩阵状态!$B$4:$B$12)+1)"
         .IgnoreBlank = True
         .InCellDropdown = True
         .InputTitle = ""
@@ -2630,7 +2630,7 @@ Sub 课程目标和综合分析公式()
     With Selection.Validation
         .Delete
         .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
-        xlBetween, Formula1:="=OFFSET(专业矩阵状态!$B$4,,,COUNTA(专业矩阵状态!$B$4:$B$12))"
+        xlBetween, Formula1:="=OFFSET(专业矩阵状态!$B$4,,,COUNTA(专业矩阵状态!$B$4:$B$12)+1)"
         .IgnoreBlank = True
         .InCellDropdown = True
         .InputTitle = ""
@@ -2717,7 +2717,8 @@ Sub 课程目标和综合分析公式()
         "=IF('1-试卷成绩登记表（填写）'!R[-3]C[1]="""","""",'1-试卷成绩登记表（填写）'!R[-3]C[1])"
     Range("D7").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(OR(R6C2=0,R6C2="""",R[-1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"")=0,COUNT(OFFSET('1-试卷成绩登记表（填写）'!R4C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,205))=0),"""",SUMIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,183))/R6C2)"
+        "=IF(OR(R6C2=0,R6C2="""",R[-1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C25,""认证"")=0,COUNT(OFFSET('1-试卷成绩登记表（填写）'!R4C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,205))=0),"""",IF(RC[-2]="""",SUMIF('1-试卷成绩登记表（填写）'!C25,""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,183)),SUMIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C," & _
+        "'1-试卷成绩登记表（填写）'!R2,0)-1,183)))/R6C2)" & ""
     Range("D8").Select
     ActiveCell.FormulaR1C1 = "=IF(R[-1]C="""","""",ROUND(R[-1]C*100/R[-2]C,1))"
     Range("D6:D8").Select
@@ -2728,7 +2729,8 @@ Sub 课程目标和综合分析公式()
         "=IF(OR(OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)="""",OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)=0),"""",100)"
     Range("M7").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(OR(R6C2=0,R6C2="""",R[-1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"")=0,COUNT(OFFSET('1-试卷成绩登记表（填写）'!R4C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,205))=0),"""",SUMIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,183))/R6C2)"
+        "=IF(OR(R6C2=0,R6C2="""",R[-1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C25,""认证"")=0,COUNT(OFFSET('1-试卷成绩登记表（填写）'!R4C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,205))=0),"""",IF(RC[-2]="""",SUMIF('1-试卷成绩登记表（填写）'!C25,""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,183)),SUMIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C," & _
+        "'1-试卷成绩登记表（填写）'!R2,0)-1,183)))/R6C2)" & ""
     Range("M8").Select
     ActiveCell.FormulaR1C1 = "=IF(R[-1]C="""","""",ROUND(R[-1]C*100/R[-2]C,1))"
     Range("M6:M8").Select
@@ -5613,7 +5615,7 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.38
+'[版本号]V5.06.39
 
 
 
