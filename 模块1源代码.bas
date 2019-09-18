@@ -5219,6 +5219,14 @@ Sub 课程目标和综合分析(Mode As String, TargetValue As String, TargetRow As Strin
             End If
         Case "课程序号"
             If TargetValue <> "" Then
+                If (Range("B6").Value = 0) Then
+                    Application.ScreenUpdating = False
+                    Application.EnableEvents = False
+                    Call 导入学生名单
+                    Application.ScreenUpdating = True
+                    Application.EnableEvents = True
+                    Worksheets("2-课程目标和综合分析（填写）").Activate
+                End If
                 If Range("B4").Value = "请在数据源-教学任务中添加该课号的课程信息" Then
                     Call 导入教学任务
                     Worksheets("2-课程目标和综合分析（填写）").Activate
