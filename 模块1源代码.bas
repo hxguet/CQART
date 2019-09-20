@@ -1220,6 +1220,113 @@ Sub 修订专业矩阵状态()
     Worksheets("专业矩阵状态").Visible = False
     Application.ScreenUpdating = True
 End Sub
+Sub 汇总用数据公式()
+    Sheets("毕业要求达成度汇总用数据").Visible = True
+    Worksheets("毕业要求达成度汇总用数据").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("B2").Select
+    ActiveSheet.Unprotect
+    ActiveCell.FormulaR1C1 = "=IF(RC6="""","""",'2-课程目标和综合分析（填写）'!R2C2)"
+    Range("C2").Select
+    ActiveCell.FormulaR1C1 = "=IF(RC6="""","""",'2-课程目标和综合分析（填写）'!R4C2)"
+    Range("D2").Select
+    ActiveCell.FormulaR1C1 = "=IF(RC6="""","""",'2-课程目标和综合分析（填写）'!R3C2)"
+    Range("E2").Select
+    ActiveCell.FormulaR1C1 = "=IF(RC6="""","""",'2-课程目标和综合分析（填写）'!R5C2)"
+    Range("F2").Select
+    ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R7C2"
+    Range("G2").Select
+    ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R9C8"
+    Range("H2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(RC6="""","""",VLOOKUP(R[-1]C,'毕业要求-指标点数据表'!R[4]C3:R[44]C7,5,0))"
+    Range("H2").Select
+    Selection.AutoFill Destination:=Range("H2:AV2"), Type:=xlFillDefault
+    Range("H2:AV2").Select
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Sheets("毕业要求达成度汇总用数据").Visible = False
+    
+    Sheets("课程目标达成度汇总用数据").Visible = True
+    Worksheets("课程目标达成度汇总用数据").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("B2").Select
+    ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R2C2"
+    Range("C2").Select
+    ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R4C2"
+    Range("D2").Select
+    ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R3C2"
+    Range("E2").Select
+    ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R5C2"
+    Range("F2").Select
+    ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R7C2"
+    Range("G2").Select
+    ActiveCell.FormulaR1C1 = "='2-课程目标和综合分析（填写）'!R9C8"
+    Range("H2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(ISNA(MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0))),"""",OFFSET('2-课程目标和综合分析（填写）'!R1C1,MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0)-1,1))"
+    Range("I2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    Range("J2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(ISNA(MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0))),"""",OFFSET('2-课程目标和综合分析（填写）'!R1C1,MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0)-1,1))"
+    Range("K2").Select
+    Selection.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    Range("L2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(ISNA(MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0))),"""",OFFSET('2-课程目标和综合分析（填写）'!R1C1,MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0)-1,1))"
+    Range("M2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    Range("M2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    Range("N2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(ISNA(MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0))),"""",OFFSET('2-课程目标和综合分析（填写）'!R1C1,MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0)-1,1))"
+    Range("O2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    Range("P2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(ISNA(MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0))),"""",OFFSET('2-课程目标和综合分析（填写）'!R1C1,MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0)-1,1))"
+    Range("Q2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    Range("R2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(ISNA(MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0))),"""",OFFSET('2-课程目标和综合分析（填写）'!R1C1,MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0)-1,1))"
+    Range("S2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    Range("T2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(ISNA(MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0))),"""",OFFSET('2-课程目标和综合分析（填写）'!R1C1,MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0)-1,1))"
+    Range("U2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    Range("V2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(ISNA(MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0))),"""",OFFSET('2-课程目标和综合分析（填写）'!R1C1,MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0)-1,1))"
+    Range("W2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    Range("X2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(ISNA(MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0))),"""",OFFSET('2-课程目标和综合分析（填写）'!R1C1,MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0)-1,1))"
+    Range("Y2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    Range("Z2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(OR(ISNA(MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0))),"""",OFFSET('2-课程目标和综合分析（填写）'!R1C1,MATCH(R1C,'2-课程目标和综合分析（填写）'!C1,0)-1,1))"
+    Range("AA2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(ISNA(MATCH(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!C1,0)),"""",VLOOKUP(""课程""&MID(R[-1]C,1,LEN(R[-1]C)-3),'2-课程目标和综合分析（填写）'!R11C1:R20C3,3,0))"
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
+    Sheets("课程目标达成度汇总用数据").Visible = False
+End Sub
 Sub 修订毕业要求达成度评价表()
     On Error Resume Next
     Dim SchoolName As String
@@ -2228,6 +2335,7 @@ Sub 重新设置公式按钮()
   Call 毕业要求达成度评价公式
   Call 评价环节比例设置公式
   Call 质量分析报告公式
+  Call 汇总用数据公式
   Worksheets("0-教学过程登记表（填写+打印)").Activate
   Application.ScreenUpdating = True
   Application.EnableEvents = True
@@ -2717,8 +2825,9 @@ Sub 课程目标和综合分析公式()
         "=IF('1-试卷成绩登记表（填写）'!R[-3]C[1]="""","""",'1-试卷成绩登记表（填写）'!R[-3]C[1])"
     Range("D7").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(OR(R6C2=0,R6C2="""",R[-1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C25,""认证"")=0,COUNT(OFFSET('1-试卷成绩登记表（填写）'!R4C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,205))=0),"""",IF(RC[-2]="""",SUMIF('1-试卷成绩登记表（填写）'!C25,""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,183)),SUMIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C," & _
-        "'1-试卷成绩登记表（填写）'!R2,0)-1,183)))/R6C2)" & ""
+        "=IF(OR(R6C2=0,R6C2="""",R[-1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C25,""认证"")=0,COUNT(OFFSET('1-试卷成绩登记表（填写）'!R4C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,205))=0),"""",IF(R7C2="""",SUMIF('1-试卷成绩登记表（填写）'!C25,""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,183)),SUMIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1" & _
+        "-试卷成绩登记表（填写）'!R2,0)-1,183)))/R6C2)" & _
+        ""
     Range("D8").Select
     ActiveCell.FormulaR1C1 = "=IF(R[-1]C="""","""",ROUND(R[-1]C*100/R[-2]C,1))"
     Range("D6:D8").Select
@@ -2729,8 +2838,9 @@ Sub 课程目标和综合分析公式()
         "=IF(OR(OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)="""",OFFSET(R3C1,,MATCH(R5C,R2,0)-1,1)=0),"""",100)"
     Range("M7").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(OR(R6C2=0,R6C2="""",R[-1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C25,""认证"")=0,COUNT(OFFSET('1-试卷成绩登记表（填写）'!R4C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,205))=0),"""",IF(RC[-2]="""",SUMIF('1-试卷成绩登记表（填写）'!C25,""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,183)),SUMIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C," & _
-        "'1-试卷成绩登记表（填写）'!R2,0)-1,183)))/R6C2)" & ""
+        "=IF(OR(R6C2=0,R6C2="""",R[-1]C="""",COUNTIF('1-试卷成绩登记表（填写）'!C25,""认证"")=0,COUNT(OFFSET('1-试卷成绩登记表（填写）'!R4C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,205))=0),"""",IF(R7C2="""",SUMIF('1-试卷成绩登记表（填写）'!C25,""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1-试卷成绩登记表（填写）'!R2,0)-1,183)),SUMIF('1-试卷成绩登记表（填写）'!C24,R9C4&""-""&R7C2&""-""&""认证"",OFFSET('1-试卷成绩登记表（填写）'!R1C1,,MATCH(R5C,'1" & _
+        "-试卷成绩登记表（填写）'!R2,0)-1,183)))/R6C2)" & _
+        ""
     Range("M8").Select
     ActiveCell.FormulaR1C1 = "=IF(R[-1]C="""","""",ROUND(R[-1]C*100/R[-2]C,1))"
     Range("M6:M8").Select
@@ -5629,8 +5739,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.39
-
-
-
-
+'[版本号]V5.06.40
