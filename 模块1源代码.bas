@@ -188,14 +188,15 @@ Sub 其他操作()
     Next
     SchoolName = Worksheets("专业矩阵状态").Range("B2").Value
     If SchoolName = "计算机信息与安全学院" Then
-        Worksheets("3 - 综合分析(打印)").Visible = True
-        Worksheets("3 - 综合分析(打印)").Activate
+        Worksheets("3-综合分析（打印）").Visible = True
+        Worksheets("3-综合分析（打印）").Activate
         If Not isError(Application.Match("（3）课程目标达成*", Range("A:A"), 0)) Then
             SelectRow = Application.Match("（3）课程目标达成*", Range("A:A"), 0)
             ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
             Range("A" & SelectRow).Value = "（3）课程目标达成评价"
             ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
         End If
+        Worksheets("3-综合分析（打印）").Visible = False
         Worksheets("2-课程目标和综合分析（填写）").Activate
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
         If Not isError(Application.Match("（3）课程目标达成*", Range("A:A"), 0)) Then
