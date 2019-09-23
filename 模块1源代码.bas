@@ -190,17 +190,27 @@ Sub 其他操作()
     If SchoolName = "计算机信息与安全学院" Then
         Worksheets("3 - 综合分析(打印)").Visible = True
         Worksheets("3 - 综合分析(打印)").Activate
-        If Range("A7").Value = "（3）课程目标达成度评价" Then
+        If Not isError(Application.Match("（3）课程目标达成*", Range("A:A"), 0)) Then
+            SelectRow = Application.Match("（3）课程目标达成*", Range("A:A"), 0)
             ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-            Range("A7").Value = "（3）课程目标达成情况评价"
+            Range("A" & SelectRow).Value = "（3）课程目标达成评价"
             ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
         End If
         Worksheets("2-课程目标和综合分析（填写）").Activate
         ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
-        SelectRow = Application.Match("（3）课程目标达成度评价", Range("A:A"), 0)
-        Range("A" & SelectRow).Value = "（3）课程目标达成情况评价"
-        SelectRow = Application.Match("（4）毕业要求达成度评价", Range("A:A"), 0)
-        Range("A" & SelectRow).Value = "（4）毕业要求达成情况评价"
+        If Not isError(Application.Match("（3）课程目标达成*", Range("A:A"), 0)) Then
+            SelectRow = Application.Match("（3）课程目标达成*", Range("A:A"), 0)
+            Range("A" & SelectRow).Value = "（3）课程目标达成情况评价"
+            Range("B" & SelectRow).Select
+            ActiveCell.FormulaR1C1 = _
+                "=IF(OR(R6C2=0,R6C2=""""),"""",IF(CONCATENATE(R[-13]C[31],R[-12]C[31],R[-11]C[31],R[-10]C[31],R[-9]C[31],R[-8]C[31],R[-7]C[31],R[-6]C[31],R[-5]C[31],R[-4]C[31])="""","""",""课程目标达成评价值分别为：""&MID(CONCATENATE(R[-13]C[31],R[-12]C[31],R[-11]C[31],R[-10]C[31],R[-9]C[31],R[-8]C[31],R[-7]C[31],R[-6]C[31],R[-5]C[31],R[-4]C[31]),1,LEN(CONCATENATE(R[-13]C[31],R[-12]C[31],R[-11]C" & _
+                "[31],R[-10]C[31],R[-9]C[31],R[-8]C[31],R[-7]C[31],R[-6]C[31],R[-5]C[31],R[-4]C[31]))-1)))" & _
+                ""
+        End If
+        If Not isError(Application.Match("（4）毕业要求达成*", Range("A:A"), 0)) Then
+            SelectRow = Application.Match("（4）毕业要求达成度评价", Range("A:A"), 0)
+            Range("A" & SelectRow).Value = "（4）毕业要求达成情况评价"
+        End If
         ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     End If
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
@@ -5739,4 +5749,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.06.40
+'[版本号]V5.07.01
