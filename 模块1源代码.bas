@@ -1761,6 +1761,7 @@ Sub 生成PDF()
     Dim PDFFilePath As String
     CurrentWorksheet = ActiveSheet.Name
     Application.ScreenUpdating = False
+    Call 其他操作
     Worksheets("专业矩阵状态").Visible = True
     Worksheets("专业矩阵状态").Activate
     ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
@@ -1787,6 +1788,7 @@ Sub 生成PDF()
     If Dir(PDFFilePath) = "" Then
         MkDir PDFFilePath
     End If
+    CourseName = Replace(CourseName, "/", "")
     PDFFileName = Term & "-" & CourseNum & "-" & Major & "-" & Teacher & "-" & CourseName
     '错误检查报告不存在，没有错误
     If (Dir(ThisWorkbook.Path & "\错误报告\" & PDFFileName & "-错误检查报告.txt") = "") Then
@@ -2188,6 +2190,7 @@ Sub 保存文件()
     CurrentWorksheet = ActiveSheet.Name
     
     Application.ScreenUpdating = False
+    Call 其他操作
     Call 设置区域颜色("1-试卷成绩登记表（填写）", "E2:M" & MaxLineCout, xlThemeColorDark1)
     Call 设置区域颜色("3-毕业要求数据表（填写）", "E7:N18", xlThemeColorDark1)
 
@@ -2241,6 +2244,11 @@ Sub 保存文件()
     FileName = ThisWorkbook.Name
 
     Worksheets("2-课程目标和综合分析（填写）").Activate
+    ActiveSheet.Protect DrawingObjects:=False, Contents:=False, Scenarios:=False, Password:=Password
+    Range("AE6").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(R[-3]C[-29]="""",R[1]C,MID(R[-4]C[-29],3,2)&""-""&MID(R[-4]C[-29],8,2)&""-""&MID(R[-4]C[-29],14,1)&""-""&R[-3]C[-29]&""-""&R[1]C[-29]&""-""&R[-1]C[-29]&""-""&SUBSTITUTE(R[-2]C[-29],""/"",""""))"
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
     Range("AE7").Value = FileName
     Range("AE5").Value = ThisWorkbook.Path
     If (FileName = Range("AE6").Value) Then
@@ -2946,7 +2954,7 @@ Sub 课程目标和综合分析公式()
         "=IF(R[1]C[-15]="""","""",ROUND(R[1]C[-15]/RC[-15],3))"
     Range("AE6").Select
     ActiveCell.FormulaR1C1 = _
-        "=IF(R[-3]C[-29]="""",R[1]C,MID(R[-4]C[-29],3,2)&""-""&MID(R[-4]C[-29],8,2)&""-""&MID(R[-4]C[-29],14,1)&""-""&R[-3]C[-29]&""-""&R[1]C[-29]&""-""&R[-1]C[-29]&""-""&R[-2]C[-29])"
+        "=IF(R[-3]C[-29]="""",R[1]C,MID(R[-4]C[-29],3,2)&""-""&MID(R[-4]C[-29],8,2)&""-""&MID(R[-4]C[-29],14,1)&""-""&R[-3]C[-29]&""-""&R[1]C[-29]&""-""&R[-1]C[-29]&""-""&SUBSTITUTE(R[-2]C[-29],""/"",""""))"
     
     Range("S7").Select
     ActiveCell.FormulaR1C1 = _
@@ -5750,4 +5758,4 @@ Sub 设置区域颜色(SetSheetName As String, SetRange As String, SetColor As String)
     End With
     ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True, Password:=Password
 End Sub
-'[版本号]V5.07.01
+'[版本号]V5.07.02
